@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — lyric language: auto-detection + per-language faces
    The styles are designed around Japanese fonts. For Chinese
@@ -151,3 +153,5 @@ J.langBaseFaces = (keys) => {
 /* segmenter locale for chunking */
 J.segLocale = () => (J.lang === 'zh-Hant' ? 'zh-Hant' : J.lang === 'zh-Hans' ? 'zh-Hans' : J.lang === 'ko' ? 'ko' : J.lang === 'en' ? 'en' : 'ja');
 })();
+
+}

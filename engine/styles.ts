@@ -1,3 +1,7 @@
+import type { Project, Style } from './types.ts';
+import type { LegacyFacade, LegacyValue } from './legacy-types.ts';
+
+export default function install(J: LegacyFacade): void {
 /* ============================================================
    JIZURA — style packs (palettes, type roles, texture, tendencies)
    Each pack = a set of colour schemes the cuts can swap between,
@@ -152,15 +156,15 @@ J.STYLES = {
 J.STYLE_ORDER = ['noir', 'crimson', 'caution', 'magenta', 'paper', 'hud', 'mint', 'specimen', 'transit', 'blueprint', 'rouge', 'mono'];
 
 /* resolve style + user colour/font overrides into an effective style */
-J.resolveStyle = (project) => {
+J.resolveStyle = (project: Project): Style => {
   const base = J.STYLES[project.style] || J.STYLES.noir;
-  const st = JSON.parse(JSON.stringify(base));
+  const st: Style = JSON.parse(JSON.stringify(base));
   const ov = project.colors || {};
   // base colours (background / text) replace the main scheme only
   if (ov.enabled) st.schemes[0] = Object.assign({}, st.schemes[0], pickDefined(ov, ['bg', 'fg', 'sub']));
   // accent + chromatic ghost colours apply to every scheme; accent is re-lit per background for contrast
   if (ov.accentOn) {
-    st.schemes = st.schemes.map(s => {
+    st.schemes = st.schemes.map((s: LegacyValue) => {
       const o = Object.assign({}, s);
       if (ov.accent) { o.accent = J.fitContrast(ov.accent, s.bg, 2.4); if (s.ink === s.accent) o.ink = o.accent; }
       // ghosts only need to stay visible against this scheme's background
@@ -180,15 +184,17 @@ J.resolveStyle = (project) => {
    and the renderer turns the finished frame monochrome and — for green — screens it onto pure green.
    Black stays the "empty" colour, so a keyer (green) or a screen / luma blend (black) gives the same result. */
 J.KEY_BG = { green: '#00FF00', black: '#000000' };
-J.keyMode = project => (project && J.KEY_BG[project.keyBg] ? project.keyBg : null);
-function keyStyle(st) {
-  st.schemes = st.schemes.map(s => {
-    const o = { bg: '#000000', fg: '#FFFFFF', sub: '#D2D2D2', accent: '#FFFFFF', accent2: '#BDBDBD', ink: '#FFFFFF', dim: '#1E1E1E', ghostA: '#9A9A9A', ghostB: '#5E5E5E' };
+J.keyMode = (project: LegacyValue) => (project && J.KEY_BG[project.keyBg] ? project.keyBg : null);
+function keyStyle(st: LegacyValue) {
+  st.schemes = st.schemes.map((s: LegacyValue) => {
+    const o: LegacyValue = { bg: '#000000', fg: '#FFFFFF', sub: '#D2D2D2', accent: '#FFFFFF', accent2: '#BDBDBD', ink: '#FFFFFF', dim: '#1E1E1E', ghostA: '#9A9A9A', ghostB: '#5E5E5E' };
     if (s.grad) o.grad = ['#FFFFFF', '#A8A8A8'];
     return o;
   });
   st.texture = { grain: 0, paper: 0, scan: 0 };
   st.key = true;
 }
-function pickDefined(o, keys) { const r = {}; for (const k of keys) if (o[k]) r[k] = o[k]; return r; }
+function pickDefined(o: LegacyValue, keys: LegacyValue) { const r: LegacyValue = {}; for (const k of keys) if (o[k]) r[k] = o[k]; return r; }
 })();
+
+}

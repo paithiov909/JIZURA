@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: typo (part 1) — 文字PV typography layouts: key glyphs, crossings, rules, grids, scale contrast, crops, annotation */
 (() => {
 'use strict';
@@ -938,3 +940,5 @@ reg('tyLineFocus', {
 });
 
 })();
+
+}

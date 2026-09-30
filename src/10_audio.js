@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — audio: decode, energy envelope, onset, BPM & beat grid
    ============================================================ */
@@ -131,3 +133,5 @@ J.beatGrid = (bpm, offset, duration) => {
   return out;
 };
 })();
+
+}

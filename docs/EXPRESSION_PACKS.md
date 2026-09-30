@@ -8,7 +8,7 @@ A pack is ONE file: `src/11p_<pack>.js`. It only registers new entries; it never
 
 Existing implementations to read first (they show the house style and all the idioms):
 `src/06_layouts.js` (layouts, `J.mainDraw`, `J.drawFx`), `src/05_anim.js` (enter/hold/exit), `src/07_decor.js` (decor),
-`src/03_text.js` (`J.drawItem` — the text item model), `src/09_render.js` (`makeEnv` drawing helpers).
+`engine/text.ts` (`J.drawItem` — the text item model), `engine/renderer.ts` (`makeEnv` drawing helpers).
 
 ## File skeleton
 
@@ -148,7 +148,7 @@ device-pixel size), `p` 0→1 (linear; ease it yourself). Draw the complete comp
 it must look exactly like A, at p=1 exactly like B. `info = {cw, ch, sc, scPrev, st, P, step, t, scale, allowFilter, seed, tmp(w,h)}`.
 The planner turns the previous cut's exit and this cut's entrance into plain cuts when a transition is used.
 
-**style** (配色セット) — added directly to `J.STYLES` + `J.STYLE_ORDER` (see src/04_styles.js for the full schema): `{ name, desc,
+**style** (配色セット) — added directly to `J.STYLES` + `J.STYLE_ORDER` (see engine/styles.ts for the full schema): `{ name, desc,
 moods: [mood keys], schemes: [2–4 × {bg, fg, sub, accent, accent2, ink, dim, ghostA, ghostB, grad?, paper?}], fonts: {display, serif,
 body, mono}, texture: {grain, paper, scan}, ghost, bias: {layout, enter, exit}, decor: {decorKey: weight}, hud, glow?, glitchBoost?, useGrad? }`.
 

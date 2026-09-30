@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: layoutsD — kinetic / faux-3D / physical / pop-graphic layouts (cube, cylinder, flags, pendulums, signs, puzzles, masks …) */
 (() => {
 'use strict';
@@ -3020,3 +3022,5 @@ reg('stencil', {
 });
 
 })();
+
+}

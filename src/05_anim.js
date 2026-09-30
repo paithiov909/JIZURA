@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — motion recipes: entrances / holds / exits
    Each recipe mutates a text item: it.size/sx/alpha/blur/clip/bands,
@@ -412,3 +414,5 @@ J.combinePiece = (fns) => {
   };
 };
 })();
+
+}

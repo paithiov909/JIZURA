@@ -1,7 +1,8 @@
 """Build the single-file browser editions from src/, app/ and vendor/: Japanese, English, 繁體中文, 简体中文, 한국어, Bahasa Indonesia, Tiếng Việt.
 usage: python3 build.py            -> index.html, en/, zh-hant/, zh-hans/, ko/, id/, vi/ index.html (GitHub Pages)
        python3 build.py --dev      -> also dev/www/jizura.js + dev/www/test.html for the test tools"""
-import argparse, glob, os
+import argparse, os, re, subprocess, tempfile
+from pathlib import Path
 from app.english import localize_body, localize_js
 from app import i18n
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -17,8 +18,10 @@ ap.add_argument('--dev', action='store_true')
 a = ap.parse_args()
 if a.cep and (not a.vite_input or a.lang not in ('ja', 'en')):
     ap.error('--cep requires --vite-input and --lang ja/en')
-sources = sorted(f for f in glob.glob('src/*.js') if not (a.cep and f.endswith('13_webmcp.js')))
-js = '\n'.join(read(f) for f in sources)
+# Explicit imports in engine/index.ts define initialization, never filename sort.
+engine_paths = re.findall(r"^import \w+ from '([^']+)';", read('engine/index.ts'), re.M)
+sources = [str((Path('engine') / source).resolve().relative_to(Path(ROOT))) for source in engine_paths]
+sources += ['src/12_ui.js'] + ([] if a.cep else ['src/13_webmcp.js'])
 mux = '/*! mp4-muxer v5.2.2 | MIT License | (c) 2023 Vanilagy | see THIRD_PARTY_NOTICES.md */\n' + read('vendor/mp4-muxer.min.js')
 def build(lang):
     english = lang == 'en'
@@ -32,19 +35,31 @@ def build(lang):
     body = read('app/body.html').replace('@VERSION@', VERSION).replace('    <div class="acts">', '    ' + language_nav + '\n    <div class="acts">', 1)
     if english: body = localize_body(body)
     elif local: body = i18n.localize_body(lang, body)
-    if english: script = '\n'.join(localize_js(read(f), f) for f in sources)
-    elif local: script = '\n'.join(i18n.localize_js(lang, read(f), f) for f in sources)
-    else: script = js
-    script = script.replace('@VERSION@', VERSION)
-    if english or local:
-        marker = '/* ============================================================\n   JIZURA — editor UI'
-        if marker not in script: raise ValueError('Could not find browser UI entry point')
-        inject = read('app/english.js') + ('\n' + i18n.labels_js(lang) if local else '')
-        script = script.replace(marker, inject + '\n' + marker, 1)
+    labels = read('app/english.js') + ('\n' + i18n.labels_js(lang) if local else '') if english or local else ''
+    adapter = read('cep/cep.js') if a.cep else "import install from './src/13_webmcp.js';\nexport default install;"
     if a.cep:
         from app.english import localize_cep
-        bridge = read('cep/cep.js')
-        script += '\n' + (localize_cep(bridge) if english else bridge)
+        adapter = 'export default function install(J) {\n' + (localize_cep(adapter) if english else adapter) + '\n}\n'
+    def emit_modules(directory):
+        os.makedirs(directory, exist_ok=True)
+        # Copy dependencies independently of their names; entry imports determine execution.
+        for source in sources + ['engine/index.ts', 'engine/types.ts', 'engine/utility-types.ts', 'engine/legacy-types.ts']:
+            content = read(source)
+            if english: content = localize_js(content, source)
+            elif local: content = i18n.localize_js(lang, content, source)
+            dest = Path(directory) / source
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(content.replace('@VERSION@', VERSION), encoding='utf-8')
+        for name, content in [('style.css', read('app/style.css') + ('\nhtml.cep .lang-switch{display:none}\n' if a.cep and english else '')),
+                              ('entry.ts', read('build/entries/legacy.ts').replace('../../engine/index.ts', './engine/index.ts')), ('mp4-muxer.js', mux),
+                              ('labels.js', 'export default function install(J) {\n' + labels + '\n}\n'), ('adapter.js', adapter)]:
+            (Path(directory) / name).write_text(content.replace('@VERSION@', VERSION), encoding='utf-8')
+    if a.vite_input:
+        script = ''
+    else:
+        with tempfile.TemporaryDirectory(prefix='jizura-modules-', dir=os.path.join(ROOT, 'dist') if os.path.isdir('dist') else ROOT) as directory:
+            emit_modules(directory)
+            script = subprocess.check_output(['node', 'build/bundle-input.mts', directory], text=True)
     alternates = '\n'.join(f'<link rel="alternate" hreflang="{hl}" href="{i18n.BASE}{f + "/" if f else ""}">' for c, f, hl, _ in i18n.EDITIONS)
     html_lang = dict((c, hl) for c, _, hl, _ in i18n.EDITIONS)[lang]
     html = f'''<!doctype html>
@@ -80,15 +95,10 @@ def build(lang):
 '''
     target = os.path.join(a.out, folder, 'index.html')
     if a.vite_input:
-        # Temporary adapter for tasks 04/06: keep one lexical J scope until the
-        # engine and localization are modules. Only ignored inputs are assembled.
         html = html.replace('<style>\n' + read('app/style.css') + '\n</style>', '')
         html = html.replace('<script>\n' + mux + '\n</script>', '<script src="./mp4-muxer.js"></script>')
         html = html.replace('<script>\n' + script + '\n</script>', '<script type="module" src="./entry.ts"></script>')
-        os.makedirs(os.path.dirname(target), exist_ok=True)
-        for name, content in [('legacy.js', script), ('style.css', read('app/style.css') + ('\nhtml.cep .lang-switch{display:none}\n' if a.cep and english else '')),
-                              ('entry.ts', read('build/entries/legacy.ts')), ('mp4-muxer.js', mux)]:
-            open(os.path.join(os.path.dirname(target), name), 'w', encoding='utf-8').write(content)
+        emit_modules(os.path.dirname(target))
     os.makedirs(os.path.dirname(target) or '.', exist_ok=True)
     open(target, 'w', encoding='utf-8').write(html)
     print(target, len(html), 'bytes')
@@ -108,6 +118,10 @@ print('sitemap.xml', len(i18n.EDITIONS), 'urls')
 if a.dev:
     dev_out = os.path.join(a.out, 'dev/www')
     os.makedirs(dev_out, exist_ok=True)
-    open(os.path.join(dev_out, 'jizura.js'), 'w', encoding='utf-8').write(js)
+    with tempfile.TemporaryDirectory(prefix='jizura-dev-modules-', dir=os.path.join(ROOT, 'dist') if os.path.isdir('dist') else ROOT) as directory:
+        # A Japanese module build preserves the historical dev runner entry.
+        subprocess.run(['python3', 'build.py', '--out', directory, '--vite-input', '--lang', 'ja'], check=True, stdout=subprocess.DEVNULL)
+        script = subprocess.check_output(['node', 'build/bundle-input.mts', directory], text=True)
+    open(os.path.join(dev_out, 'jizura.js'), 'w', encoding='utf-8').write(script)
     open(os.path.join(dev_out, 'test.html'), 'w', encoding='utf-8').write(read('dev/test.html'))
     print('dev/www ready: cd dev/www && python3 -m http.server 8765')

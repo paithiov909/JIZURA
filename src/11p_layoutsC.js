@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: layoutsC — 34 layouts themed on print, editorial design and Japanese paper objects */
 (() => {
 'use strict';
@@ -3382,3 +3384,5 @@ reg('karuta', {
 });
 
 })();
+
+}

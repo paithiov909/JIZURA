@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: enter — 40 extra entrances (glyph masks, flips, squash & stretch, graphic wipes, glitch, neon, stamps) */
 (() => {
 'use strict';
@@ -866,3 +868,5 @@ const DEFS = {
 
 for (const k of Object.keys(DEFS)) J.register('enter', k, DEFS[k], P);
 })();
+
+}

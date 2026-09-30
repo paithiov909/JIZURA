@@ -2,7 +2,9 @@
   "name": "jizura",
   "private": true,
   "description": "JIZURA migration build workspace; application version comes from VERSION",
-  "engines": { "node": ">=26.10.0 <27" },
+  "engines": {
+    "node": ">=26.10.0 <27"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "node build/build.mts all",
@@ -10,13 +12,15 @@
     "build:offline": "node build/build.mts offline",
     "build:ae": "node build/build.mts ae",
     "build:cep": "node build/build.mts cep",
-    "check": "npm run typecheck && npm run build && npm run check:outputs && npm run test:ae",
+    "check": "npm run typecheck && npm run test:engine && npm run build && npm run check:outputs && npm run test:ae",
     "check:outputs": "node build/check-outputs.mts",
     "test:ae": "node dev/ae_test.js --jsx dist/ae/JIZURA_AE.jsx tests/baseline/v1/lrc-ja-ae-plan.json && node dev/ae_test.js --jsx dist/ae/JIZURA_AE_en.jsx tests/baseline/v1/lrc-ja-ae-plan.json",
     "test:browser": "python3 dev/build_foundation_test.py",
     "spike:build": "node dev/cep-offline-spike/build.mjs",
     "spike:test": "node dev/cep-offline-spike/node-test.mjs",
-    "spike:browser": "python3 dev/cep-offline-spike/browser_test.py"
+    "spike:browser": "python3 dev/cep-offline-spike/browser_test.py",
+    "test:engine": "node --test --test-isolation=none tests/engine/contract.mts",
+    "test:engine:browser": "python3 dev/engine_modules_test.py"
   },
   "devDependencies": {
     "@types/node": "26.6.3",

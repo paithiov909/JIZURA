@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — おまかせ (randomise everything into a coherent mood)
    Each call rolls a mood, a style, effect strengths, a technique
@@ -124,3 +126,5 @@ J.omakase = (project, rnd = Math.random, themeId = null) => {
   return Object.assign({ mood, style, fx, enabled, fonts, colors, overrides, seed: Math.floor(rnd() * 1e9) }, switches);
 };
 })();
+
+}

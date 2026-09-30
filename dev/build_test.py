@@ -1,19 +1,39 @@
-"""Build an isolated test bundle: core engine (src/*.js except packs) + the given pack files.
-usage: python3 dev/build_test.py NAME [src/11p_x.js ...]   ->  dev/www/t_NAME.js + dev/www/t_NAME.html
-       python3 dev/build_test.py NAME --all-packs          (core + every src/11p_*.js)"""
-import glob, os, sys
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+"""Build a diagnostic bundle with explicit module initialization and selected packs.
+usage: python3 dev/build_test.py NAME [src/11p_x.js ...]
+       python3 dev/build_test.py NAME --all-packs
+Outputs remain ignored in dev/www; the production module graph defines order.
+"""
+import os
+import re
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
 os.chdir(ROOT)
 name = sys.argv[1]
+if not re.fullmatch(r'[\w-]+', name):
+    raise ValueError('NAME must contain only letters, digits, underscores or hyphens')
 args = sys.argv[2:]
-allsrc = sorted(glob.glob('src/*.js'))
-packs = [f for f in allsrc if os.path.basename(f).startswith('11p_')]
-core = [f for f in allsrc if f not in packs]
-chosen = packs if '--all-packs' in args else [a for a in args if a.endswith('.js')]
-files = sorted(core + chosen)          # keep global load order (packs load before 12_ui)
-js = '\n'.join(open(f, encoding='utf-8').read() for f in files)
-os.makedirs('dev/www', exist_ok=True)
-open(f'dev/www/t_{name}.js', 'w', encoding='utf-8').write(js)
-page = open('dev/test.html', encoding='utf-8').read().replace('src="jizura.js"', f'src="t_{name}.js"')
-open(f'dev/www/t_{name}.html', 'w', encoding='utf-8').write(page)
-print('built', f'dev/www/t_{name}.html', 'files:', len(files), 'packs:', [os.path.basename(c) for c in chosen])
+index = (ROOT / 'engine/index.ts').read_text(encoding='utf-8')
+imports = re.findall(r"^import (\w+) from '../(src/11p_[^']+\.js)';", index, re.M)
+known = {source for _, source in imports}
+chosen = known if '--all-packs' in args else {arg for arg in args if arg.endswith('.js')}
+if chosen - known:
+    raise ValueError(f'Unknown packs: {chosen - known}')
+(ROOT / 'dist').mkdir(exist_ok=True)
+with tempfile.TemporaryDirectory(prefix='jizura-pack-test-', dir=ROOT / 'dist') as directory:
+    subprocess.run(['python3', 'build.py', '--out', directory, '--vite-input', '--lang', 'ja'], check=True)
+    for alias, source in imports:
+        if source not in chosen:
+            index = re.sub(rf'^import {alias} from [^\n]+\n', '', index, flags=re.M)
+            index = re.sub(rf'^  \[[^\n]+, {alias}\],\n', '', index, flags=re.M)
+    (Path(directory) / 'engine/index.ts').write_text(index, encoding='utf-8')
+    bundle = subprocess.check_output(['node', 'build/bundle-input.mts', directory], text=True)
+output = ROOT / 'dev/www'
+output.mkdir(parents=True, exist_ok=True)
+(output / f't_{name}.js').write_text(bundle, encoding='utf-8')
+page = (ROOT / 'dev/test.html').read_text(encoding='utf-8').replace('src="jizura.js"', f'src="t_{name}.js"')
+(output / f't_{name}.html').write_text(page, encoding='utf-8')
+print('built', f'dev/www/t_{name}.html', 'packs:', [source for _, source in imports if source in chosen])

@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: styles — twelve more style packs (配色セット: colour schemes, font roles, texture, tendencies) */
 (() => {
 'use strict';
@@ -287,3 +289,5 @@ for (const [k, v] of Object.entries(S)) {
   if (!J.STYLE_ORDER.includes(k)) J.STYLE_ORDER.push(k);
 }
 })();
+
+}

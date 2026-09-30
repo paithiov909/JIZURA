@@ -1,3 +1,7 @@
+import type { TextItem, GlyphLayout } from './types.ts';
+import type { LegacyFacade, LegacyValue } from './legacy-types.ts';
+
+export default function install(J: LegacyFacade): void {
 /* ============================================================
    JIZURA — text items: layout + drawing (whole glyphs or pieces)
    ============================================================ */
@@ -5,17 +9,17 @@
 'use strict';
 
 J.PID = Object.freeze({ dx: 0, dy: 0, rot: 0, s: 1, st: 1, sdir: 0, a: 1 });
-J.PT = (dx = 0, dy = 0, rot = 0, s = 1, st = 1, sdir = 0, a = 1) => ({ dx, dy, rot, s, st, sdir, a });
+J.PT = (dx: LegacyValue = 0, dy: LegacyValue = 0, rot: LegacyValue = 0, s: LegacyValue = 1, st: LegacyValue = 1, sdir: LegacyValue = 0, a: LegacyValue = 1) => ({ dx, dy, rot, s, st, sdir, a });
 
 /* ---------- 文字整列 (typeset): set per plan by the planner / renderer (J.setTypeset) ----------
    kana set a little tighter, particles smaller and the first character larger, Latin a little larger with a
    small gap to Japanese. Only the size / advance of each glyph changes, so every layout keeps working. */
 J.TYPESET = false;
-J.setTypeset = on => { J.TYPESET = !!on; };
+J.setTypeset = (on: boolean) => { J.TYPESET = !!on; };
 const HIRA = /[ぁ-ゟ]/, KATA = /[゠-ヿㇰ-ㇿ]/, KANJI = /[㐀-鿿豈-﫿々〆]/, LATIN = /[A-Za-z0-9]/;
 const PARTICLES = 'はがをにでとのへも';
-const cls = ch => (!ch ? '' : LATIN.test(ch) ? 'L' : KANJI.test(ch) ? 'K' : KATA.test(ch) ? 'T' : HIRA.test(ch) ? 'H' : /\s/.test(ch) ? 'S' : 'P');
-function isParticle(arr, i) {
+const cls = (ch: LegacyValue) => (!ch ? '' : LATIN.test(ch) ? 'L' : KANJI.test(ch) ? 'K' : KATA.test(ch) ? 'T' : HIRA.test(ch) ? 'H' : /\s/.test(ch) ? 'S' : 'P');
+function isParticle(arr: LegacyValue, i: LegacyValue) {
   const ch = arr[i], prev = arr[i - 1], next = arr[i + 1];
   if (!prev || PARTICLES.indexOf(ch) < 0 || prev === 'っ' || prev === 'ッ' || prev === 'ー') return false;
   if (ch === 'を') return true;
@@ -24,12 +28,12 @@ function isParticle(arr, i) {
   return nextOK && cp !== 'S' && cp !== 'P' && !(cp === 'H' && cn === 'H');
 }
 /* per character: f = size factor, gap = extra space before it (in em) */
-J.typesetLine = (arr) => {
+J.typesetLine = (arr: string[]): Array<{ f: number; gap: number; adv: number }> => {
   const out = arr.map(() => ({ f: 1, gap: 0, adv: 1 }));
   if (!J.TYPESET) return out;
-  const content = arr.filter(c => !/\s/.test(c)).length;
+  const content = arr.filter((c: LegacyValue) => !/\s/.test(c)).length;
   let first = true;
-  arr.forEach((ch, i) => {
+  arr.forEach((ch: LegacyValue, i: LegacyValue) => {
     const c = cls(ch), o = out[i];
     if (c === 'S') return;
     if (c === 'H' || c === 'T') o.adv = J.isSmallKana(ch) ? 0.86 : ch === 'ー' ? 0.94 : 0.9;       // kana: set tighter
@@ -44,26 +48,26 @@ J.typesetLine = (arr) => {
 };
 
 /* layout: glyph centres relative to the item origin, in unscaled item space */
-J.layoutText = (it) => {
+J.layoutText = (it: TextItem): GlyphLayout => {
   const text = String(it.text ?? '');
   const size = it.size, track = it.track || 0, sx = it.sx || 1, sy = it.sy || 1;
   const lines = text.split('\n');
-  const out = [];
+  const out = [] as unknown as GlyphLayout;
   const vertical = !!it.vertical;
   const lead = (it.lead || 1.3) * size;
   let gi = 0;
   if (!vertical) {
-    const sets = lines.map(line => { const arr = [...line]; return { arr, ts: J.typesetLine(arr) }; });
+    const sets = lines.map((line: LegacyValue) => { const arr: LegacyValue = [...line]; return { arr, ts: J.typesetLine(arr) }; });
     const widths = sets.map(({ arr, ts }) => {
       let w = 0;
-      arr.forEach((ch, i) => { w += (J.metrics.adv(it.font, ch) * ts[i].adv * ts[i].f + ts[i].gap) * size + (i < arr.length - 1 ? track * size : 0); });
+      arr.forEach((ch: LegacyValue, i: LegacyValue) => { w += (J.metrics.adv(it.font, ch) * ts[i].adv * ts[i].f + ts[i].gap) * size + (i < arr.length - 1 ? track * size : 0); });
       return w;
     });
     const maxW = Math.max(1, ...widths);
-    sets.forEach(({ arr, ts }, li) => {
+    sets.forEach(({ arr, ts }, li: LegacyValue) => {
       let x = it.align === 'left' ? 0 : it.align === 'right' ? -widths[li] : -widths[li] / 2;
       const y = (li - (lines.length - 1) / 2) * lead;
-      arr.forEach((ch, ci) => {
+      arr.forEach((ch: LegacyValue, ci: LegacyValue) => {
         const t = ts[ci], a = J.metrics.adv(it.font, ch) * size * t.adv * t.f;
         x += t.gap * size;
         // smaller / larger glyphs keep the line's baseline
@@ -73,13 +77,13 @@ J.layoutText = (it) => {
     });
     out.W = maxW; out.H = lines.length * lead - (lead - size);
   } else {
-    const sets = lines.map(line => { const arr = [...line]; return { arr, ts: J.typesetLine(arr) }; });
-    const heights = sets.map(({ arr, ts }) => arr.reduce((h, ch, i) => h + (vAdv(it.font, ch, size) * ts[i].adv * ts[i].f + ts[i].gap * size) + track * size, 0) - track * size);
+    const sets = lines.map((line: LegacyValue) => { const arr: LegacyValue = [...line]; return { arr, ts: J.typesetLine(arr) }; });
+    const heights = sets.map(({ arr, ts }) => arr.reduce((h: LegacyValue, ch: LegacyValue, i: LegacyValue) => h + (vAdv(it.font, ch, size) * ts[i].adv * ts[i].f + ts[i].gap * size) + track * size, 0) - track * size);
     const maxH = Math.max(1, ...heights);
-    sets.forEach(({ arr, ts }, li) => {
+    sets.forEach(({ arr, ts }, li: LegacyValue) => {
       let y = it.align === 'left' ? 0 : -heights[li] / 2;         // 'left' == top-aligned for vertical
       const x = -(li - (lines.length - 1) / 2) * lead;
-      arr.forEach((ch, ci) => {
+      arr.forEach((ch: LegacyValue, ci: LegacyValue) => {
         const t = ts[ci], a = vAdv(it.font, ch, size) * t.adv * t.f;
         y += t.gap * size;
         const r90 = J.VERT_ROTATE.includes(ch) || /[A-Za-z0-9]/.test(ch);
@@ -95,12 +99,12 @@ J.layoutText = (it) => {
   out.N = gi;
   return out;
 };
-function vAdv(font, ch, size) { return /[A-Za-z0-9]/.test(ch) ? J.metrics.adv(font, ch) * size : size; }
+function vAdv(font: LegacyValue, ch: LegacyValue, size: LegacyValue) { return /[A-Za-z0-9]/.test(ch) ? J.metrics.adv(font, ch) * size : size; }
 
 /* Blurred / glowing items are drawn ONCE into an offscreen layer and the blur / glow is applied to the whole
    layer — a filter or shadowBlur on every glyph (× 3 chromatic passes) is very slow on canvas. */
-let layerCv = null;
-function drawItemLayered(env, it) {
+let layerCv: LegacyValue = null;
+function drawItemLayered(env: LegacyValue, it: LegacyValue) {
   const ctx = env.ctx;
   const lay = it._lay || (it._lay = J.layoutText(it));
   const size = it.size, sx = it.sx || 1, sy = it.sy || 1;
@@ -149,14 +153,14 @@ function drawItemLayered(env, it) {
 /* 飾りの数字・時刻を出さない: decorative copy that is only a number (No.01, #03, 128) or a time (00:12.34, REC 1:05).
    Anything that also appears in the lyric of the cut is lyric, and stays. */
 const CJK = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\uac00-\ud7af]/;
-J.decoTextKind = (t) => {
+J.decoTextKind = (t: LegacyValue) => {
   t = String(t || '').trim();
   if (!t || !/\d/.test(t) || CJK.test(t)) return null;
   if (/\d{1,2}[:：]\d{2}/.test(t) && /^[A-Za-z]{0,4}[\s.#]*[\d:：.;'"\s\/\-–—+]+[A-Za-z]{0,3}$/.test(t)) return 'time';
   if ((t.match(/[A-Za-z]/g) || []).length <= 5 && /^[A-Za-z#№.\s\d\/\-–—+×x%:,'°]+$/.test(t)) return 'no';
   return null;
 };
-J.hideDecoText = (env, text) => {
+J.hideDecoText = (env: LegacyValue, text: LegacyValue) => {
   const fx = env.fx || {};
   if (!fx.hideNo && !fx.hideTime) return false;
   const k = J.decoTextKind(text);
@@ -164,7 +168,7 @@ J.hideDecoText = (env, text) => {
   const lyr = env.cut ? String(env.cut.lineText || env.cut.text || '') : '';
   return !lyr.includes(String(text).trim());
 };
-J.drawItem = (env, it) => {
+J.drawItem = (env: LegacyValue, it: LegacyValue) => {
   const ctx = env.ctx;
   const ghostPass = env.pass !== 'main';
   if (ghostPass && it.ghost === false) return null;
@@ -191,12 +195,12 @@ J.drawItem = (env, it) => {
   const wg = env.cut && env.cut.weightGrow && !it.noWeight ? J.weightNow(env) : 0;
   ctx.font = wg ? J.varFontCSS(it.font, size, wg) : J.fontCSS(it.font, size);
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  let grad = null;
+  let grad: LegacyValue = null;
   if (!ghostPass && it.gradient && fill) {
     // gradient coordinates live in each glyph's local space (the fill happens after the per-glyph translate)
     grad = ctx.createLinearGradient(0, -size * 0.5, 0, size * 0.5);
     if (it.gradient.length === 2) { grad.addColorStop(0, it.gradient[0]); grad.addColorStop(1, it.gradient[1]); }
-    else it.gradient.forEach(([o, c]) => grad.addColorStop(o, c));      // [[offset, colour], ...] for hard splits
+    else it.gradient.forEach(([o, c]: [number, string]) => grad.addColorStop(o, c));      // [[offset, colour], ...] for hard splits
   }
   if (!ghostPass && it.pattern && fill && !grad) grad = J.textPattern(ctx, it.pattern, it.patternColor || it.color || '#fff', it.patternBg, size, env.scale || 1);
   const fillA = it.fillAlpha ?? 1;
@@ -208,7 +212,7 @@ J.drawItem = (env, it) => {
   }
   const ext = !ghostPass && it.extrude && it.extrude.n > 0 ? it.extrude : null;
   const dash = it.dash != null && it.dash < 1 ? it.dash : null;
-  const boxes = [];
+  const boxes: LegacyValue = [];
   const pxScale = size * Math.max(sx, sy) * (env.scale || 1);
   for (const g of lay) {
     if (g.ch === ' ' || g.ch === '　') continue;
@@ -277,19 +281,19 @@ J.drawItem = (env, it) => {
 };
 
 /* 太さ: growth 0..1 of the current cut (never exactly 0, so it also means "on"); eased, over the first half of the cut */
-J.weightNow = (env) => {
+J.weightNow = (env: LegacyValue) => {
   const span = Math.max(0.5, Math.min(1.4, env.cut.dur * 0.5));
   const k = J.clamp(((env.ltb ?? env.lt) || 0) / span);
   return 1e-3 + (1 - Math.pow(1 - k, 3)) * (1 - 1e-3);
 };
-J.varFontCSS = (key, px, e) => {
+J.varFontCSS = (key: LegacyValue, px: LegacyValue, e: LegacyValue) => {
   const f = J.FONTS[key] || {}, serif = f.kind === 'mincho';
   const w = Math.round(serif ? 200 + e * 700 : 100 + e * 800);
   return `${w} ${px.toFixed(2)}px ${serif ? '"Noto Serif JP"' : '"Noto Sans JP"'},${f.fb || 'sans-serif'}`;
 };
 
 /* returns true if pieces were drawn (i.e. not at rest) */
-function drawPieces(env, it, g, ch, gx, gy, crot, sx, sy, col, alpha, px) {
+function drawPieces(env: LegacyValue, it: LegacyValue, g: LegacyValue, ch: LegacyValue, gx: LegacyValue, gy: LegacyValue, crot: LegacyValue, sx: LegacyValue, sy: LegacyValue, col: LegacyValue, alpha: LegacyValue, px: LegacyValue) {
   const glyph = J.glyphs.get(it.font, ch, px);
   const list = it.shatter ? fragList(glyph, it.seed || 1) : glyph.pieces;
   if (!list.length) return false;
@@ -326,7 +330,7 @@ function drawPieces(env, it, g, ch, gx, gy, crot, sx, sy, col, alpha, px) {
       // fragment: clip to polygon (coords in em around fragment centre) then draw parent sprite
       const src = p.src;
       ctx.beginPath();
-      p.poly.forEach((q, qi) => { const X = (q[0] - p.fx) * res, Y = (q[1] - p.fy) * res; qi ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
+      p.poly.forEach((q: LegacyValue, qi: LegacyValue) => { const X = (q[0] - p.fx) * res, Y = (q[1] - p.fy) * res; qi ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
       ctx.closePath(); ctx.clip();
       ctx.drawImage(spr, -p.fx * res - src.w * res / 2, -p.fy * res - src.h * res / 2);
     } else {
@@ -337,9 +341,9 @@ function drawPieces(env, it, g, ch, gx, gy, crot, sx, sy, col, alpha, px) {
   return true;
 }
 
-function fragList(glyph, seed) {
+function fragList(glyph: LegacyValue, seed: LegacyValue) {
   if (glyph.frags) return glyph.frags;
-  const out = [];
+  const out: LegacyValue = [];
   for (const p of glyph.pieces) {
     const fr = J.fragments(p, seed);
     if (fr.length <= 1) { out.push(p); continue; }
@@ -351,7 +355,7 @@ function fragList(glyph, seed) {
 
 /* fill patterns for text: 'dots' | 'stripes' | 'hatch' | 'grid' | 'lines' — cell size follows the text size */
 const patCache = new Map();
-J.textPattern = (ctx, kind, color, bg, size, scale) => {
+J.textPattern = (ctx: LegacyValue, kind: LegacyValue, color: LegacyValue, bg: LegacyValue, size: LegacyValue, scale: LegacyValue) => {
   const cell = Math.max(3, Math.round(size * (kind === 'dots' ? 0.075 : 0.06))), px = Math.max(2, Math.round(cell * scale));
   const key = kind + color + (bg || '') + px;
   let cv = patCache.get(key);
@@ -374,13 +378,15 @@ J.textPattern = (ctx, kind, color, bg, size, scale) => {
 };
 
 /* measure an item's laid-out size in design px (after sx/sy) */
-J.measure = (it) => { const l = J.layoutText(it); return { w: l.W * (it.sx || 1), h: l.H * (it.sy || 1), lay: l }; };
+J.measure = (it: TextItem) => { const l = J.layoutText(it); return { w: l.W * (it.sx || 1), h: l.H * (it.sy || 1), lay: l }; };
 
 /* size that makes text fit a box */
-J.fitSize = (text, font, maxW, maxH, opt = {}) => {
+J.fitSize = (text: string, font: string, maxW: number, maxH: number, opt: Partial<TextItem> = {}) => {
   const probe = Object.assign({ text, font, size: 100, track: 0 }, opt);
   const m = J.measure(probe);
   const k = Math.min(maxW / Math.max(1, m.w), maxH / Math.max(1, m.h));
   return 100 * k;
 };
 })();
+
+}

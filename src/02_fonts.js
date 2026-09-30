@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — fonts: catalogue, loading, glyph decomposition
    ============================================================ */
@@ -297,3 +299,5 @@ function clipHalf(poly, nx, ny, d0, sgn) {
   return out;
 }
 })();
+
+}

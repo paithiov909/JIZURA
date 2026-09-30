@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: layoutsA — 28 compositional layouts: telops, editorial typesetting, graphic devices and UI mock-ups */
 (() => {
 'use strict';
@@ -1892,3 +1894,5 @@ reg('ticket', {
 });
 
 })();
+
+}

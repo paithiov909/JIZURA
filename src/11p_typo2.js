@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: typo (part 2) — typographic entrances, exits and holds: key glyph first, line wipes with rules, ruby, brackets, retyping, indices */
 (() => {
 'use strict';
@@ -517,3 +519,5 @@ reg('hold', 'tyTrackStep', {
 });
 
 })();
+
+}

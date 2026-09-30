@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: typo (part 3) — typographic decor (colophon, running head, glyph bodies, text rules, type scale, big quote marks),
    text treatments (hollow key glyph, head / foot rules, large head glyph, glyph indices) and two type-driven transitions */
 (() => {
@@ -432,3 +434,5 @@ trReg('tyGridCells', {
   } });
 
 })();
+
+}

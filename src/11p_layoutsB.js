@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: layoutsB — kinetic / typographic layouts (rain, hanging, orbit, tunnel, word cloud, mechanical reveals …) */
 (() => {
 'use strict';
@@ -1908,3 +1910,5 @@ J.register('layout', 'tape', {
 }, P);
 
 })();
+
+}

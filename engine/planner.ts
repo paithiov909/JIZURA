@@ -1,3 +1,7 @@
+import type { Project, Plan, ParsedLyrics, AudioAnalysis, Cut, CutSnapshot, EffectGroup, Timing } from './types.ts';
+import type { LegacyFacade, LegacyValue } from './legacy-types.ts';
+
+export default function install(J: LegacyFacade): void {
 /* ============================================================
    JIZURA — planner: lyrics -> lines -> chunks -> timed cuts + events
    ============================================================ */
@@ -9,7 +13,7 @@ J.SAMPLE_LYRICS = `夜明けの色を/覚えてる
 ねえ、まだ間に合うかな
 *透明*なままじゃ終われない!`;
 
-J.defaultProject = () => ({
+J.defaultProject = (): Project => ({
   version: 1,
   timingOrder: 2,                 // lyric lines keep their written order around LRC-tagged lines (v0.10)
   themeId: null,                  // おまかせのテーマ (J.THEMES key) — only おまかせ reads it
@@ -30,7 +34,7 @@ J.defaultProject = () => ({
   seed: 20260922,
   aspect: '16:9', res: 1080, fps: 24,
   fx: { motion: 0.7, glitch: 0.55, chroma: 0.7, decor: 0.5, density: 0.55, texture: 0.6, flash: true, onTwos: true, koma: 12, hud: 'auto', bgSwitch: 0.35, hideNo: false, hideTime: false },
-  enabled: Object.fromEntries(J.GROUP_KEYS.map(g => [g, Object.fromEntries(J.order(g).map(k => [k, true]))])),
+  enabled: Object.fromEntries(J.GROUP_KEYS.map((g: LegacyValue) => [g, Object.fromEntries(J.order(g).map((k: LegacyValue) => [k, true]))])) as Project['enabled'],
   timing: { bpm: 0, offset: 0.4, snap: true, tail: 0.9, lineTimes: {}, lineScale: 1 },
   overrides: {},
   locks: { tech: {}, params: {} },   // groups and values Randomize / Shuffle must not change (UI side only)
@@ -42,12 +46,12 @@ J.defaultProject = () => ({
 J.CORE_ORDER = { layout: J.LAYOUT_ORDER.slice(), enter: J.ENTER_ORDER.slice(), exit: J.EXIT_ORDER.slice(), hold: J.HOLD_ORDER.slice(), decor: J.DECOR_ORDER.slice() };
 
 /* animation step length: 'koma' = drawings per second on a 24fps timebase (12 = on twos, 8 = on threes, 0 = every output frame) */
-J.komaOf = fx => (fx.koma != null ? +fx.koma : (fx.onTwos === false ? 0 : 12));
-J.stepDur = (fx, fps) => { const k = J.komaOf(fx); return k > 0 ? 1 / k : 1 / (fps || 24); };
+J.komaOf = (fx: LegacyValue) => (fx.koma != null ? +fx.koma : (fx.onTwos === false ? 0 : 12));
+J.stepDur = (fx: LegacyValue, fps: LegacyValue) => { const k = J.komaOf(fx); return k > 0 ? 1 / k : 1 / (fps || 24); };
 
 /* ---------------- lyric parsing ---------------- */
-J.parseLyrics = (raw) => {
-  const lines = []; const meta = {};
+J.parseLyrics = (raw: string): ParsedLyrics => {
+  const lines: LegacyValue = []; const meta: LegacyValue = {};
   let pendingGap = false;
   const rows = String(raw || '').replace(/\r/g, '').split('\n');
   for (let ri = 0; ri < rows.length; ri++) {
@@ -56,78 +60,78 @@ J.parseLyrics = (raw) => {
     if (s0.startsWith('#')) continue;
     const mm = s0.match(/^\[(ti|ar|al|by|offset):(.*)\]$/i);
     if (mm) { meta[mm[1].toLowerCase()] = mm[2].trim(); continue; }
-    let s = s0; const times = [];
+    let s = s0; const times: LegacyValue = [];
     let m;
     while ((m = s.match(/^\[(\d+):(\d+(?:[.:]\d+)?)\]/))) { times.push(+m[1] * 60 + parseFloat(m[2].replace(':', '.'))); s = s.slice(m[0].length); }
     s = s.trim();
     // 間奏: [間奏] / [間奏 8] (8 seconds) — also [interlude] [inst] [间奏] [간주]; no lyrics, only background and decorations
     const im = s.match(/^\[\s*(間奏|间奏|interlude|instrumental|inst|간주)(?:\s*[:：]?\s*(\d+(?:\.\d+)?)\s*(?:s|sec|秒|초)?)?\s*\]$/i);
     if (im) {
-      const base = { text: '', interlude: true, secs: im[2] ? parseFloat(im[2]) : null, note: null, impact: false, emph: [], manual: null, gapBefore: pendingGap, src: ri };
+      const base: LegacyValue = { text: '', interlude: true, secs: im[2] ? parseFloat(im[2]) : null, note: null, impact: false, emph: [], manual: null, gapBefore: pendingGap, src: ri };
       pendingGap = false;
-      if (times.length) times.forEach(t => lines.push(Object.assign({}, base, { lrc: t })));
+      if (times.length) times.forEach((t: LegacyValue) => lines.push(Object.assign({}, base, { lrc: t })));
       else lines.push(Object.assign({}, base, { lrc: null }));
       continue;
     }
-    let note = null;
+    let note: LegacyValue = null;
     const bar = s.indexOf('|');
     if (bar >= 0) { note = s.slice(bar + 1).trim() || null; s = s.slice(0, bar).trim(); }
     let impact = false;
     if (/[!！]$/.test(s) && s.length > 1 && /!$/.test(s)) { impact = true; s = s.slice(0, -1).trim(); }
-    const emph = [];
-    s = s.replace(/\*([^*]+)\*/g, (_, w) => { emph.push(w); return w; });
-    let manual = null;
+    const emph: LegacyValue = [];
+    s = s.replace(/\*([^*]+)\*/g, (_: LegacyValue, w: LegacyValue) => { emph.push(w); return w; });
+    let manual: LegacyValue = null;
     if (s.includes('/')) {
-      manual = s.split('/').map(x => x.trim()).filter(Boolean);
-      const latin = manual.some(x => /[A-Za-z]/.test(x));
+      manual = s.split('/').map((x: LegacyValue) => x.trim()).filter(Boolean);
+      const latin = manual.some((x: LegacyValue) => /[A-Za-z]/.test(x));
       s = manual.join(latin ? ' ' : '');
     }
     if (!s) continue;
-    const base = { text: s, note, impact, emph, manual, gapBefore: pendingGap, src: ri };
+    const base: LegacyValue = { text: s, note, impact, emph, manual, gapBefore: pendingGap, src: ri };
     pendingGap = false;
-    if (times.length) times.forEach(t => lines.push(Object.assign({}, base, { lrc: t })));
+    if (times.length) times.forEach((t: LegacyValue) => lines.push(Object.assign({}, base, { lrc: t })));
     else lines.push(Object.assign({}, base, { lrc: null }));
   }
   // LRC: order by time. A line without a tag (an interlude, a line added by hand) stays right after the line it
   // follows in the text — it used to be moved to the very end.
-  if (lines.some(l => l.lrc != null)) {
+  if (lines.some((l: LegacyValue) => l.lrc != null)) {
     let key = -1, k = 0;
-    lines.forEach(l => { if (l.lrc != null) { key = l.lrc; k = 0; l._key = l.lrc; } else l._key = key + 1e-6 * ++k; });
-    lines.sort((a, b) => a._key - b._key);
-    lines.forEach(l => { delete l._key; });
+    lines.forEach((l: LegacyValue) => { if (l.lrc != null) { key = l.lrc; k = 0; l._key = l.lrc; } else l._key = key + 1e-6 * ++k; });
+    lines.sort((a: LegacyValue, b: LegacyValue) => a._key - b._key);
+    lines.forEach((l: LegacyValue) => { delete l._key; });
   }
   return { lines, meta };
 };
 /* the order the lyric lines had before v0.10 (untagged lines last) — used once to move saved per-line settings of old projects */
-J.parseOrderV1 = (raw) => {
+J.parseOrderV1 = (raw: string) => {
   const p = J.parseLyrics(raw), lines = p.lines.slice();
-  if (!lines.some(l => l.lrc != null) || lines.every(l => l.lrc != null)) return null;
-  const byRow = lines.map((l, i) => ({ l, i }));
-  const old = byRow.slice().sort((a, b) => ((a.l.lrc ?? 1e9) - (b.l.lrc ?? 1e9)) || (a.l.src - b.l.src));
-  return old.map(x => x.i);          // old index -> new index
+  if (!lines.some((l: LegacyValue) => l.lrc != null) || lines.every((l: LegacyValue) => l.lrc != null)) return null;
+  const byRow = lines.map((l: LegacyValue, i: LegacyValue) => ({ l, i }));
+  const old = byRow.slice().sort((a: LegacyValue, b: LegacyValue) => ((a.l.lrc ?? 1e9) - (b.l.lrc ?? 1e9)) || (a.l.src - b.l.src));
+  return old.map((x: LegacyValue) => x.i);          // old index -> new index
 };
 
 /* ---------------- chunking (bunsetsu-ish) ---------------- */
-const segmenters = {};   // one per lyric language (J.segLocale: ja / zh-Hant / zh-Hans / ko)
+const segmenters: LegacyValue = {};   // one per lyric language (J.segLocale: ja / zh-Hant / zh-Hans / ko)
 const segmenterOf = () => {
   if (typeof Intl === 'undefined' || !Intl.Segmenter) return null;
   const loc = J.segLocale ? J.segLocale() : 'ja';
   if (!(loc in segmenters)) { try { segmenters[loc] = new Intl.Segmenter(loc, { granularity: 'word' }); } catch (e) { segmenters[loc] = null; } }
   return segmenters[loc];
 };
-const segType = s => {
+const segType = (s: string): string => {
   if (/^\s+$/.test(s)) return 'S';
-  if ([...s].every(c => J.isPunct(c))) return 'P';
-  if ([...s].some(c => J.isKanji(c))) return 'K';
-  if ([...s].every(c => J.isHira(c) || c === 'ー')) return 'H';
-  if ([...s].every(c => J.isKata(c) || c === 'ー')) return 'T';
+  if ([...s].every((c: LegacyValue) => J.isPunct(c))) return 'P';
+  if ([...s].some((c: LegacyValue) => J.isKanji(c))) return 'K';
+  if ([...s].every((c: LegacyValue) => J.isHira(c) || c === 'ー')) return 'H';
+  if ([...s].every((c: LegacyValue) => J.isKata(c) || c === 'ー')) return 'T';
   if (/[A-Za-z0-9]/.test(s)) return 'L';
   return 'O';
 };
-J.segments = (text) => {
+J.segments = (text: string) => {
   const segmenter = segmenterOf();
-  if (segmenter) return [...segmenter.segment(text)].map(x => x.segment);
-  const out = []; let cur = '', ct = '';
+  if (segmenter) return [...segmenter.segment(text)].map((x: LegacyValue) => x.segment);
+  const out: LegacyValue = []; let cur = '', ct = '';
   for (const c of text) {
     const t = segType(c);
     if (cur && t !== ct && !(ct === 'K' && t === 'H')) { out.push(cur); cur = ''; }
@@ -138,21 +142,21 @@ J.segments = (text) => {
 };
 /* Latin / Hangul helpers: words are joined with a space, except right after a dash (never- + ending → never-ending) */
 const WORDCH = /[A-Za-z\u00c0-\u024f0-9\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]/;
-J.isWordLike = t => /^[A-Za-z\u00c0-\u024f0-9\uac00-\ud7af'’.,!?‐–—-]+$/.test(t) && WORDCH.test(t);
-J.joinWords = arr => {
+J.isWordLike = (t: string) => /^[A-Za-z\u00c0-\u024f0-9\uac00-\ud7af'’.,!?‐–—-]+$/.test(t) && WORDCH.test(t);
+J.joinWords = (arr: string[]) => {
   const latin = /[A-Za-z]/.test(arr.join('')), HG = /[\uac00-\ud7af]/;
-  return arr.reduce((acc, w, i) => {
+  return arr.reduce((acc: LegacyValue, w: LegacyValue, i: LegacyValue) => {
     if (!i) return w;
     if (/[-‐–—]$/.test(acc)) return acc + w;
     return acc + (latin || (HG.test([...acc].pop()) && HG.test([...w][0])) ? ' ' : '') + w;
   }, '');
 };
 /* mostly Latin letters (English, Indonesian, Vietnamese … lyrics) */
-J.isLatinText = t => { const s = String(t || '').replace(/\s/g, ''); if (!s) return false; const n = (s.match(/[A-Za-z\u00c0-\u024f\u1e00-\u1eff]/g) || []).length; return n / [...s].length >= 0.6; };
+J.isLatinText = (t: string) => { const s = String(t || '').replace(/\s/g, ''); if (!s) return false; const n = (s.match(/[A-Za-z\u00c0-\u024f\u1e00-\u1eff]/g) || []).length; return n / [...s].length >= 0.6; };
 
-J.chunkText = (text) => {
+J.chunkText = (text: string) => {
   const segs = J.segments(text);
-  const chunks = []; let cur = null;
+  const chunks: LegacyValue = []; let cur: LegacyValue = null;
   const close = () => { if (cur && cur.s.trim()) chunks.push(cur.s.trim()); cur = null; };
   for (const sg of segs) {
     const t = segType(sg);
@@ -171,14 +175,14 @@ J.chunkText = (text) => {
   }
   close();
   // split very long chunks, merge lonely single kana
-  const out = [];
+  const out: LegacyValue = [];
   for (const c of chunks) {
     const n = [...c].length;
     if (n > 10 && J.isWordLike(c)) {
       // one long Latin / Hangul word: never cut inside it — only after its dashes (never-ending → never- / ending)
       const parts = c.split(/(?<=[-‐–—])(?=\S)/);
-      if (parts.length > 1) parts.forEach(x => out.push(x)); else out.push(c);
-    } else if (n > 10) { J.splitLines(c, Math.ceil(n / Math.ceil(n / 8))).split('\n').forEach(x => out.push(x)); }
+      if (parts.length > 1) parts.forEach((x: LegacyValue) => out.push(x)); else out.push(c);
+    } else if (n > 10) { J.splitLines(c, Math.ceil(n / Math.ceil(n / 8))).split('\n').forEach((x: LegacyValue) => out.push(x)); }
     else out.push(c);
   }
   for (let i = out.length - 1; i > 0; i--) {
@@ -188,8 +192,8 @@ J.chunkText = (text) => {
 };
 
 /* English lyrics: cut by short phrases, not word by word (a Japanese chunk holds about as much as 2–3 English words) */
-J.phraseChunks = (words) => {
-  const out = []; let cur = [], letters = 0;
+J.phraseChunks = (words: string[]) => {
+  const out: LegacyValue = []; let cur: LegacyValue = [], letters = 0;
   const flush = () => { if (cur.length) out.push(J.joinWords(cur)); cur = []; letters = 0; };
   for (const w of words) {
     const n = (w.match(/[A-Za-z\u00c0-\u024f0-9]/g) || []).length;
@@ -203,12 +207,12 @@ J.phraseChunks = (words) => {
 };
 
 /* ---------------- timing ---------------- */
-J.computeTiming = (project, parsed, audio) => {
-  const T = project.timing || {};
+J.computeTiming = (project: Project, parsed: ParsedLyrics, audio?: AudioAnalysis | null) => {
+  const T: Partial<Timing> = project.timing || {};
   const lines = parsed.lines;
-  const beat = T.bpm > 0 ? 60 / T.bpm : 0;
+  const beat = T.bpm! > 0 ? 60 / T.bpm! : 0;
   // fixed times: a hand-set time (typed, tapped, dragged) wins over the LRC tag; the rest is estimated
-  const fixed = lines.map((l, i) => {
+  const fixed = lines.map((l: LegacyValue, i: LegacyValue) => {
     const man = T.lineTimes && T.lineTimes[i] != null ? +T.lineTimes[i] : null;
     if (man != null && isFinite(man)) return Math.max(0, man);
     return l.lrc != null && isFinite(l.lrc) ? l.lrc : null;
@@ -216,13 +220,13 @@ J.computeTiming = (project, parsed, audio) => {
   // a fixed time may not go back past an earlier one (the saved value itself is left alone)
   let lastFix = -Infinity;
   for (let i = 0; i < fixed.length; i++) if (fixed[i] != null) { if (fixed[i] < lastFix + 0.05) fixed[i] = lastFix + 0.05; lastFix = fixed[i]; }
-  const natural = i => {         // estimated length of line i
+  const natural = (i: LegacyValue) => {         // estimated length of line i
     const n = [...lines[i].text].length, L = lines[i];
-    let d = L.interlude ? (L.secs > 0 ? L.secs : 4) : J.clamp(0.8 + n * 0.17, 1.3, 5.2) * (T.lineScale || 1);
-    if (beat && !(L.interlude && L.secs > 0)) d = Math.max(2, Math.round(d / beat)) * beat;
+    let d = L.interlude ? (L.secs! > 0 ? L.secs! : 4) : J.clamp(0.8 + n * 0.17, 1.3, 5.2) * (T.lineScale || 1);
+    if (beat && !(L.interlude && L.secs! > 0)) d = Math.max(2, Math.round(d / beat)) * beat;
     return d;
   };
-  const gapOf = i => (i > 0 && i < lines.length && lines[i].gapBefore ? (beat ? beat * 2 : 0.8) : 0);
+  const gapOf = (i: LegacyValue) => (i > 0 && i < lines.length && lines[i].gapBefore ? (beat ? beat * 2 : 0.8) : 0);
   const starts = new Array(lines.length);
   let i = 0, t = T.offset ?? 0.4;
   if (fixed.length && fixed[0] != null) t = fixed[0];
@@ -244,11 +248,11 @@ J.computeTiming = (project, parsed, audio) => {
     }
     i = j;
   }
-  const ends = starts.map((s, i) => {
+  const ends = starts.map((s: LegacyValue, i: LegacyValue) => {
     if (i < starts.length - 1) return Math.max(s + 0.35, starts[i + 1]);
     const n = [...lines[i].text].length, L = lines[i];
-    let d = L.interlude ? (L.secs > 0 ? L.secs : 4) : J.clamp(0.8 + n * 0.17, 1.5, 5.2) * (T.lineScale || 1);
-    if (beat && !(L.interlude && L.secs > 0)) d = Math.max(2, Math.round(d / beat)) * beat;
+    let d = L.interlude ? (L.secs! > 0 ? L.secs! : 4) : J.clamp(0.8 + n * 0.17, 1.5, 5.2) * (T.lineScale || 1);
+    if (beat && !(L.interlude && L.secs! > 0)) d = Math.max(2, Math.round(d / beat)) * beat;
     return s + d;
   });
   let duration = (ends.length ? ends[ends.length - 1] : 3) + (T.tail ?? 0.9);
@@ -257,15 +261,15 @@ J.computeTiming = (project, parsed, audio) => {
 };
 
 /* ---------------- planning ---------------- */
-const wkey = (obj, k, d = 1) => (obj && obj[k] != null ? obj[k] : d);
+const wkey = (obj: LegacyValue, k: LegacyValue, d: LegacyValue = 1) => (obj && obj[k] != null ? obj[k] : d);
 
-function cutTechOf(ov, k) {
+function cutTechOf(ov: LegacyValue, k: LegacyValue) {
   const t = (ov.cutTech && (ov.cutTech[k] || ov.cutTech[String(k)])) || {};
   const fromLay = ov.cutLayouts && (ov.cutLayouts[k] || ov.cutLayouts[String(k)]);
   return fromLay && !t.layout ? Object.assign({}, t, { layout: fromLay }) : t;
 }
 
-J.plan = (project, audio) => {
+J.plan = (project: Project, audio?: AudioAnalysis | null): Plan => {
   const st = J.resolveStyle(project);
   const fx = Object.assign({}, J.defaultProject().fx, project.fx || {});
   const parsed = J.parseLyrics(project.lyrics);
@@ -275,22 +279,22 @@ J.plan = (project, audio) => {
   // 文字整列: the lyrics appear 0.2 s before the voice (reading ahead feels in time)
   if (project.typeset) {
     const LEAD = 0.2;
-    tm.starts = tm.starts.map(t => Math.max(0, t - LEAD));
-    tm.ends = tm.ends.map((t, i) => Math.max(tm.starts[i] + 0.3, t - LEAD));
+    tm.starts = tm.starts.map((t: LegacyValue) => Math.max(0, t - LEAD));
+    tm.ends = tm.ends.map((t: LegacyValue, i: LegacyValue) => Math.max(tm.starts[i] + 0.3, t - LEAD));
   }
   const [W, H] = J.designSize(project.aspect);
   // enabled map: anything not explicitly switched off is on (new pack entries appear enabled in old projects);
   // then the 追加分 / 和風 switches decide what random picks may use (a per-line override still works)
-  const en = {};
-  for (const g of J.GROUP_KEYS) { en[g] = {}; const src = (project.enabled || {})[g] || {}; for (const k of J.order(g)) en[g][k] = src[k] !== false && (!J.randomOk || J.randomOk(project, g, k)); }
+  const en: LegacyValue = {};
+  for (const g of J.GROUP_KEYS as EffectGroup[]) { en[g] = {}; const src = (project.enabled || {})[g] || {}; for (const k of J.order(g)) en[g][k] = src[k] !== false && (!J.randomOk || J.randomOk(project, g, k)); }
   // 中央を空ける (キャラクター用): every cut is laid out in a side band — left / right on wide frames, top / bottom on tall
   // ones — alternating line by line; the centre keeps only the full-frame background and screen effects
   const zones = project.centerFree ? J.sideZones(W, H, project.centerDir) : null;
   // the lyric of every cut is split in two: the first half in band 0 (left / top), the second in band 1 (right / bottom)
-  const zoneOf = () => (zones ? Object.assign({}, zones[0]) : null);
+  const zoneOf = (_line?: number) => (zones ? Object.assign({}, zones[0]) : null);
   if (zones && en.bg) en.bg.bigChar = false;               // the one background that draws the lyric itself (big, centred)
-  const plan = {
-    version: 1, generator: 'JIZURA', appVersion: '@VERSION@', title, artist, W, H, fps: project.fps || 24,
+  const plan: Plan = {
+    version: 1, generator: 'JIZURA', appVersion: J.APP_VERSION, title, artist, W, H, fps: project.fps || 24,
     duration: tm.duration, styleKey: project.style, style: st, fx, seed: project.seed,
     lines: [], cuts: [], events: [], beats: audio && audio.beats ? audio.beats.slice() : [],
     hud: fx.hud === 'on' ? true : fx.hud === 'off' ? false : !!st.hud,
@@ -302,7 +306,7 @@ J.plan = (project, audio) => {
   if (J.setLang) J.setLang(plan.lang);                     // chunking + measuring below use this language
   if (J.setTypeset) J.setTypeset(plan.typeset);
   const beats = plan.beats;
-  const snap = (t) => {
+  const snap = (t: LegacyValue) => {
     if (!beats.length || !(project.timing && project.timing.snap)) return t;
     let lo = 0, hi = beats.length - 1;
     while (lo < hi) { const mid = (lo + hi) >> 1; if (beats[mid] < t) lo = mid + 1; else hi = mid; }
@@ -310,10 +314,10 @@ J.plan = (project, audio) => {
     for (const k of [lo - 1, lo]) if (k >= 0 && k < beats.length && Math.abs(beats[k] - t) < bd) { bd = Math.abs(beats[k] - t); best = beats[k]; }
     return best;
   };
-  const history = [], bgHistory = [], fxHistory = [];
+  const history: LegacyValue = [], bgHistory: LegacyValue = [], fxHistory: LegacyValue = [];
   let schemeIdx = 0;
   const nSchemes = st.schemes.length;
-  const addEvent = (t, type, amp, dur) => plan.events.push({ t, type, amp, dur });
+  const addEvent = (t: LegacyValue, type: LegacyValue, amp: LegacyValue, dur: LegacyValue) => plan.events.push({ t, type, amp, dur });
   const evOwner = new WeakMap(); Object.defineProperty(plan, 'evOwner', { value: evOwner });
 
   // title card
@@ -325,17 +329,17 @@ J.plan = (project, audio) => {
 
   // 統一感: sections, repeated lines, キメ lines and the per-section palettes (see makeUnify below)
   const U = plan.unify ? makeUnify(parsed.lines, { st, en, fx, history, lang: plan.lang, seed: project.seed }) : null;
-  parsed.lines.forEach((ln, li) => {
+  parsed.lines.forEach((ln: LegacyValue, li: LegacyValue) => {
     const s = tm.starts[li], e = tm.ends[li];
     const ov = (project.overrides || {})[li] || {};
-    const lineSeed = ov.lock && ov.lockedSeed != null ? ov.lockedSeed : J.h(project.seed, li + 1, ov.seed | 0);
+    const lineSeed = ov.lock && ov.lockedSeed != null ? ov.lockedSeed : J.h(project.seed, li + 1, ov.seed! | 0);
     const rng = J.rng(lineSeed);
     if (ln.interlude) {                                    // [間奏]: background, decorations and screen effects only
       plan.lines.push({ index: li, src: ln.src, lrc: ln.lrc, text: '', interlude: true, secs: ln.secs, start: s, end: e, visEnd: e, note: null, impact: false, emph: [], chunks: [], seed: lineSeed });
       const bg = ov.bg && J.BG[ov.bg] ? ov.bg : pickBg(rng, st, en, fx, bgHistory); bgHistory.push(bg);
       const dur = e - s, showTitle = dur >= 6 && !!(title || artist);
       plan.cuts.push(makeCut({ text: '', lineText: '', line: li, start: s, end: e, layout: 'interlude', enter: 'blur', exit: 'blur', hold: 'still', inDur: 0.4, outDur: 0.4,
-        params: { variant: 'quiet', showTitle, titleText: showTitle ? [title, artist].filter(Boolean).join('  /  ') : '' }, decor: Array.isArray(ov.decor) ? ov.decor.filter(id => J.DECOR[id]).map(id => decorParams(rng, id)) : pickDecor(rng, st, en, Object.assign({}, fx, { decor: Math.max(0.6, fx.decor) }), 'interlude', history),
+        params: { variant: 'quiet', showTitle, titleText: showTitle ? [title, artist].filter(Boolean).join('  /  ') : '' }, decor: Array.isArray(ov.decor) ? ov.decor.filter((id: LegacyValue) => J.DECOR[id]).map((id: LegacyValue) => decorParams(rng, id)) : pickDecor(rng, st, en, Object.assign({}, fx, { decor: Math.max(0.6, fx.decor) }), 'interlude', history),
         scheme: schemeIdx, seed: J.h(lineSeed, 405), bg, bgP: J.BG[bg] && J.BG[bg].plan ? J.BG[bg].plan(rng, st) : {}, cam: 'push', camP: {} }));
       if (en.fx == null || en.fx.chroma !== false) addEvent(s, 'chroma', 1 + fx.chroma, 0.25);
       for (let t = s + 1.2; t < e - 0.8; t += J.clamp(dur / 4, 1.6, 3.2)) {          // a few effect accents so a long interlude keeps moving
@@ -354,32 +358,32 @@ J.plan = (project, audio) => {
     let nC = Math.round(D / L);
     const maxC = chunks.length + (chunks.length >= 2 && D > 2.0 ? 1 : 0);
     nC = J.clamp(nC, 1, Math.max(1, maxC));
-    const ovAny = Object.keys(ov).some(k2 => !['lock', 'lockedSeed', 'seed', 'cutTech', 'cutLayouts', 'cutQuiet', 'cutTime'].includes(k2));
+    const ovAny = Object.keys(ov).some((k2: LegacyValue) => !['lock', 'lockedSeed', 'seed', 'cutTech', 'cutLayouts', 'cutQuiet', 'cutTime'].includes(k2));
     const kime = !!(U && U.kime.has(li) && !ov.cuts);
     if (ov.single || kime) nC = 1;
     if (zones) nC = Math.max(1, Math.min(nC, Math.floor(chunks.length / 2)));   // 中央を空ける: each cut is split in two, so keep ≥ 2 words per cut
     // カット数の指定 (per line): exactly that many cuts — chunks are split further when the line has fewer
-    const fixedN = ov.cuts > 0 ? Math.min(12, ov.cuts | 0) : 0;
+    const fixedN = ov.cuts! > 0 ? Math.min(12, ov.cuts! | 0) : 0;
     let chunks2 = chunks;
     if (fixedN) { nC = fixedN; chunks2 = splitToCount(chunks, fixedN); }
     // groups of chunks
     let groups;
     const nG = Math.min(nC, chunks2.length);
     if (nG <= 1) groups = [ln.text];
-    else groups = partition(chunks2, nG).map(g => J.joinWords(g));
+    else groups = partition(chunks2, nG).map((g: LegacyValue) => J.joinWords(g));
     const recap = !fixedN && nC > groups.length && groups.length >= 2;
-    let units = groups.map(g => ({ text: g, w: [...g].length + 1.6 }));
-    if (recap) units.push({ text: ln.text, w: (units.reduce((a, u) => a + u.w, 0) / units.length) * 1.25, recap: true });
+    let units = groups.map((g: LegacyValue) => ({ text: g, w: [...g].length + 1.6 }));
+    if (recap) units.push({ text: ln.text, w: (units.reduce((a: LegacyValue, u: LegacyValue) => a + u.w, 0) / units.length) * 1.25, recap: true });
     // a locked line keeps its own cuts too (the cut count would otherwise follow the 細かさ slider or おまかせ)
-    if (ov.lock && Array.isArray(ov.lockedCuts) && ov.lockedCuts.length && ov.lockedCuts.every(c => c && typeof c.utext === 'string' && ln.text.includes(c.utext.trim())))
-      units = ov.lockedCuts.map(c => ({ text: c.utext, w: [...c.utext].length + 1.6, recap: !!c.recap }));
-    const tot = units.reduce((a, u) => a + u.w, 0);
+    if (ov.lock && Array.isArray(ov.lockedCuts) && ov.lockedCuts.length && ov.lockedCuts.every((c: LegacyValue) => c && typeof c.utext === 'string' && ln.text.includes(c.utext.trim())))
+      units = ov.lockedCuts.map((c: LegacyValue) => ({ text: c.utext, w: [...c.utext].length + 1.6, recap: !!c.recap }));
+    const tot = units.reduce((a: LegacyValue, u: LegacyValue) => a + u.w, 0);
     // ロック: a locked line keeps exactly what it showed when it was locked (layouts, motion, decorations, colours,
     // accents) — rerolling other lines changes the shared "recently used" state, so the seed alone is not enough
     const lockSpecs = ov.lock && Array.isArray(ov.lockedCuts) && ov.lockedCuts.length === units.length
-      && ov.lockedCuts.every((c, k2) => c && c.utext === units[k2].text && J.LAYOUTS[c.layout]) ? ov.lockedCuts : null;
-    let acc = s; const bounds = [s];
-    units.forEach((u, k) => { acc += D * u.w / tot; bounds.push(k === units.length - 1 ? visEnd : acc); });
+      && ov.lockedCuts.every((c: LegacyValue, k2: LegacyValue) => c && c.utext === units[k2].text && J.LAYOUTS[c.layout]) ? ov.lockedCuts : null;
+    let acc = s; const bounds: LegacyValue = [s];
+    units.forEach((u: LegacyValue, k: LegacyValue) => { acc += D * u.w / tot; bounds.push(k === units.length - 1 ? visEnd : acc); });
     for (let k = 1; k < bounds.length - 1; k++) bounds[k] = J.clamp(snap(bounds[k]), bounds[k - 1] + 0.22, bounds[k + 1] - 0.22);
     // カットの開始時刻 (詳細モード): seconds from the line start, set by hand or by tapping — kept in order, 0.22 s apart
     if (ov.cutTime && typeof ov.cutTime === 'object') {
@@ -395,12 +399,12 @@ J.plan = (project, audio) => {
     let lineBg = ov.bg && J.BG[ov.bg] ? ov.bg : pickBg(rng, st, en, fx, bgHistory);
     bgHistory.push(lineBg);
     let lineBgP = J.BG[lineBg] && J.BG[lineBg].plan ? J.BG[lineBg].plan(rng, st) : {};
-    units.forEach((u, k) => {
+    units.forEach((u: LegacyValue, k: LegacyValue) => {
       const cs = bounds[k], ce = bounds[k + 1], dur = ce - cs;
       const halves = zones ? splitHalf(u.text, plan.lang) : null;               // 中央を空ける: 「花が」｜「咲いた」
       const txt = halves ? halves[0] : u.text;
-      const nn = Math.max(...(halves || [u.text]).map(t => [...t.replace(/\s+/g, '')].length));
-      const emph = kime || ln.impact && (k === 0 || u.recap) || ln.emph.some(w => u.text.includes(w));
+      const nn = Math.max(...(halves || [u.text]).map((t: LegacyValue) => [...t.replace(/\s+/g, '')].length));
+      const emph = kime || ln.impact && (k === 0 || u.recap) || ln.emph.some((w: LegacyValue) => u.text.includes(w));
       const Z = zoneOf(li), LW = Z ? Z.w : W, LH = Z ? Z.h : H;       // the frame this cut is laid out in
       const UU = U && !ovAny ? U : null;                              // per-line settings always win over 統一感
       const tech = cutTechOf(ov, k);                                  // このカットだけの指定
@@ -417,7 +421,7 @@ J.plan = (project, audio) => {
         weightGrow = UU.weightGrow({ kime, nn, rng, dur });
         if (weightGrow) enter = UU.softEnter(enter, rng);
       }
-      const durs = (en2, ex2) => {
+      const durs = (en2: LegacyValue, ex2: LegacyValue) => {
         let a = J.clamp(dur * 0.36, 0.12, 0.6);
         if (en2 === 'type') a = J.clamp(nn * 0.055 + 0.1, 0.15, dur * 0.65);
         if (en2 === 'assemble') a = J.clamp(dur * 0.45, 0.22, 0.75);
@@ -434,7 +438,7 @@ J.plan = (project, audio) => {
       if (!U && nSchemes > 1 && k > 0 && rng.chance(0.12 * fx.bgSwitch)) sch = (schemeIdx + 1) % nSchemes;
       let LD = J.LAYOUTS[layout];
       let params = LD.plan(rng, { text: txt, n: nn, W: LW, H: LH, dur }, st);
-      let decor = Array.isArray(ov.decor) ? ov.decor.filter(id => J.DECOR[id]).map(id => decorParams(rng, id)) : pickDecor(rng, st, en, fx, layout, history);
+      let decor = Array.isArray(ov.decor) ? ov.decor.filter((id: LegacyValue) => J.DECOR[id]).map((id: LegacyValue) => decorParams(rng, id)) : pickDecor(rng, st, en, fx, layout, history);
       let treat = ov.treat && J.TREAT[ov.treat] ? ov.treat : pickTreat(rng, st, en, fx, LD, emph, history);
       if (UU) { decor = UU.decor(li, decor, { layout, kime, rng }); treat = UU.treat(li, treat, { kime, rng, LD }); }
       let treatP = J.TREAT[treat].plan ? J.TREAT[treat].plan(rng, st) : {};
@@ -457,15 +461,15 @@ J.plan = (project, audio) => {
         ({ layout, enter, exit, hold, params, decor, treat, treatP, cam, camP } = LS);
         if (!J.ENTER[enter]) enter = 'blur'; if (!J.EXIT[exit]) exit = 'blur'; if (!J.HOLD[hold]) hold = 'still';
         if (!J.TREAT[treat]) { treat = 'none'; treatP = {}; } if (!J.CAMERA[cam]) { cam = 'push'; camP = {}; }
-        decor = (decor || []).filter(d => J.DECOR[d.id]);
+        decor = (decor || []).filter((d: LegacyValue) => J.DECOR[d.id]);
         weightGrow = !!LS.weightGrow; sch = LS.scheme | 0; cutSeed = LS.seed; LD = J.LAYOUTS[layout];
         bg = LS.bg && J.BG[LS.bg] ? LS.bg : 'none'; if (bg !== 'none') { lineBg = bg; lineBgP = LS.bgP || {}; }
         inDur = LS.inDur; outDur = LS.outDur;
       }
       // このカットだけの指定: applied on top of the draw with its own random stream, so changing one cut never
       // shifts the other cuts (history below keeps what was drawn, as if nothing had been changed here)
-      const drawn = { layout, enter, exit, hold, treat, cam, decor: decor.map(d => d.id) };
-      let techBgP = null;
+      const drawn: LegacyValue = { layout, enter, exit, hold, treat, cam, decor: decor.map((d: LegacyValue) => d.id) };
+      let techBgP: LegacyValue = null;
       if (tech.layout && J.LAYOUTS[tech.layout] && !J.LAYOUTS[tech.layout].special) {
         layout = tech.layout; LD = J.LAYOUTS[layout];
         try { params = LD.plan(J.rng(J.h(lineSeed, k, 91)), { text: txt, n: nn, W: LW, H: LH, dur }, st); } catch (e) {}
@@ -496,15 +500,15 @@ J.plan = (project, audio) => {
       }
       // cut-to-cut transition (replaces the previous cut's exit and this cut's entrance)
       const prevCut = plan.cuts[plan.cuts.length - 1];
-      let trans = null, transP = {}, transDur = 0, morph = null;
-      const joinSaved = { enter, inDur, prevExit: prevCut && prevCut.exit, prevOut: prevCut && prevCut.outDur };
+      let trans: LegacyValue = null, transP: LegacyValue = {}, transDur = 0, morph: LegacyValue = null;
+      const joinSaved: LegacyValue = { enter, inDur, prevExit: prevCut && prevCut.exit, prevOut: prevCut && prevCut.outDur };
       // a locked line keeps its own exit: the next (unlocked) line may not replace it with a transition / morph
       const prevLockedOther = prevCut && prevCut.line !== li && !LS && ((project.overrides || {})[prevCut.line] || {}).lock;
       const canTrans = prevCut && Math.abs(prevCut.end - cs) < 0.06 && prevCut.layout !== 'interlude' && dur > 0.5 && !prevLockedOther;
       // 統一感: モーフ — the next part of the same line grows out of this one (shared characters glide, the rest melts)
       if (LS) {                                       // locked: the same join as before, when the cuts still touch
         if (canTrans && LS.morph) { morph = { dur: LS.morph.dur }; prevCut.exit = 'cut'; prevCut.outDur = 0; }
-        else if (canTrans && LS.trans && J.TRANS[LS.trans]) { trans = LS.trans; transP = LS.transP || {}; transDur = LS.transDur; prevCut.exit = 'cut'; prevCut.outDur = 0; }
+        else if (canTrans && LS.trans && J.TRANS[LS.trans]) { trans = LS.trans; transP = LS.transP || {}; transDur = LS.transDur!; prevCut.exit = 'cut'; prevCut.outDur = 0; }
       } else if (canTrans && UU && k > 0 && !kime && (again ? again.morph : rng.chance(u.recap ? 0.85 : 0.4))) {
         morph = { dur: J.clamp(dur * 0.45, 0.28, 0.6) };
         enter = 'cut'; inDur = 0.12; prevCut.exit = 'cut'; prevCut.outDur = 0;
@@ -551,13 +555,13 @@ J.plan = (project, audio) => {
       plan.cuts.push(cut);
       const evMark = plan.events.length;
       // history = what the draw gave (with the usual join), so a per-cut pick never shifts the later cuts
-      const hist = { layout, enter, exit, hold, treat, cam, trans, decor: decor.map(d => d.id) };
+      const hist: LegacyValue = { layout, enter, exit, hold, treat, cam, trans, decor: decor.map((d: LegacyValue) => d.id) };
       for (const g of Object.keys(hist)) if (tech[g] !== undefined && drawn[g] !== undefined) hist[g] = g === 'enter' && drawn.trans ? 'cut' : drawn[g];
       history.push(hist);
       // events at cut start
       // events at cut start — durations are on a 24fps timebase so every output rate looks the same
       const g = fx.glitch * (st.glitchBoost || 1);
-      const fxOn = k2 => en.fx == null || en.fx[k2] !== false;
+      const fxOn = (k2: LegacyValue) => en.fx == null || en.fx[k2] !== false;
       const F = 1 / 24;
       if (fxOn('chroma')) addEvent(cs, 'chroma', 1.4 + rng.range(0, 2) * fx.chroma + (emph ? 2.5 : 0), 0.25);
       if (fxOn('slice') && rng.chance(g * 0.5 + (emph ? 0.3 : 0))) addEvent(cs, 'slice', 0.6 + rng.range(0, 0.8) * g + (emph ? 0.5 : 0), rng.pick([2, 3, 4]) * F);
@@ -594,14 +598,14 @@ J.plan = (project, audio) => {
       plan.cuts.push(makeCut({ text: title || '', lineText: '', line: li, start: visEnd, end: nextStart, layout: 'interlude', enter: 'blur', exit: 'blur', hold: 'still', inDur: 0.3, outDur: 0.3, params: J.LAYOUTS.interlude.plan(r2), decor: pickDecor(r2, st, en, Object.assign({}, fx, { decor: 1 }), 'interlude'), scheme: schemeIdx, seed: J.h(lineSeed, 405) }));
     }
   });
-  plan.cuts.sort((a, b) => a.start - b.start);
-  plan.cuts.forEach((c, i) => {
+  plan.cuts.sort((a: LegacyValue, b: LegacyValue) => a.start - b.start);
+  plan.cuts.forEach((c: LegacyValue, i: LegacyValue) => {
     c.index = i;
     if (!zones || c.zone) return;
     if (c.layout === 'interlude') { c.params = Object.assign({}, c.params, { showTitle: false }); return; }   // no lyric: the whole frame
     c.zone = zoneOf(c.line);
   });
-  plan.events.sort((a, b) => a.t - b.t);
+  plan.events.sort((a: LegacyValue, b: LegacyValue) => a.t - b.t);
   plan.energy = audio && audio.energy ? audio.energy : null;
   plan.energyRate = audio && audio.energyRate ? audio.energyRate : 0;
   return plan;
@@ -614,40 +618,40 @@ J.plan = (project, audio) => {
    · directional moves alternate (left ↔ right, up ↔ down), strong moves are kept for the lines that matter
    · キメ: lines ending in ! — or, when none is marked, the first line of a part that repeats — get one big cut
    · モーフ between the parts of a line, and 太さ (thin → bold) now and then */
-const DIR_PAIRS = { enter: [['slideL', 'slideR'], ['riseMask', 'dropMask'], ['trackIn', 'trackOut'], ['flipX', 'flipY']],
+const DIR_PAIRS: LegacyValue = { enter: [['slideL', 'slideR'], ['riseMask', 'dropMask'], ['trackIn', 'trackOut'], ['flipX', 'flipY']],
   exit: [['slideOutL', 'slideOutR'], ['sinkMask', 'riseOut'], ['flipOutX', 'flipOutY']],
   cam: [['panL', 'panR'], ['tiltUp', 'tiltDown'], ['dollyIn', 'pullOut']] };
-const STRONG = { enter: ['bounceBig', 'whip', 'spin', 'slingshot', 'crumple', 'stamp', 'zoom', 'glitchIn', 'scramble', 'spiralIn', 'rollIn', 'shuffle', 'windBlown', 'matrixRain', 'stopMotion', 'splitFlap'],
+const STRONG: LegacyValue = { enter: ['bounceBig', 'whip', 'spin', 'slingshot', 'crumple', 'stamp', 'zoom', 'glitchIn', 'scramble', 'spiralIn', 'rollIn', 'shuffle', 'windBlown', 'matrixRain', 'stopMotion', 'splitFlap'],
   cam: ['earthquake', 'shakeHard', 'crashZoom', 'barrelRoll', 'whipIn', 'snapPan', 'vertigo', 'roll', 'spiralIn', 'jelly', 'bounce', 'beatPunch', 'stepZoom'] };
-const KIME = { layout: ['huge', 'huge', 'huge', 'columnsBig', 'columnsBig', 'halftoneBig', 'center'], enter: ['stamp', 'zoom', 'bounceBig', 'overexpose', 'slingshot', 'blur'],
+const KIME: LegacyValue = { layout: ['huge', 'huge', 'huge', 'columnsBig', 'columnsBig', 'halftoneBig', 'center'], enter: ['stamp', 'zoom', 'bounceBig', 'overexpose', 'slingshot', 'blur'],
   exit: ['zoomThrough', 'blur', 'shrink', 'zoomFar'], hold: ['still', 'pulse', 'heartbeat'], cam: ['beatPunch', 'crashZoom', 'dollyIn', 'push'] };
-const SOFT_ENTER = ['blur', 'fadeStagger', 'trackIn', 'blurStagger', 'cut'];
-function makeUnify(lines, C) {
+const SOFT_ENTER: LegacyValue = ['blur', 'fadeStagger', 'trackIn', 'blurStagger', 'cut'];
+function makeUnify(lines: LegacyValue, C: LegacyValue) {
   const { st, en, fx, history } = C;
-  const norm = t => String(t || '').replace(/[\s、。，．,.!！?？…・「」『』（）()"'“”‘’~〜ー―-]/g, '');
+  const norm = (t: LegacyValue) => String(t || '').replace(/[\s、。，．,.!！?？…・「」『』（）()"'“”‘’~〜ー―-]/g, '');
   // sections
-  const sec = [], starts = new Set([0]);
+  const sec: LegacyValue = [], starts = new Set([0]);
   let si = 0;
-  lines.forEach((ln, i) => { if (i > 0 && (ln.gapBefore || ln.interlude || lines[i - 1].interlude)) { si++; starts.add(i); } sec.push(si); });
+  lines.forEach((ln: LegacyValue, i: LegacyValue) => { if (i > 0 && (ln.gapBefore || ln.interlude || lines[i - 1].interlude)) { si++; starts.add(i); } sec.push(si); });
   // repeats
-  const first = new Map(), repeatOf = [], count = new Map();
-  lines.forEach((ln, i) => { const k = norm(ln.text); if (ln.interlude || k.length < 2) { repeatOf.push(null); return; } count.set(k, (count.get(k) || 0) + 1); if (first.has(k)) repeatOf.push(first.get(k)); else { first.set(k, i); repeatOf.push(null); } });
+  const first = new Map(), repeatOf: LegacyValue = [], count = new Map();
+  lines.forEach((ln: LegacyValue, i: LegacyValue) => { const k = norm(ln.text); if (ln.interlude || k.length < 2) { repeatOf.push(null); return; } count.set(k, (count.get(k) || 0) + 1); if (first.has(k)) repeatOf.push(first.get(k)); else { first.set(k, i); repeatOf.push(null); } });
   // キメ
   const kime = new Set();
-  lines.forEach((ln, i) => { if (ln.impact && !ln.interlude) kime.add(i); });
-  if (!kime.size) lines.forEach((ln, i) => { if (starts.has(i) && !ln.interlude && (count.get(norm(ln.text)) || 0) >= 2) kime.add(i); });
-  const ok = (g, k) => !!(k && en[g] && en[g][k] !== false && (g === 'layout' ? J.LAYOUTS[k] : g === 'enter' ? J.ENTER[k] : g === 'exit' ? J.EXIT[k] : g === 'hold' ? J.HOLD[k] : g === 'cam' ? J.CAMERA[k] : g === 'treat' ? J.TREAT[k] : g === 'trans' ? J.TRANS[k] : null));
+  lines.forEach((ln: LegacyValue, i: LegacyValue) => { if (ln.impact && !ln.interlude) kime.add(i); });
+  if (!kime.size) lines.forEach((ln: LegacyValue, i: LegacyValue) => { if (starts.has(i) && !ln.interlude && (count.get(norm(ln.text)) || 0) >= 2) kime.add(i); });
+  const ok = (g: LegacyValue, k: LegacyValue) => !!(k && en[g] && en[g][k] !== false && (g === 'layout' ? J.LAYOUTS[k] : g === 'enter' ? J.ENTER[k] : g === 'exit' ? J.EXIT[k] : g === 'hold' ? J.HOLD[k] : g === 'cam' ? J.CAMERA[k] : g === 'treat' ? J.TREAT[k] : g === 'trans' ? J.TRANS[k] : null));
   const pals = new Map(), last = new Map();
-  const pal = i => { const s2 = sec[i]; if (!pals.has(s2)) pals.set(s2, { layout: [], enter: [], exit: [], hold: [], cam: [], decor: [], treat: [], trans: [] }); return pals.get(s2); };
+  const pal = (i: LegacyValue) => { const s2 = sec[i]; if (!pals.has(s2)) pals.set(s2, { layout: [], enter: [], exit: [], hold: [], cam: [], decor: [], treat: [], trans: [] }); return pals.get(s2); };
   // keep up to max distinct picks per part; once full, mostly reuse them
-  const sticky = (i, g, v, max, rng, fits = () => true, reuse = 0.85) => {
+  const sticky = (i: LegacyValue, g: LegacyValue, v: LegacyValue, max: LegacyValue, rng: LegacyValue, fits: LegacyValue = () => true, reuse: LegacyValue = 0.85) => {
     const P = pal(i)[g];
-    if (P.length >= max && rng.chance(reuse)) { const pool = P.filter(k => ok(g, k) && fits(k)); if (pool.length) return rng.pick(pool); }
+    if (P.length >= max && rng.chance(reuse)) { const pool = P.filter((k: LegacyValue) => ok(g, k) && fits(k)); if (pool.length) return rng.pick(pool); }
     if (!P.includes(v) && P.length < max) P.push(v);
     return v;
   };
   // alternate directions within a part
-  const alternate = (i, g, v) => {
+  const alternate = (i: LegacyValue, g: LegacyValue, v: LegacyValue) => {
     const key = sec[i] + ':' + g, prev = last.get(key);
     for (const pr of DIR_PAIRS[g] || []) {
       const j = pr.indexOf(v);
@@ -657,7 +661,7 @@ function makeUnify(lines, C) {
     return v;
   };
   const strongRun = new Map();                 // was the previous cut of this part strong?
-  const calm = (i, g, v, emph, repick, rng) => {
+  const calm = (i: LegacyValue, g: LegacyValue, v: LegacyValue, emph: LegacyValue, repick: LegacyValue, rng: LegacyValue) => {
     const key = sec[i] + ':' + g;
     if (!emph && STRONG[g] && STRONG[g].includes(v) && (strongRun.get(key) || rng.chance(0.55))) {
       for (let t = 0; t < 4; t++) { const w = repick(); if (!STRONG[g].includes(w)) { v = w; break; } }
@@ -665,43 +669,43 @@ function makeUnify(lines, C) {
     strongRun.set(key, !!(STRONG[g] && STRONG[g].includes(v)));
     return v;
   };
-  const kimePick = (g, v, rng, fits = () => true) => { const pool = KIME[g].filter(k => ok(g, k) && fits(k)); return pool.length ? rng.pick(pool) : v; };
+  const kimePick = (g: LegacyValue, v: LegacyValue, rng: LegacyValue, fits: LegacyValue = () => true) => { const pool = KIME[g].filter((k: LegacyValue) => ok(g, k) && fits(k)); return pool.length ? rng.pick(pool) : v; };
   const specs = new Map();
   return {
     kime,
-    sectionStart: i => starts.has(i),
-    layout(i, v, o) {
-      const fits = k => J.LAYOUTS[k] && J.LAYOUTS[k].fits(o.nn) && (!o.portrait || J.LAYOUTS[k].portrait !== 0);
-      if (o.kime) return kimePick('layout', v, o.rng, k => J.LAYOUTS[k].fits(o.nn));
+    sectionStart: (i: LegacyValue) => starts.has(i),
+    layout(i: LegacyValue, v: LegacyValue, o: LegacyValue) {
+      const fits = (k: LegacyValue) => J.LAYOUTS[k] && J.LAYOUTS[k].fits(o.nn) && (!o.portrait || J.LAYOUTS[k].portrait !== 0);
+      if (o.kime) return kimePick('layout', v, o.rng, (k: LegacyValue) => J.LAYOUTS[k].fits(o.nn));
       return sticky(i, 'layout', v, 3, o.rng, fits, 0.9);
     },
-    enter(i, v, o) {
+    enter(i: LegacyValue, v: LegacyValue, o: LegacyValue) {
       if (o.kime) return kimePick('enter', v, o.rng);
       v = sticky(i, 'enter', v, 2, o.rng);
       v = calm(i, 'enter', v, o.emph, () => pickEnter(o.rng, st, en, o.layout, o.dur, history, false, o.nn), o.rng);
       return alternate(i, 'enter', v);
     },
-    exit(i, v, o) { if (o.kime) return kimePick('exit', v, o.rng); return alternate(i, 'exit', sticky(i, 'exit', v, 2, o.rng)); },
-    hold(i, v, o) { if (o.kime) return kimePick('hold', v, o.rng); return sticky(i, 'hold', v, 1, o.rng); },
-    cam(i, v, o) {
+    exit(i: LegacyValue, v: LegacyValue, o: LegacyValue) { if (o.kime) return kimePick('exit', v, o.rng); return alternate(i, 'exit', sticky(i, 'exit', v, 2, o.rng)); },
+    hold(i: LegacyValue, v: LegacyValue, o: LegacyValue) { if (o.kime) return kimePick('hold', v, o.rng); return sticky(i, 'hold', v, 1, o.rng); },
+    cam(i: LegacyValue, v: LegacyValue, o: LegacyValue) {
       if (o.kime) return kimePick('cam', v, o.rng);
       v = sticky(i, 'cam', v, 2, o.rng);
       v = calm(i, 'cam', v, o.emph, () => pickCam(o.rng, st, en, fx, J.LAYOUTS.center, false, history), o.rng);
       return alternate(i, 'cam', v);
     },
-    decor(i, list, o) {
+    decor(i: LegacyValue, list: LegacyValue, o: LegacyValue) {
       if (o.kime) return [];
       const P = pal(i).decor;
       if (P.length >= 2 && o.rng.chance(0.8)) { const id = o.rng.pick(P); return J.DECOR[id] ? [decorParams(o.rng, id)] : list; }
       for (const d of list) if (!P.includes(d.id) && P.length < 2) P.push(d.id);
       return list;
     },
-    treat(i, v, o) { if (o.kime) return 'none'; return sticky(i, 'treat', v, 1, o.rng, () => true, 0.75); },
-    trans(i, v, o) { return sticky(i, 'trans', v, 2, o.rng); },
-    weightGrow(o) { if (!/^(ja|en)$/.test(C.lang || 'ja') || o.nn > 16 || o.dur < 0.7) return false; return o.rng.chance(o.kime ? 0.45 : 0.14); },
-    softEnter(v, rng) { const pool = SOFT_ENTER.filter(k => ok('enter', k)); return pool.length ? rng.pick(pool) : v; },
-    again(i, k, txt) { const f = repeatOf[i]; if (f == null) return null; const sp = (specs.get(f) || [])[k]; return sp && sp.text === txt ? sp : null; },
-    remember(i, k, txt, cut) {
+    treat(i: LegacyValue, v: LegacyValue, o: LegacyValue) { if (o.kime) return 'none'; return sticky(i, 'treat', v, 1, o.rng, () => true, 0.75); },
+    trans(i: LegacyValue, v: LegacyValue, o: LegacyValue) { return sticky(i, 'trans', v, 2, o.rng); },
+    weightGrow(o: LegacyValue) { if (!/^(ja|en)$/.test(C.lang || 'ja') || o.nn > 16 || o.dur < 0.7) return false; return o.rng.chance(o.kime ? 0.45 : 0.14); },
+    softEnter(v: LegacyValue, rng: LegacyValue) { const pool = SOFT_ENTER.filter((k: LegacyValue) => ok('enter', k)); return pool.length ? rng.pick(pool) : v; },
+    again(i: LegacyValue, k: LegacyValue, txt: LegacyValue) { const f = repeatOf[i]; if (f == null) return null; const sp = (specs.get(f) || [])[k]; return sp && sp.text === txt ? sp : null; },
+    remember(i: LegacyValue, k: LegacyValue, txt: LegacyValue, cut: LegacyValue) {
       if (!specs.has(i)) specs.set(i, []);
       specs.get(i)[k] = { text: txt, layout: cut.layout, enter: cut.enter, exit: cut.exit, hold: cut.hold, params: cut.params, decor: cut.decor, treat: cut.treat, treatP: cut.treatP,
         cam: cut.cam, camP: cut.camP, scheme: cut.scheme, seed: cut.seed, bg: cut.bg, bgP: cut.bgP, weightGrow: !!cut.weightGrow, morph: !!cut.morph,
@@ -713,13 +717,13 @@ function makeUnify(lines, C) {
 /* 中央を空ける: one scene, the lyric split in two — 「花が」 in the left (top) band, 「咲いた」 in the right (bottom) one.
    Both halves use the same layout, motion, decorations and camera (the same random draws), so it reads as one picture
    with the centre left for the character; the second half follows a beat later. */
-function splitHalf(text, lang) {
+function splitHalf(text: LegacyValue, lang: LegacyValue) {
   const t = String(text || '').trim();
   const n = [...t.replace(/\s+/g, '')].length;
   // between words, as near the middle as possible (「花が」｜「咲いた」, "Good night," | "see you tomorrow")
-  const words = (lang === 'en' ? J.phraseChunks(J.chunkText(t)) : J.chunkText(t)).map(w => String(w));
+  const words = (lang === 'en' ? J.phraseChunks(J.chunkText(t)) : J.chunkText(t)).map((w: LegacyValue) => String(w));
   if (words.length >= 2) {
-    const L = w => [...w.replace(/\s+/g, '')].length, total = words.reduce((a2, w) => a2 + L(w), 0);
+    const L = (w: LegacyValue) => [...w.replace(/\s+/g, '')].length, total = words.reduce((a2: LegacyValue, w: LegacyValue) => a2 + L(w), 0);
     let acc = 0, best = 1, bd = 1e9;
     for (let k = 1; k < words.length; k++) { acc += L(words[k - 1]); const d = Math.abs(acc - total / 2); if (d < bd) { bd = d; best = k; } }
     const sep = /[A-Za-z]/.test(t) ? ' ' : '';
@@ -735,9 +739,9 @@ function splitHalf(text, lang) {
   return [a, b];
 }
 const HEAD_BAD = /[、。，．,.!?！？…・ーっッゃゅょャュョぁぃぅぇぉァィゥェォをがはにでとのへもやよね」』）)]/;
-function splitCut(cut, halves, zones, st, dur, LS) {
+function splitCut(cut: LegacyValue, halves: LegacyValue, zones: LegacyValue, st: LegacyValue, dur: LegacyValue, LS: LegacyValue) {
   const LD = J.LAYOUTS[cut.layout], seed = J.h(cut.seed, 23);
-  const planFor = (text, z) => LD.plan(J.rng(seed), { text, n: [...text.replace(/\s+/g, '')].length, W: z.w, H: z.h, dur }, st);
+  const planFor = (text: LegacyValue, z: LegacyValue) => LD.plan(J.rng(seed), { text, n: [...text.replace(/\s+/g, '')].length, W: z.w, H: z.h, dur }, st);
   cut.text = halves[0]; cut.lineText = halves[0]; cut.words = J.chunkText(halves[0]); cut.zone = Object.assign({}, zones[0]);
   cut.params = LS && LS.params && LS.twinParams ? LS.params : planFor(halves[0], zones[0]);   // a locked line keeps its own
   const delay = Math.min(0.12, dur * 0.08);
@@ -748,10 +752,10 @@ function splitCut(cut, halves, zones, st, dur, LS) {
 }
 
 /* ロック: what a line shows, so it can be kept as it is (stored in project.overrides[line].lockedCuts) */
-J.lineSnapshot = (plan, li) => {
-  const cuts = plan.cuts.filter(c => c.line === li && c.utext != null);
+J.lineSnapshot = (plan: Plan, li: number): CutSnapshot[] | null => {
+  const cuts = plan.cuts.filter((c: LegacyValue) => c.line === li && c.utext != null);
   if (!cuts.length) return null;
-  const S = JSON.parse(JSON.stringify(cuts.map(c => ({ utext: c.utext, layout: c.layout, enter: c.enter, exit: c.exit, hold: c.hold, inDur: c.inDur, outDur: c.outDur,
+  const S = JSON.parse(JSON.stringify(cuts.map((c: LegacyValue) => ({ utext: c.utext, layout: c.layout, enter: c.enter, exit: c.exit, hold: c.hold, inDur: c.inDur, outDur: c.outDur,
     params: c.params, decor: c.decor, treat: c.treat, treatP: c.treatP, bg: c.bg, bgP: c.bgP, cam: c.cam, camP: c.camP, scheme: c.scheme, seed: c.seed,
     trans: c.trans, transP: c.transP, transDur: c.transDur, morph: c.morph || null, weightGrow: !!c.weightGrow, kime: !!c.kime, recap: !!c.recap, twinParams: c.companion ? c.companion.params : null, events: [] }))));
   // each accent belongs to the cut it plays in (the ones just before a cut start belong to that cut)
@@ -769,32 +773,32 @@ J.lineSnapshot = (plan, li) => {
 
 /* side bands for 中央を空ける: [a, b] in design pixels. Wide frames: left / right thirds (a little narrower on 21:9);
    tall frames: top / bottom; square-ish frames count as wide. */
-J.sideZones = (W, H, dir) => {
+J.sideZones = (W: LegacyValue, H: LegacyValue, dir: LegacyValue) => {
   if (H > W * 1.1 && dir === 'lr') { const w = Math.round(W * 0.34); return [{ x: 0, y: 0, w, h: H, side: 'left' }, { x: W - w, y: 0, w, h: H, side: 'right' }]; }   // 縦長で左右に分ける
   if (H > W * 1.1) { const h = Math.round(H * 0.33); return [{ x: 0, y: 0, w: W, h, side: 'top' }, { x: 0, y: H - h, w: W, h, side: 'bottom' }]; }
   const w = Math.round(W * (W / H > 2 ? 0.3 : 0.36));
   return [{ x: 0, y: 0, w, h: H, side: 'left' }, { x: W - w, y: 0, w, h: H, side: 'right' }];
 };
 
-function makeCut(o) {
+function makeCut(o: LegacyValue) {
   const c = Object.assign({ hold: 'still', inDur: 0.3, outDur: 0.25, stagger: 0.04, decor: [], params: {}, scheme: 0, emph: false, words: [], note: null, treat: 'none', treatP: {}, bg: 'none', bgP: {}, cam: 'push', camP: {} }, o);
   c.dur = c.end - c.start;
   return c;
 }
 /* split chunks until there are at least n pieces (longest first: words for Latin text, characters otherwise) */
-function splitToCount(chunks, n) {
+function splitToCount(chunks: LegacyValue, n: LegacyValue) {
   const out = chunks.slice();
   let guard = 0;
   while (out.length < n && guard++ < 64) {
     let bi = -1, bl = 1;
-    out.forEach((c, i) => { const l = /\s/.test(c.trim()) ? c.trim().split(/\s+/).length : [...c].length; if (l > bl) { bl = l; bi = i; } });
+    out.forEach((c: LegacyValue, i: LegacyValue) => { const l = /\s/.test(c.trim()) ? c.trim().split(/\s+/).length : [...c].length; if (l > bl) { bl = l; bi = i; } });
     if (bi < 0) break;
     const c = out[bi].trim();
     let a, b;
     if (/\s/.test(c)) { const w = c.split(/\s+/), h = Math.ceil(w.length / 2); a = w.slice(0, h).join(' '); b = w.slice(h).join(' '); }
     else {
       // at a word boundary nearest the middle when there is one (夜明け|の), else between characters
-      const ch = [...c], segs = J.segments ? J.segments(c) : [];
+      const ch: LegacyValue = [...c], segs = J.segments ? J.segments(c) : [];
       let cut = Math.ceil(ch.length / 2);
       if (segs.length > 1) { let acc = 0, best = -1, bd = 1e9; for (let k = 0; k < segs.length - 1; k++) { acc += [...segs[k]].length; const d = Math.abs(acc - ch.length / 2); if (d < bd) { bd = d; best = acc; } } if (best > 0) cut = best; }
       a = ch.slice(0, cut).join(''); b = ch.slice(cut).join('');
@@ -803,11 +807,11 @@ function splitToCount(chunks, n) {
   }
   return out;
 }
-function partition(chunks, k) {
-  const lens = chunks.map(c => [...c].length + 1);
-  const tot = lens.reduce((a, b) => a + b, 0), target = tot / k;
-  const groups = []; let cur = [], acc = 0, remainingGroups = k;
-  chunks.forEach((c, i) => {
+function partition(chunks: LegacyValue, k: LegacyValue) {
+  const lens = chunks.map((c: LegacyValue) => [...c].length + 1);
+  const tot = lens.reduce((a: LegacyValue, b: LegacyValue) => a + b, 0), target = tot / k;
+  const groups: LegacyValue = []; let cur: LegacyValue = [], acc = 0, remainingGroups = k;
+  chunks.forEach((c: LegacyValue, i: LegacyValue) => {
     const remainingChunks = chunks.length - i;
     if (cur.length && (acc + lens[i] / 2 > target || remainingChunks < remainingGroups) && groups.length < k - 1) { groups.push(cur); cur = []; acc = 0; remainingGroups--; }
     cur.push(c); acc += lens[i];
@@ -815,14 +819,14 @@ function partition(chunks, k) {
   if (cur.length) groups.push(cur);
   return groups;
 }
-function novelty(history, key, val) {
+function novelty(history: LegacyValue, key: LegacyValue, val: LegacyValue) {
   let w = 1;
   for (let i = history.length - 1, d = 0; i >= 0 && d < 6; i--, d++) if (history[i][key] === val) w *= d < 2 ? 0.2 : 0.6;
   return w;
 }
-const PORTRAIT_W = { vcols: 1.9, condensed: 1.3, huge: 1.3, center: 1.2, stack: 1.1, mixed: 0.7, marquee: 0.6, wave: 0.6, diag: 0.8, type: 0.8, gloss: 0.5 };
-function pickLayout(rng, st, en, n, dur, history, emph, recap, portrait) {
-  const cands = [];
+const PORTRAIT_W: LegacyValue = { vcols: 1.9, condensed: 1.3, huge: 1.3, center: 1.2, stack: 1.1, mixed: 0.7, marquee: 0.6, wave: 0.6, diag: 0.8, type: 0.8, gloss: 0.5 };
+function pickLayout(rng: LegacyValue, st: LegacyValue, en: LegacyValue, n: LegacyValue, dur: LegacyValue, history: LegacyValue, emph: LegacyValue, recap: LegacyValue, portrait: LegacyValue) {
+  const cands: LegacyValue = [];
   for (const k of J.LAYOUT_ORDER) {
     const L = J.LAYOUTS[k];
     if (!en.layout[k] || !L.fits(n)) continue;
@@ -838,13 +842,13 @@ function pickLayout(rng, st, en, n, dur, history, emph, recap, portrait) {
   if (!cands.length) return 'center';
   return rng.wpick(cands);
 }
-const LAYOUT_ENTER = {
+const LAYOUT_ENTER: LegacyValue = {
   type: { type: 4, scramble: 1.5 }, ring: { pop: 2, spin: 2, cut: 1, assemble: 0.4, slice: 0.2, wipe: 0.2 }, labels: { cut: 3, pop: 1 },
   wave: { pop: 1.5, drop: 1.5, blur: 1, slice: 0.3 }, tile: { assemble: 1.3, slice: 1.4, zoom: 1.4 }, huge: { zoom: 1.5, wipe: 1.5, slice: 1.4, stretch: 1.3, type: 0.2 },
   mixed: { pop: 1.6, drop: 1.6, spin: 1.3 }, scatter: { pop: 1.5, spin: 1.5, drop: 1.2, assemble: 1.3 }, vcols: { assemble: 1.8, type: 1.2 }, pill: { wipe: 1.8, type: 1.2 },
 };
-function pickEnter(rng, st, en, layout, dur, history, emph, n) {
-  const cands = [];
+function pickEnter(rng: LegacyValue, st: LegacyValue, en: LegacyValue, layout: LegacyValue, dur: LegacyValue, history: LegacyValue, emph: LegacyValue, n: LegacyValue) {
+  const cands: LegacyValue = [];
   for (const k of J.ENTER_ORDER) {
     if (!en.enter[k]) continue;
     const D = J.ENTER[k]; if (!D) continue;
@@ -861,8 +865,8 @@ function pickEnter(rng, st, en, layout, dur, history, emph, n) {
   }
   return cands.length ? rng.wpick(cands) : 'cut';
 }
-function pickExit(rng, st, en, layout, dur, lastOfLine, history) {
-  const cands = [];
+function pickExit(rng: LegacyValue, st: LegacyValue, en: LegacyValue, layout: LegacyValue, dur: LegacyValue, lastOfLine: LegacyValue, history: LegacyValue) {
+  const cands: LegacyValue = [];
   for (const k of J.EXIT_ORDER) {
     if (!en.exit[k]) continue;
     const D = J.EXIT[k]; if (!D) continue;
@@ -875,9 +879,9 @@ function pickExit(rng, st, en, layout, dur, lastOfLine, history) {
   }
   return cands.length ? rng.wpick(cands) : 'cut';
 }
-const HOLD_W = { still: 1, jitter: 1.2, drift: 1, breathe: 0.7, wave: 0.4, glitchtick: 0.9 };
-function pickHold(rng, en, fx, history) {
-  const cands = J.HOLD_ORDER.filter(k => en.hold[k] !== false && J.HOLD[k]).map(k => {
+const HOLD_W: LegacyValue = { still: 1, jitter: 1.2, drift: 1, breathe: 0.7, wave: 0.4, glitchtick: 0.9 };
+function pickHold(rng: LegacyValue, en: LegacyValue, fx: LegacyValue, history: LegacyValue) {
+  const cands = J.HOLD_ORDER.filter((k: LegacyValue) => en.hold[k] !== false && J.HOLD[k]).map((k: LegacyValue) => {
     const D = J.HOLD[k];
     let w = HOLD_W[k] != null ? HOLD_W[k] : (D.w ?? 0.8);
     if (k === 'jitter' || (D.tags && D.tags.includes('glitch'))) w *= 0.4 + fx.motion;
@@ -886,40 +890,40 @@ function pickHold(rng, en, fx, history) {
   });
   return cands.length ? rng.wpick(cands) : 'still';
 }
-function decorParams(rng, k) {
+function decorParams(rng: LegacyValue, k: LegacyValue) {
   return { id: k, seed: rng.int(1, 1e9), n: rng.int(1, 3) + (k === 'shapes' ? 3 : 0) + (k === 'sparks' ? 4 : 0), right: rng.chance(0.5), low: rng.chance(0.5), accent: rng.chance(0.4), corner: rng.chance(0.5), big: rng.chance(0.4), mode: rng.pick(['count', 'index']), from: rng.int(0, 20), to: rng.int(30, 999), v: rng.int(0, 5), r: rng() };
 }
-function pickDecor(rng, st, en, fx, layout, history = []) {
+function pickDecor(rng: LegacyValue, st: LegacyValue, en: LegacyValue, fx: LegacyValue, layout: LegacyValue, history: LegacyValue = []) {
   const count = Math.round(fx.decor * 2.8 * rng.range(0.45, 1.15));
-  const recent = new Set(history.slice(-2).flatMap(h => h.decor || []));
+  const recent = new Set(history.slice(-2).flatMap((h: LegacyValue) => h.decor || []));
   const LD = J.LAYOUTS[layout] || {};
-  const cands = J.DECOR_ORDER.filter(k => en.decor[k] && J.DECOR[k] && !(LD.busy && J.DECOR[k].layer === 'back' && !J.DECOR[k].subtle))
-    .map(k => [k, wkey(st.decor, k, J.DECOR[k].w != null ? J.DECOR[k].w * 0.5 : 0.35) * (recent.has(k) ? 0.35 : 1)]);
-  const out = [];
+  const cands = J.DECOR_ORDER.filter((k: LegacyValue) => en.decor[k] && J.DECOR[k] && !(LD.busy && J.DECOR[k].layer === 'back' && !J.DECOR[k].subtle))
+    .map((k: LegacyValue) => [k, wkey(st.decor, k, J.DECOR[k].w != null ? J.DECOR[k].w * 0.5 : 0.35) * (recent.has(k) ? 0.35 : 1)]);
+  const out: LegacyValue = [];
   for (let i = 0; i < count && cands.length; i++) {
     const k = rng.wpick(cands);
-    cands.splice(cands.findIndex(c => c[0] === k), 1);
+    cands.splice(cands.findIndex((c: LegacyValue) => c[0] === k), 1);
     out.push(decorParams(rng, k));
   }
   return out;
 }
 // text treatment: plain most of the time; the "decor" slider raises how often a treatment is used
-function pickTreat(rng, st, en, fx, LD, emph, history) {
+function pickTreat(rng: LegacyValue, st: LegacyValue, en: LegacyValue, fx: LegacyValue, LD: LegacyValue, emph: LegacyValue, history: LegacyValue) {
   if (LD.treat === false) return 'none';
   if (!rng.chance(0.18 + 0.42 * (fx.decor ?? 0.5) + (emph ? 0.15 : 0))) return 'none';
-  const cands = J.TREAT_ORDER.filter(k => k !== 'none' && en.treat && en.treat[k] !== false && J.TREAT[k] && (LD.treat !== 'safe' || J.TREAT[k].safe))
-    .map(k => [k, wkey(st.bias && st.bias.treat, k, J.TREAT[k].w ?? 1) * novelty(history, 'treat', k)]);
+  const cands = J.TREAT_ORDER.filter((k: LegacyValue) => k !== 'none' && en.treat && en.treat[k] !== false && J.TREAT[k] && (LD.treat !== 'safe' || J.TREAT[k].safe))
+    .map((k: LegacyValue) => [k, wkey(st.bias && st.bias.treat, k, J.TREAT[k].w ?? 1) * novelty(history, 'treat', k)]);
   return cands.length ? rng.wpick(cands) : 'none';
 }
-function pickBg(rng, st, en, fx, bgHist) {
+function pickBg(rng: LegacyValue, st: LegacyValue, en: LegacyValue, fx: LegacyValue, bgHist: LegacyValue) {
   if (!rng.chance(0.2 + 0.35 * (fx.decor ?? 0.5) + 0.2 * (fx.bgSwitch ?? 0.35))) return 'none';
   const last = bgHist.slice(-3);
-  const cands = J.BG_ORDER.filter(k => k !== 'none' && en.bg && en.bg[k] !== false && J.BG[k])
-    .map(k => [k, wkey(st.bias && st.bias.bg, k, J.BG[k].w ?? 1) * (last.includes(k) ? 0.25 : 1)]);
+  const cands = J.BG_ORDER.filter((k: LegacyValue) => k !== 'none' && en.bg && en.bg[k] !== false && J.BG[k])
+    .map((k: LegacyValue) => [k, wkey(st.bias && st.bias.bg, k, J.BG[k].w ?? 1) * (last.includes(k) ? 0.25 : 1)]);
   return cands.length ? rng.wpick(cands) : 'none';
 }
-function pickCam(rng, st, en, fx, LD, emph, history) {
-  const cands = J.CAMERA_ORDER.filter(k => en.cam && en.cam[k] !== false && J.CAMERA[k]).map(k => {
+function pickCam(rng: LegacyValue, st: LegacyValue, en: LegacyValue, fx: LegacyValue, LD: LegacyValue, emph: LegacyValue, history: LegacyValue) {
+  const cands = J.CAMERA_ORDER.filter((k: LegacyValue) => en.cam && en.cam[k] !== false && J.CAMERA[k]).map((k: LegacyValue) => {
     const D = J.CAMERA[k];
     let w = wkey(st.bias && st.bias.cam, k, D.w ?? 1) * novelty(history, 'cam', k);
     if (D.strong) w *= 0.25 + 0.9 * (fx.motion ?? 0.7) + (emph ? 0.6 : 0);
@@ -928,26 +932,26 @@ function pickCam(rng, st, en, fx, LD, emph, history) {
   });
   return cands.length ? rng.wpick(cands) : 'push';
 }
-function pickTrans(rng, st, en, fx, emph, history) {
+function pickTrans(rng: LegacyValue, st: LegacyValue, en: LegacyValue, fx: LegacyValue, emph: LegacyValue, history: LegacyValue) {
   if (!J.TRANS_ORDER.length) return null;
   if (!rng.chance(0.1 + 0.22 * (fx.motion ?? 0.7) + (emph ? 0.08 : 0))) return null;
-  const cands = J.TRANS_ORDER.filter(k => en.trans && en.trans[k] !== false && J.TRANS[k])
-    .map(k => [k, wkey(st.bias && st.bias.trans, k, J.TRANS[k].w ?? 1) * novelty(history, 'trans', k)]);
+  const cands = J.TRANS_ORDER.filter((k: LegacyValue) => en.trans && en.trans[k] !== false && J.TRANS[k])
+    .map((k: LegacyValue) => [k, wkey(st.bias && st.bias.trans, k, J.TRANS[k].w ?? 1) * novelty(history, 'trans', k)]);
   return cands.length ? rng.wpick(cands) : null;
 }
 // kind 'edge' = transition at a cut boundary, 'mid' = accent in the middle of a cut
-function pickFx(rng, st, en, fx, emph, fxHist, kind) {
+function pickFx(rng: LegacyValue, st: LegacyValue, en: LegacyValue, fx: LegacyValue, emph: LegacyValue, fxHist: LegacyValue, kind: LegacyValue) {
   const g = fx.glitch ?? 0.55;
   const p = kind === 'edge' ? 0.12 + 0.38 * g + 0.12 * (fx.motion ?? 0.7) + (emph ? 0.15 : 0) : 0.05 + 0.2 * g;
   if (!rng.chance(p)) return null;
   const last = fxHist.slice(-3);
-  const cands = J.FXE_ORDER.filter(k => { const D = J.FXE[k]; return D && !D.builtin && en.fx && en.fx[k] !== false && (kind === 'edge' ? D.edge !== false : D.mid); })
-    .map(k => { const D = J.FXE[k]; let w = wkey(st.bias && st.bias.fx, k, D.w ?? 1) * (last.includes(k) ? 0.2 : 1); if (D.glitchy) w *= 0.3 + g * 1.4; return [k, w]; });
+  const cands = J.FXE_ORDER.filter((k: LegacyValue) => { const D = J.FXE[k]; return D && !D.builtin && en.fx && en.fx[k] !== false && (kind === 'edge' ? D.edge !== false : D.mid); })
+    .map((k: LegacyValue) => { const D = J.FXE[k]; let w = wkey(st.bias && st.bias.fx, k, D.w ?? 1) * (last.includes(k) ? 0.2 : 1); if (D.glitchy) w *= 0.3 + g * 1.4; return [k, w]; });
   return cands.length ? rng.wpick(cands) : null;
 }
 
 /* one-cut (or two-cut, for transitions) plan used by the 手法 tab thumbnails */
-J.previewPlan = (project, group, key) => {
+J.previewPlan = (project: LegacyValue, group: LegacyValue, key: LegacyValue) => {
   const enUI = typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'en';
   const st = J.resolveStyle(project);
   const fx = Object.assign({}, J.defaultProject().fx, project.fx || {}, {
@@ -981,7 +985,7 @@ J.previewPlan = (project, group, key) => {
     else if (hold === 'still' && J.HOLD.drift) hold = 'drift';
   }
   const LD = J.LAYOUTS[layout];
-  let params = {};
+  let params: LegacyValue = {};
   try { params = LD.plan(rng, { text, n: nn, W, H, dur }, st) || {}; } catch (e) { params = {}; }
   let inDur = enter === 'cut' ? 0.12 : 0.5;
   if (J.ENTER[enter] && J.ENTER[enter].inDur) try { inDur = J.ENTER[enter].inDur(dur, nn); } catch (e) {}
@@ -998,19 +1002,19 @@ J.previewPlan = (project, group, key) => {
   let cam = group === 'cam' ? key : 'push';
   if (!J.CAMERA[cam]) cam = 'push';
   const camP = (J.CAMERA[cam] && J.CAMERA[cam].plan) ? (J.CAMERA[cam].plan(rng, st) || {}) : {};
-  const events = [];
+  const events: LegacyValue = [];
   if (group === 'fx' && J.FXE[key]) {
     const D2 = J.FXE[key];
     events.push({ t: 0.04, type: key, amp: (D2.amp || 1.15) * 1.2, dur: ((D2.dur || 6) / 24) });
   }
-  const cuts = [];
+  const cuts: LegacyValue = [];
   if (group === 'trans' && J.TRANS[key]) {
     const TD = J.TRANS[key];
     const transDur = J.clamp(TD.dur || 0.35, 0.18, 0.7);
     const transP = TD.plan ? (TD.plan(rng, st) || {}) : {};
     const tA = enUI ? 'BEFORE' : '前のカット';
     const tB = enUI ? 'AFTER' : '字面';
-    let pA = {}, pB = {};
+    let pA: LegacyValue = {}, pB: LegacyValue = {};
     try { pA = J.LAYOUTS.center.plan(rng, { text: tA, n: [...tA].length, W, H, dur: 1.2 }, st) || {}; } catch (e) {}
     try { pB = J.LAYOUTS.center.plan(rng, { text: tB, n: [...tB].length, W, H, dur: 1.2 }, st) || {}; } catch (e) {}
     cuts.push(makeCut({ text: tA, lineText: tA, line: 0, start: 0, end: 1.2, layout: 'center', enter: 'cut', exit: 'cut', hold: 'still', inDur: 0.12, outDur: 0, params: pA, decor: [], scheme: 0, seed: 1, words: J.chunkText(tA) }));
@@ -1022,7 +1026,7 @@ J.previewPlan = (project, group, key) => {
       treat, treatP, bg, bgP, cam, camP, stagger: 0.04,
     }));
   }
-  cuts.forEach((c, i) => { c.index = i; });
+  cuts.forEach((c: LegacyValue, i: LegacyValue) => { c.index = i; });
   return {
     version: 1, generator: 'JIZURA-preview', title: '', artist: '', W, H, fps: 24,
     duration: cuts[cuts.length - 1].end, styleKey: project.style, style: st, fx,
@@ -1030,7 +1034,7 @@ J.previewPlan = (project, group, key) => {
   };
 };
 
-J.designSize = (aspect) => {
+J.designSize = (aspect: LegacyValue) => {
   if (aspect === '9:16') return [1080, 1920];
   if (aspect === '1:1') return [1440, 1440];
   if (aspect === '4:5') return [1440, 1800];
@@ -1039,9 +1043,11 @@ J.designSize = (aspect) => {
   if (aspect === '3:4') return [1080, 1440];
   return [1920, 1080];
 };
-J.outputSize = (project) => {
+J.outputSize = (project: LegacyValue) => {
   const [W, H] = J.designSize(project.aspect);
   const k = (project.res || 1080) / Math.min(W, H);
   return [Math.round(W * k / 2) * 2, Math.round(H * k / 2) * 2];
 };
 })();
+
+}
