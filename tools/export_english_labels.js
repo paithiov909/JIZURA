@@ -2,7 +2,9 @@
 'use strict';
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const root = path.resolve(__dirname, '..');
-const files = fs.readdirSync(path.join(root, 'src')).filter(f => f.endsWith('.js') && f !== '12_ui.js').sort();
+// Metadata export has no editor or browser tool surface. Loading WebMCP here
+// broke the English AE/core build because this VM intentionally has no UI DOM.
+const files = fs.readdirSync(path.join(root, 'src')).filter(f => f.endsWith('.js') && !['12_ui.js', '13_webmcp.js'].includes(f)).sort();
 const context = vm.createContext({
   window: {}, document: { createElement: () => ({ getContext: () => ({ measureText: () => ({ width: 100 }) }) }) },
   console, Intl, URL, Map, Set, TextEncoder, TextDecoder, performance: { now: () => 0 }

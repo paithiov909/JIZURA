@@ -2,15 +2,5 @@
   "name": "jizura-cep-offline-spike",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.12.0" },
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "node build.mjs",
-    "test:node": "node node-test.mjs"
-  },
-  "devDependencies": {
-    "acorn": "8.18.0",
-    "typescript": "7.0.2",
-    "vite": "8.3.1"
-  }
+  "description": "ES module boundary for task 02 evidence. Commands and dependencies live at the repository root."
 }

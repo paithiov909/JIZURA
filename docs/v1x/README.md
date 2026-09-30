@@ -58,6 +58,8 @@ After task 04, tasks 05 and 06 can proceed in parallel on separate task branches
 
 Task 02 result (2026-09-30): [CEP/offline output decision](CEP-OFFLINE-DECISION.md) and repeatable `dev/cep-offline-spike/` checks are available. Normal Vite HTML failed the tested local-file startup; library IIFE/local CEP and single-HTML offline startup passed focused checks. Per the user's instruction, actual AE tests are deferred while no AE subscription/installation is available. Implementation can continue using separately identified mocks; an actual Adobe runtime pass has not been established.
 
+Task 03 result (2026-09-30): the [root TS/Vite workspace](BUILD.md) builds all four targets into ignored `dist/` outputs from one dependency lockfile. Clean-checkout install/check and independent builds without inherited generated inputs passed. Twenty production-output browser cases, eight preserved spike cases and both 87-build AE model suites passed. The English metadata-export VM failure is fixed. Actual Adobe/Chromium 88 runtime checks remain deferred; see [task 03's handoff](03-build-foundation.md#result--2026-09-30). Next: task 04, then task 06 alongside task 05.
+
 ## Distribution design
 
 - CI runs focused checks on task PRs and on `codex/v1x-integration`. It creates no release or Pages deployment there.

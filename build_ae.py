@@ -8,6 +8,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ap = argparse.ArgumentParser()
 ap.add_argument('--packs', default=None, help='comma separated pack names (p_xxx) or "none"; default: all ae/p_*.jsx')
 ap.add_argument('--out', default=None)
+ap.add_argument('--data', default='ae/data.json', help='metadata input; root workspace generates this under dist/')
 ap.add_argument('--core', action='store_true', help='engine only (no ScriptUI), exposed as $.global.JZ_CORE — used by the CEP panel')
 ap.add_argument('--lang', choices=['ja', 'en'], default='ja', help='interface language (default: Japanese)')
 a = ap.parse_args()
@@ -15,7 +16,7 @@ if a.out is None: a.out = 'dist/JIZURA_CEP/jsx/jizura_core.jsx' if a.core else (
 allpacks = sorted(os.path.basename(f)[:-4] for f in glob.glob('ae/p_*.jsx'))
 packs = allpacks if a.packs is None else ([] if a.packs == 'none' else [p.strip().replace('.jsx', '').replace('ae/', '') for p in a.packs.split(',') if p.strip()])
 parts = ['00_core', '05_reg', '10_helpers', '15_plan', '16_omakase', '20_motion', '30_layouts', '40_decor', '45_core'] + packs + ['50_build', '55_diag'] + ([] if a.core else ['90_ui'])
-data = json.load(open('ae/data.json', encoding='utf-8'))
+data = json.load(open(a.data, encoding='utf-8'))
 if a.lang == 'en':
     labels = json.loads(subprocess.check_output(['node', 'tools/export_english_labels.js'], text=True))
     for key, value in labels['styles'].items():

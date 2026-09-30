@@ -1,20 +1,20 @@
 # Task 02: local CEP and offline feasibility spike
 
-This is a small, isolated TypeScript/Vite package, not the task 03 root workspace or a migrated editor. It imports the production `cep/cep.js` and `src/13_webmcp.js` unchanged, with a minimal editor surface and task 01's Japanese AE plan. The generated extension contains the existing Japanese host/core and uses a separate `com.852wa.jizura.spike` ID. Nothing is installed into Adobe directories.
+This is a small TypeScript/Vite feasibility fixture, now run from the task 03 root workspace. It imports the production `cep/cep.js` and `src/13_webmcp.js` unchanged, with a minimal editor surface and task 01's Japanese AE plan. The generated extension contains the existing Japanese host/core and uses a separate `com.852wa.jizura.spike` ID. Nothing is installed into Adobe directories.
 
 From the repository root:
 
 ```sh
-npm --prefix dev/cep-offline-spike ci --ignore-scripts
-npm --prefix dev/cep-offline-spike run typecheck
-npm --prefix dev/cep-offline-spike run build
-npm --prefix dev/cep-offline-spike run test:node
+npm ci
+npm run typecheck
+npm run spike:build
+npm run spike:test
 python3 -m venv /tmp/jizura-task02-python
 /tmp/jizura-task02-python/bin/pip install -r dev/cep-offline-spike/requirements.txt
 /tmp/jizura-task02-python/bin/python dev/cep-offline-spike/browser_test.py --browser /usr/bin/google-chrome
 ```
 
-Use Node >=22.12, Python and an installed Chrome/Chromium; the checked environment is recorded in [the decision record](../../docs/v1x/CEP-OFFLINE-DECISION.md). No downloaded browser is required. Pass the installed browser path explicitly on another OS.
+Task 03 consolidated the spike into the root dependency tree and shared classic Vite configuration/packaging validation. Use Node 26.10.0, Python and an installed Chrome/Chromium; task 02's historical environment is recorded in [the decision record](../../docs/v1x/CEP-OFFLINE-DECISION.md). No downloaded browser is required. Pass the installed browser path explicitly on another OS. The small package manifest only marks the ESM boundary; do not install dependencies in this directory.
 
 All outputs and raw results go into ignored `dist/task02/`:
 
@@ -29,4 +29,4 @@ The actual CEP bridge handles connection, file/string plan transfer, audio file 
 
 The WebMCP production adapter is intentionally included in this spike to prove its CEP guard: zero registrations in CEP, 18 registrations with a mock modelContext in browser/offline controls. Tool execution is outside this spike. Task 08 will keep WebMCP out of the production CEP entry.
 
-No actual AE, CEP 11, Chromium 88 or CEP's embedded Node 15.9 runtime is tested. These mocks and syntax checks must not be reported as an Adobe runtime pass. Existing English core build failures remain assigned to later migration tasks.
+No actual AE, CEP 11, Chromium 88 or CEP's embedded Node 15.9 runtime is tested. These mocks and syntax checks must not be reported as an Adobe runtime pass. Task 03 fixes the English metadata-export VM failure and builds both languages in the root workspace; this bounded spike retains its Japanese fixture.

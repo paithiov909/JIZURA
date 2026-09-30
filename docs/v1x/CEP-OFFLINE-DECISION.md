@@ -51,6 +51,8 @@ git diff --check
 
 `npm ci`, TS typecheck, all four spike builds, the focused Node checks and all eight browser cases passed. Typecheck covers the tiny TS surface; it does not typecheck the unchanged legacy JS modules. `build` invokes the existing Japanese `build_ae.py --core --lang ja` with an explicit ignored output path. Raw results and screenshots are under `dist/task02/`; only this concise result and source/lockfile are committed. [Spike instructions](../../dev/cep-offline-spike/README.md) also document Python dependency installation for a fresh environment.
 
+Task 03 follow-up: the commands above record the original task 02 run. Current commands and dependencies are consolidated at the repository root; use [BUILD.md](BUILD.md) and the updated spike instructions. The selected classic formats and all eight spike browser cases remain validated. Task 03 also fixes the English metadata-export failure noted below; the actual-runtime and encoding gaps remain open.
+
 ## Remaining compatibility gaps
 
 - Per the user's 2026-09-30 instruction, no actual AE run is attempted while an AE subscription/installation is unavailable. This task explicitly permits mocks, so task 03 and later implementation work can proceed. Actual AE/CEP installation, ExtendScript behavior/rendering and native save dialogs remain unverified; record them as deferred in later verification/cutover handoffs.
