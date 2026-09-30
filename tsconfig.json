@@ -28,6 +28,9 @@
     "tests/engine/**/*.mts",
     "tests/engine/**/*.ts",
     "effects/**/*.ts",
+    "i18n/**/*.ts",
+    "tests/i18n/**/*.mts",
+    "tests/i18n/**/*.ts",
     "tests/effects/**/*.mts",
     "tests/effects/**/*.ts"
   ]

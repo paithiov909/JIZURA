@@ -7,7 +7,7 @@ npm ci
 npm run check
 ```
 
-`check` runs the TS/config/engine typecheck, UI-free Node engine and effect contract tests, all builds, output/syntax validation, source AE-port catalog comparisons, Japanese and English ScriptUI object-model mocks. No Adobe installation or browser is required for this command. Typechecking covers the migrated engine public boundaries and TS implementations, with strict effect registration/metadata/group callback contracts and explicit dynamic drawing/item slots. It does **not** cover the unconverted installer JS or ExtendScript; the ES2021 and ES3 parsers and runtime mocks are separate evidence.
+`check` runs the TS/config/engine typecheck, UI-free Node engine/effect and locale contract tests, all builds, output/syntax validation, source AE-port catalog comparisons, Japanese and English ScriptUI object-model mocks. No Adobe installation or browser is required for this command. Typechecking covers the migrated engine public boundaries and TS implementations, with strict effect registration/metadata/group callback contracts and explicit dynamic drawing/item slots. It does **not** cover the unconverted installer JS or ExtendScript; the ES2021 and ES3 parsers and runtime mocks are separate evidence.
 
 | Command | Output | Format |
 | --- | --- | --- |
@@ -23,9 +23,9 @@ npm run check
 
 Every target can build independently without prebuilt tracked HTML, JSX or `ae/data.json`. The CEP command regenerates its own metadata/cores and does not need `build:ae`. `VERSION` remains the only application version source; the root package has no application version. Builds reject non-`x.y.z` versions and output validation checks propagation into each target and manifest. Outputs include project/third-party notices and muxer/Vite licenses; the standalone HTML also embeds the full muxer license. Do not commit `dist/`, npm dependencies or generated assets.
 
-Vite uses explicit JS/CSS `chrome88` targets for web and both classic targets. `JIZURA_WEB_BASE` defaults to `/JIZURA/`; override it for another hosted path, for example `JIZURA_WEB_BASE=/ npm run build:web`. CEP and offline always use their local paths and ignore that variable. Canonical/hreflang metadata retains the baseline public URLs until the locale service is migrated. `PYTHON` can select a Python executable for the root build (`python3` by default).
+Vite uses explicit JS/CSS `chrome88` targets for web and both classic targets. `JIZURA_WEB_BASE` defaults to `/JIZURA/`; override it for another hosted path, for example `JIZURA_WEB_BASE=/ npm run build:web`. CEP and offline always use their local paths and ignore that variable. Canonical/hreflang metadata retains the baseline public URLs; `i18n/` owns the seven route descriptors. `PYTHON` can select a Python executable for the root build (`python3` by default).
 
-Intermediate localized sources and AE data live in `dist/.inputs/`; temporary IIFE bundles live in `dist/.bundles/`. The compatibility entry in `build/entries/legacy.ts` creates an independent engine via `engine/index.ts`, attaches it to `window.J` for the unconverted UI, installs labels, then starts UI and the selected browser/CEP adapter. `INITIALIZATION_ORDER` exposes the explicit installer sequence, including the pre-pack `CORE_ORDER` capture. There is no generated concatenated `legacy.js`; web/offline/CEP, diagnostic bundles and AE metadata exporters share the module graph. `build.py` still localizes copies of individual module sources into ignored inputs until task 06 replaces Python localization. AE still uses Python assembly and source metadata until task 09. `build.py --out ... --vite-input`, `build_ae.py --data ...`, `tools/export_ae_data.js --out ...` and `build_cep.py --panel-dir ... --core-source ...` are transitional adapters. Their old defaults remain available for historical tooling and can write tracked outputs; use the root npm commands for migration work.
+Untranslated module copies and AE data live in `dist/.inputs/`; temporary IIFE bundles live in `dist/.bundles/`. `build/prepare-browser.mts` creates each target's entry, initializes an independent engine, attaches it to `window.J` for the unconverted UI, applies the runtime dictionary, then starts UI and the selected browser/CEP adapter. `INITIALIZATION_ORDER` exposes the explicit installer sequence, including the pre-pack `CORE_ORDER` capture. Web/offline/CEP, diagnostic bundles and AE metadata exporters share the module graph. Browser sources are never rewritten for translation or version substitution; project exports use `J.APP_VERSION`. `build.py` delegates historical browser/dev CLI commands to the same TypeScript preparation. `tools/export_english_labels.js` uses the runtime English metadata dictionary. AE/CEP host still use separate ES3 Python assembly until tasks 09/10. `build_cep.py` is now a packaging-only helper requiring `--panel-dir`; use `npm run build:cep` for source builds. `build.py`/`build_ae.py` retain historical output defaults that can write tracked outputs; use the root npm commands or explicit ignored output paths.
 
 The `dev/` and spike manifests mark CommonJS/ESM boundaries only. Install dependencies once at the root; no npm workspaces, second bundler or nested dependency lockfiles are needed. Task 02's preserved spike shares the root classic config, muxer guard and one-chunk validator:
 
@@ -49,7 +49,7 @@ Run `npm run build` before the first browser test and `npm run spike:build` befo
 
 ## Remaining distribution gates
 
-This establishes the build foundation. Browser/CEP entries still use legacy algorithms and localization. Full export regression, WebMCP tool execution/native discovery, accessibility/layout parity, and downloadable assets linked from the hosted UI remain later tasks. Release files are intentionally kept in their own outputs; this task does not stage all release downloads into `dist/web/`, deploy Pages, sign/install CEP or publish a release. The inherited tracked generated files stay untouched until task 13 removes them from the final source snapshot.
+This establishes the build foundation. Browser/CEP entries still use legacy UI/export algorithms; their copy now uses runtime dictionaries. Full export regression, WebMCP tool execution/native discovery, accessibility/layout parity, and downloadable assets linked from the hosted UI remain later tasks. Release files are intentionally kept in their own outputs; this task does not stage all release downloads into `dist/web/`, deploy Pages, sign/install CEP or publish a release. The inherited tracked generated files stay untouched until task 13 removes them from the final source snapshot.
 
 No actual AE/CEP, Chromium 88 or embedded Node 15.9 runtime was exercised. Modern Chrome CEP API mocks and Node AE object-model mocks do not certify Adobe compatibility. CEP 11 WebCodecs/MP4 encoding, native dialogs and actual rendering remain deferred as recorded in task 02's decision. `dev/cep_test.py` still requires missing historical assets; use the focused checks above.
 
@@ -72,9 +72,9 @@ See [task 04](04-engine-modules.md) for the compatibility-facade removal path an
 
 `effects/index.ts` owns the explicit core/pack/set stage lists. The engine consumes those
 lists without naming individual packs; core initialization installs the registry first,
-then registers motion/layout/decor in the original public order. `build.py` follows relative
+then registers motion/layout/decor in the original public order. `build/prepare-browser.mts` follows relative
 imports and re-exports recursively, including nested TypeScript dependencies, when copying
-localized build inputs. Diagnostic selection uses `effects/packs/*.ts` paths, for example:
+untranslated build inputs. Diagnostic selection uses `effects/packs/*.ts` paths, for example:
 
 ```sh
 python3 dev/build_test.py enter effects/packs/enter.ts
@@ -89,3 +89,17 @@ contribution example is test-only; no baseline fixtures or release assets are ch
 fallbacks. With `--ae`, it loads the built ES3 registry and compares its IDs to the explicit
 source catalog, without running the AE UI or rendering. See [the contribution contract](../EXPRESSION_PACKS.md)
 and [task 05](05-effect-modules.md) for recorded verification and remaining dynamic slots.
+
+
+## Locale checks (task 06)
+
+```sh
+npm run check:i18n
+npm run test:i18n
+npm run test:i18n:source
+PYTHONPATH=/tmp/jizura-baseline-py python3 dev/i18n_test.py --browser /usr/bin/google-chrome
+```
+
+The first two are included in `npm run check`; every root build also runs the missing-key/caller/catalog validator. The focused GitHub Actions workflow validates dictionaries and types on integration pushes/PRs, with no deployment. The optional source comparison needs the integration-base git object; it is excluded from clean-checkout gates. The browser check needs completed web/offline builds, verifies 14 locale pages against captured static DOM and seven hosted language-menu transitions, and writes `dist/task06-browser-results.json`. Its route transitions preserve pending lyric edits, full project data, volume and mode. Per-file offline startup/localization is verified separately; portable cross-file storage/menu navigation remains an offline packaging concern for tasks 07/11.
+
+See [the locale contribution instructions](../../i18n/README.md) and [task 06](06-browser-i18n.md) for provenance, checks and remaining boundaries.

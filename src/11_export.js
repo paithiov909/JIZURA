@@ -1,5 +1,8 @@
+import { createI18n } from '../i18n/index.ts';
 /* Temporary installer adapter; algorithm conversion belongs to later tasks. */
 export default function install(J) {
+const japanese = createI18n('ja');
+const translate = (key, values) => (J.i18n || japanese).t(key, values);
 /* ============================================================
    JIZURA — export: MP4 (WebCodecs + mp4-muxer), PNG sequence ZIP,
    file saving (artifact download capability or plain browser download)
@@ -114,7 +117,7 @@ J.lrcText = (project, lines, range) => {
   for (let i = from; i <= to && i < parsed.lines.length; i++) {
     const L = parsed.lines[i];
     let txt = clean(rows[L.src]);
-    if (L.interlude && !/^\[/.test(txt)) txt = '[間奏]';
+    if (L.interlude && !/^\[/.test(txt)) txt = translate("export.interlude");
     out.push(stamp(tm.starts[i] - t0) + txt);
   }
   return out.join('\n') + '\n';
@@ -145,22 +148,22 @@ J.exportMP4 = async (o) => {
   const [w, h] = J.outputSize(project);
   const fps = plan.fps, bitrate = J.videoBitrate(w, h, fps, quality);
   const attempts = await J.videoAttempts(w, h, fps, bitrate);
-  if (!attempts.length) throw new Error('このブラウザは動画エンコード（WebCodecs）に対応していません。Chrome か Edge の最新版で開いてください。');
+  if (!attempts.length) throw new Error(translate("export.video_encoding_webcodecs_is_unavailable_open_in"));
   const tried = [];
   for (let k = 0; k < attempts.length; k++) {
     const vc = attempts[k];
     try {
       if (file && k > 0) { await file.seek(0); await file.truncate(0); }
-      const r = await encodeMP4(Object.assign({}, o, { w, h, vc, note: k > 0 ? `（${vc.label}・ソフトウェアで再試行 ${k}）` : '' }));
+      const r = await encodeMP4(Object.assign({}, o, { w, h, vc, note: k > 0 ? translate("export.retry_in_software", [vc.label, k]) : '' }));
       r.tried = tried; return r;
     } catch (e) {
-      if (signal && signal.aborted) throw new Error('キャンセルしました');
+      if (signal && signal.aborted) throw new Error(translate("export.canceled"));
       if (e && e.jzFatal) throw e;
       tried.push(`${vc.label}/${vc.hw}: ${e && e.message ? e.message : e}`);
       console.warn('MP4 export attempt failed', vc.codec, vc.hw, e);
     }
   }
-  const err = new Error('MP4 を書き出せませんでした。' + (file ? '' : '「大きな動画用（ファイルに直接保存）」か、') + '解像度・fps・画質を下げて試してください。詳細：' + tried.join(' ／ '));
+  const err = new Error(translate("export.could_not_export_the_mp4") + (file ? '' : translate("export.use_for_large_videos_save_straight_to")) + translate("export.try_a_lower_resolution_fps_or_quality") + tried.join(' ／ '));
   err.detail = tried; throw err;
 };
 async function encodeMP4({ plan, project, audio, onProgress, signal, range, file, w, h, vc, note }) {
@@ -186,27 +189,27 @@ async function encodeMP4({ plan, project, audio, onProgress, signal, range, file
   const closeEnc = () => { try { if (venc.state !== 'closed') venc.close(); } catch (e) {} };
   try {
     for (let i = 0; i < total; i++) {
-      if (signal && signal.aborted) { closeEnc(); throw new Error('キャンセルしました'); }
+      if (signal && signal.aborted) { closeEnc(); throw new Error(translate("export.canceled")); }
       if (err) throw err;
-      if (venc.state === 'closed') throw new Error('エンコーダーが停止しました');
+      if (venc.state === 'closed') throw new Error(translate("export.the_encoder_stopped"));
       R.frame(ctx, plan, span.t0 + i / fps, { scale });
       const vf = new VideoFrame(canvas, { timestamp: Math.round(i * 1e6 / fps), duration: Math.round(1e6 / fps) });
       try { venc.encode(vf, { keyFrame: i % (fps * 2) === 0 }); } finally { vf.close(); }
       let spins = 0;
       // (time in the background doesn't count: a phone pauses the encoder while the page is hidden)
-      while (venc.encodeQueueSize > 4 && !err) { await new Promise(r => setTimeout(r, 2)); if (!document.hidden && ++spins > 15000) throw new Error('エンコーダーが応答しません'); }
+      while (venc.encodeQueueSize > 4 && !err) { await new Promise(r => setTimeout(r, 2)); if (!document.hidden && ++spins > 15000) throw new Error(translate("export.the_encoder_stopped_responding")); }
       // an encoder that accepts frames but never returns any has failed silently (seen with some GPU drivers)
-      if (i === Math.min(total - 1, fps * 3) && outFrames === 0) { await venc.flush(); if (!outFrames) throw new Error('エンコーダーが出力を返しません'); }
-      if (i % 3 === 0) { onProgress && onProgress(i / total, `フレーム ${i + 1}/${total}${note || ''}`); await new Promise(r => setTimeout(r, 0)); }
+      if (i === Math.min(total - 1, fps * 3) && outFrames === 0) { await venc.flush(); if (!outFrames) throw new Error(translate("export.the_encoder_returned_no_output")); }
+      if (i % 3 === 0) { onProgress && onProgress(i / total, translate("export.frame", [i + 1, total, note || ''])); await new Promise(r => setTimeout(r, 0)); }
     }
     await venc.flush();
     if (err) throw err;
   } catch (e) { closeEnc(); throw e; }
   finally { J.glyphs.maxRes = prevRes; }
   closeEnc();
-  if (outFrames < total * 0.98) throw new Error(`動画のフレームが足りません（${outFrames}/${total}）`);
+  if (outFrames < total * 0.98) throw new Error(translate("export.frames_are_missing", [outFrames, total]));
   if (ac) {
-    onProgress && onProgress(0.99, '音声をエンコード中');
+    onProgress && onProgress(0.99, translate("export.encoding_audio"));
     const rs = await resample(audio.buffer, ac.sr, span.dur, span.t0);
     const chn = rs.numberOfChannels;
     let aChunks = 0, aEnd = 0, aErr = null;
@@ -224,29 +227,29 @@ async function encodeMP4({ plan, project, audio, onProgress, signal, range, file
     }
     await aenc.flush(); aenc.close();
     const fatal = m => { const e = new Error(m); e.jzFatal = true; return e; };    // audio problems: another video encoder won't help
-    if (aErr) throw fatal('音声のエンコードに失敗しました: ' + (aErr.message || aErr));
+    if (aErr) throw fatal(translate("export.audio_encoding_failed") + (aErr.message || aErr));
     // the encoder must have produced the whole soundtrack — otherwise report it instead of writing a silent file
-    if (!aChunks || aEnd < (Math.min(span.dur, audio.buffer.duration - span.t0) - 0.5) * 1e6) throw fatal('音声のエンコードが途中で止まりました（' + aChunks + '）。もう一度書き出してください');
+    if (!aChunks || aEnd < (Math.min(span.dur, audio.buffer.duration - span.t0) - 0.5) * 1e6) throw fatal(translate("export.audio_encoding_stopped_partway") + aChunks + translate("export.please_export_again"));
   }
-  onProgress && onProgress(0.995, 'ファイルを仕上げ中');
+  onProgress && onProgress(0.995, translate("export.finishing_the_file"));
   muxer.finalize();
   if (file) await file.close();
-  onProgress && onProgress(1, '完了');
+  onProgress && onProgress(1, translate("export.done"));
   const size = file ? null : store.end;
-  return { blob: file ? null : store.blob('video/mp4'), size, codec: vc.label + (vc.hw === 'prefer-software' ? '（ソフトウェア）' : ''), audio: ac ? ac.mux : null, audioWanted: !!(audio && audio.buffer && project.includeAudio !== false), width: w, height: h, toFile: !!file };
+  return { blob: file ? null : store.blob('video/mp4'), size, codec: vc.label + (vc.hw === 'prefer-software' ? translate("export.software") : ''), audio: ac ? ac.mux : null, audioWanted: !!(audio && audio.buffer && project.includeAudio !== false), width: w, height: h, toFile: !!file };
 }
 
 /* ---------- PNG sequence as ZIP (store, no compression) ---------- */
 const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
 const crc32 = (u8) => { let c = 0xffffffff; for (let i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
-const ZIP_TOO_BIG = 'ZIP が大きくなりすぎます（65,535 ファイル・4GB まで）。書き出す範囲を狭めるか、解像度を下げてください';
+const ZIP_TOO_BIG = () => translate("export.the_zip_would_be_too_large_65");
 class ZipWriter {
   constructor() { this.parts = []; this.central = []; this.offset = 0; }
   add(name, u8) {
     const nb = new TextEncoder().encode(name);
     // plain ZIP (no ZIP64): at most 65,535 files and 4 GB
-    if (this.central.length / 2 >= 0xffff) throw new Error(ZIP_TOO_BIG);
-    if (this.offset + 30 + nb.length + u8.length > 0xffffffff) throw new Error(ZIP_TOO_BIG);
+    if (this.central.length / 2 >= 0xffff) throw new Error(ZIP_TOO_BIG());
+    if (this.offset + 30 + nb.length + u8.length > 0xffffffff) throw new Error(ZIP_TOO_BIG());
     const crc = crc32(u8);
     const lh = new DataView(new ArrayBuffer(30));
     lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
@@ -263,7 +266,7 @@ class ZipWriter {
   finish() {
     const cdSize = this.central.reduce((s, p) => s + (p.byteLength ?? p.length), 0);
     const n = this.central.length / 2;
-    if (this.offset + cdSize > 0xffffffff) throw new Error(ZIP_TOO_BIG);
+    if (this.offset + cdSize > 0xffffffff) throw new Error(ZIP_TOO_BIG());
     const end = new DataView(new ArrayBuffer(22));
     end.setUint32(0, 0x06054b50, true); end.setUint16(8, n, true); end.setUint16(10, n, true); end.setUint32(12, cdSize, true); end.setUint32(16, this.offset, true);
     return new Blob([...this.parts, ...this.central, end.buffer], { type: 'application/zip' });
@@ -279,11 +282,11 @@ J.exportPNGZip = async ({ plan, project, transparent, layers, onProgress, signal
   const R = new J.Renderer();
   const fps = plan.fps, total = Math.max(1, Math.round(span.dur * fps));
   const nFiles = Math.ceil(total / every) * (layers ? 2 : 1);
-  if (nFiles > 0xffff) throw new Error(ZIP_TOO_BIG);        // say so before rendering, not after an hour
+  if (nFiles > 0xffff) throw new Error(ZIP_TOO_BIG());        // say so before rendering, not after an hour
   const zip = new ZipWriter();
   const scale = w / plan.W;
   for (let i = 0; i < total; i += every) {
-    if (signal && signal.aborted) throw new Error('キャンセルしました');
+    if (signal && signal.aborted) throw new Error(translate("export.canceled"));
     const name = `jizura_${String(i).padStart(5, '0')}.png`;
     for (const layer of layers ? ['back', 'front'] : [null]) {
       R.frame(ctx, plan, span.t0 + i / fps, { scale, transparent: transparent || !!layers, layer });
@@ -292,7 +295,7 @@ J.exportPNGZip = async ({ plan, project, transparent, layers, onProgress, signal
     }
     onProgress && onProgress(i / total, `PNG ${i + 1}/${total}`);
   }
-  onProgress && onProgress(1, '完了');
+  onProgress && onProgress(1, translate("export.done"));
   return zip.finish();
 };
 

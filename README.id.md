@@ -29,7 +29,7 @@ Gunakan **Simpan** dan **Buka** untuk proyek `.jizura.json`. **Ekspor untuk AE**
 <details>
 <summary><h2>Build dan publikasi</h2></summary>
 
-Jalankan `python3 build.py` dari root repository. Perintah ini membuat edisi `index.html`, `en/`, `zh-hant/`, `zh-hans/`, `ko/`, `id/`, dan `vi/` (terjemahan browser berada di `app/english.py` dan `app/i18n_*.py`), semuanya berupa halaman mandiri untuk GitHub Pages. Jalankan `python3 build_ae.py --lang en` untuk membangun panel After Effects Inggris, atau `python3 build_cep.py --lang en --out dist` untuk paket CEP Inggris. Commit halaman hasil build, panel, dan sumber terjemahan bersama-sama. Publikasikan dari root repository di GitHub Pages; edisi Indonesia tersedia di `/JIZURA/id/`. File HTML juga bisa dibuka langsung secara lokal untuk penggunaan offline, dengan font terpasang sebagai fallback.
+Jalankan `python3 build.py` dari root repository. Perintah ini membuat edisi `index.html`, `en/`, `zh-hant/`, `zh-hans/`, `ko/`, `id/`, dan `vi/` (terjemahan browser berada di `i18n/locales/*.ts`), semuanya berupa halaman mandiri untuk GitHub Pages. Jalankan `python3 build_ae.py --lang en` untuk membangun panel After Effects Inggris, atau `npm run build:cep` untuk paket CEP Inggris. Commit halaman hasil build, panel, dan sumber terjemahan bersama-sama. Publikasikan dari root repository di GitHub Pages; edisi Indonesia tersedia di `/JIZURA/id/`. File HTML juga bisa dibuka langsung secara lokal untuk penggunaan offline, dengan font terpasang sebagai fallback.
 
 Panel After Effects memerlukan After Effects untuk memverifikasi gerakan dan hasil ekspor; pengujian otomatis memakai mock AE.
 
