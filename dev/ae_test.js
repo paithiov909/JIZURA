@@ -1,11 +1,15 @@
 // Build JIZURA_AE.jsx comps on the emulated AE object model (dev/aeom.js) and report problems.
-//   node dev/ae_test.js [plan_ae.json | folder ...]
+//   node dev/ae_test.js [--jsx dist/ae/JIZURA_AE.jsx] [plan_ae.json | folder ...]
 // Checks: every style x several seeds through the panel's own planner (with and without 追加分 / 和風),
 // and any JSON plans exported by the browser app.
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const AEOM = require('./aeom');
 const ROOT = path.join(__dirname, '..');
-const SRC = fs.readFileSync(path.join(ROOT, 'JIZURA_AE.jsx'), 'utf8').replace(/^#target.*\n/, '')
+const argv = process.argv.slice(2);
+const jsxIndex = argv.indexOf('--jsx');
+const JSX = jsxIndex < 0 ? path.join(ROOT, 'JIZURA_AE.jsx') : argv.splice(jsxIndex, 2)[1];
+if (!JSX) throw new Error('--jsx requires an output path');
+const SRC = fs.readFileSync(JSX, 'utf8').replace(/^#target.*\n/, '')
   .replace(/jzUI\(thisObj\);\s*\}\)\(this\);\s*$/, 'thisObj.__jz = { jzMakePlan: jzMakePlan, jzBuild: jzBuild, log: function () { return JZLOG; }, JZ_DATA: JZ_DATA, JZ_REG: JZ_REG, jzOrder: jzOrder, jzChunk: jzChunk, jzMoodEnabled: jzMoodEnabled, fallbacks: function () { return JZ_FALLBACKS; } };\n})(this);');
 const total = { builds: 0, comps: 0, layers: 0, exprs: 0, animators: 0, effects: {}, unknown: new Set(), exprErrors: [], problems: [], warnings: [] };
 // ExtendScript is ES3: run the panel in a realm without ES5+ built-ins so accidental use fails here, not in AE
@@ -82,7 +86,7 @@ for (const [mood, seed, sw] of [['horror', 3, { horror: true }], ['horror', 11, 
 console.log('part sets used', JSON.stringify(setUse));
 // JSON plans from the browser app
 const P = path;
-const jsons = process.argv.slice(2).flatMap(p => fs.existsSync(p) && fs.statSync(p).isDirectory() ? fs.readdirSync(p).filter(f => f.endsWith('.json')).map(f => P.join(p, f)) : [p]).filter(p => fs.existsSync(p));
+const jsons = argv.flatMap(p => fs.existsSync(p) && fs.statSync(p).isDirectory() ? fs.readdirSync(p).filter(f => f.endsWith('.json')).map(f => path.join(p, f)) : [p]).filter(p => fs.existsSync(p));
 let fallbacks = 0;
 for (const jp of jsons) {
   const { env, JZ } = load();

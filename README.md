@@ -401,14 +401,16 @@ AE パネルは2種類あります。どちらも中の生成エンジンは同�
 <summary><h2>開発・ビルド</h2></summary>
 
 ```
-python3 build.py              # src/ app/ vendor/ → index.html / en/index.html / ko/index.html
-node tools/export_ae_data.js  # src/ を変えたとき：ae/data.json（AE パネルが使うスタイル・部品の情報）を更新
-python3 build_ae.py           # ae/（本体 + 移植済みパック ae/p_*.jsx）→ JIZURA_AE.jsx
-python3 build_cep.py          # index.html + ae/ + cep/ → build/com.852wa.jizura/ と build/JIZURA_CEP.zip（公開用は直下にコピー）
+npm ci                       # リポジトリ直下で開発依存をインストール
+npm run check                # 型検査、全ターゲットのビルド、出力検査、日英 AE モック
+npm run build:web            # Web 7 言語 → dist/web/
+npm run build:offline        # 単一 HTML 7 言語 → dist/offline/
+npm run build:ae             # 日英 ScriptUI と CEP コア → dist/ae/
+npm run build:cep            # 日英ローカル拡張と ZIP → dist/cep/
 ```
 バージョンはリポジトリ直下の `VERSION` に書きます（ビルドのときに画面・AE パネル・CEP 版に入ります）。変えたときは `CHANGELOG.md` にも追記してください。README の見出しをたたむ形にするには `python3 tools/fold_readme.py README.md` を使います（新しい見出しは `<details>` の形で書き足してください）。
 
-ビルドに必要なのは Python 3 と Node.js だけです（npm パッケージは不要）。AE パネルのテスト（AE のオブジェクトモデルを模した環境で全スタイルを組み立てる）は `cd dev && npm install` のあと `node dev/ae_test.js` で実行できます。表現部品を追加するときは `docs/EXPRESSION_PACKS.md` を参照してください（テスト用ツールは `dev/`）。
+v1.x 移行のビルドは Node.js 26.10.0（`.node-version`）と Python 3 を使います。出力はすべて無視対象の `dist/` に置き、生成物をコミットしません。ブラウザ検証の準備、旧ビルドとの境界、公開前に残る作業は [ビルド手順](docs/v1x/BUILD.md) を参照してください。AE 検査はモックであり、実機 After Effects の確認は別途必要です。表現部品の説明は `docs/EXPRESSION_PACKS.md`、テスト用ツールは `dev/` にあります。
 
 <details>
 <summary><h3>自分のリポジトリで公開する（フォークした場合など）</h3></summary>

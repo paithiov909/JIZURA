@@ -9,7 +9,7 @@ import { parse } from 'acorn';
 const repo = fileURLToPath(new URL('../../', import.meta.url));
 const extension = path.join(repo, 'dist/task02/cep/com.852wa.jizura.spike');
 const vendor = fs.readFileSync(path.join(repo, 'vendor/mp4-muxer.min.js'), 'utf8');
-const guard = fs.readFileSync(new URL('muxer-guard.js', import.meta.url), 'utf8');
+const guard = fs.readFileSync(path.join(repo, 'build/muxer-guard.js'), 'utf8');
 const report = { node: process.version, formats: {}, muxer: [], host: {}, evidence: 'Node VM + AE object-model mock; no AE/CEP runtime' };
 const output = path.join(repo, 'dist/task02');
 // Syntax evidence is deliberately separate from actually running Chromium 88.

@@ -1,4 +1,6 @@
 __pycache__/
 *.pyc
+# Root build targets, temporary Vite inputs/bundles and verification evidence.
 /dist/
+# One root install; legacy dev tools resolve dependencies from it.
 node_modules/

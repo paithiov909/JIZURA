@@ -13,11 +13,13 @@ ap = argparse.ArgumentParser()
 ap.add_argument('--out', default='dist' if os.path.isdir('dist') else 'build')
 ap.add_argument('--debug', action='store_true')
 ap.add_argument('--lang', choices=['ja', 'en'], default='ja')
+ap.add_argument('--panel-dir', help='prepackaged local Vite panel directory (no legacy HTML embedding)')
+ap.add_argument('--core-source', help='prebuilt ES3 core to copy; used by the root workspace')
 a = ap.parse_args()
 
 english = a.lang == 'en'
-app_html = next((p for p in (['en/index.html'] if english else ['dist/JIZURA.html', 'index.html']) if os.path.exists(p)), None)
-if not app_html: sys.exit('build the browser app first (python3 build.py)')
+app_html = None if a.panel_dir else next((p for p in (['en/index.html'] if english else ['dist/JIZURA.html', 'index.html']) if os.path.exists(p)), None)
+if not a.panel_dir and not app_html: sys.exit('build the browser app first (python3 build.py)')
 extension_id = 'com.852wa.jizura.en' if english else 'com.852wa.jizura'
 ext = os.path.join(a.out, extension_id)
 if os.path.isdir(ext): shutil.rmtree(ext)
@@ -35,21 +37,28 @@ def es_escape(src):
     return ''.join(out)
 
 # 1) panel page: the browser app + a Node-context guard for the MP4 muxer + the AE bridge
-html = open(app_html, encoding='utf-8').read()
-guard = "<script>if(!window.Mp4Muxer&&typeof module!=='undefined'&&module&&module.exports&&module.exports.Muxer)window.Mp4Muxer=module.exports;</script>\n"
-i = html.index('</script>') + len('</script>\n')          # right after the mp4-muxer script
-html = html[:i] + guard + html[i:]
-bridge = open('cep/cep.js', encoding='utf-8').read()
-if english:
-    bridge = localize_cep(bridge)
-    html = html.replace('</style>', 'html.cep .lang-switch{display:none}\n</style>', 1)
-html = html.replace('</body>', '<script>\n' + bridge + '\n</script>\n</body>', 1)
-open(os.path.join(ext, 'index.html'), 'w', encoding='utf-8').write(html)
+if a.panel_dir:
+    if not os.path.isfile(os.path.join(a.panel_dir, 'index.html')): sys.exit('--panel-dir must contain index.html')
+    shutil.copytree(a.panel_dir, ext, dirs_exist_ok=True)
+else:
+    html = open(app_html, encoding='utf-8').read()
+    guard = "<script>if(!window.Mp4Muxer&&typeof module!=='undefined'&&module&&module.exports&&module.exports.Muxer)window.Mp4Muxer=module.exports;</script>\n"
+    i = html.index('</script>') + len('</script>\n')          # right after the mp4-muxer script
+    html = html[:i] + guard + html[i:]
+    bridge = open('cep/cep.js', encoding='utf-8').read()
+    if english:
+        bridge = localize_cep(bridge)
+        html = html.replace('</style>', 'html.cep .lang-switch{display:none}\n</style>', 1)
+    html = html.replace('</body>', '<script>\n' + bridge + '\n</script>\n</body>', 1)
+    open(os.path.join(ext, 'index.html'), 'w', encoding='utf-8').write(html)
 
 # 2) ExtendScript side: host + the build engine (same code as JIZURA_AE.jsx, without its ScriptUI)
 host = open('cep/host.jsx', encoding='utf-8').read()
 open(os.path.join(ext, 'jsx', 'host.jsx'), 'w', encoding='utf-8').write(es_escape(localize_cep(host, host=True) if english else host))
-subprocess.run([sys.executable, 'build_ae.py', '--core', '--lang', a.lang, '--out', os.path.join(ext, 'jsx', 'jizura_core.jsx')], check=True, stdout=subprocess.DEVNULL)
+if a.core_source:
+    shutil.copyfile(a.core_source, os.path.join(ext, 'jsx', 'jizura_core.jsx'))
+else:
+    subprocess.run([sys.executable, 'build_ae.py', '--core', '--lang', a.lang, '--out', os.path.join(ext, 'jsx', 'jizura_core.jsx')], check=True, stdout=subprocess.DEVNULL)
 
 # 3) manifest (+ optional remote-debug file)
 manifest = open('cep/manifest.xml', encoding='utf-8').read().replace('@VERSION@', VERSION)

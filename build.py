@@ -1,14 +1,23 @@
 """Build the single-file browser editions from src/, app/ and vendor/: Japanese, English, 繁體中文, 简体中文, 한국어, Bahasa Indonesia, Tiếng Việt.
 usage: python3 build.py            -> index.html, en/, zh-hant/, zh-hans/, ko/, id/, vi/ index.html (GitHub Pages)
        python3 build.py --dev      -> also dev/www/jizura.js + dev/www/test.html for the test tools"""
-import glob, os, sys
+import argparse, glob, os
 from app.english import localize_body, localize_js
 from app import i18n
 ROOT = os.path.dirname(os.path.abspath(__file__))
 os.chdir(ROOT)
 read = lambda p: open(p, encoding='utf-8').read()
 VERSION = read('VERSION').strip()
-sources = sorted(glob.glob('src/*.js'))
+ap = argparse.ArgumentParser()
+ap.add_argument('--out', default='.', help='output root (default: legacy tracked pages)')
+ap.add_argument('--vite-input', action='store_true', help='emit temporary HTML/JS/CSS inputs for the root Vite build')
+ap.add_argument('--cep', action='store_true', help='include the local CEP bridge and exclude browser WebMCP')
+ap.add_argument('--lang', choices=[c for c, _, _, _ in i18n.EDITIONS])
+ap.add_argument('--dev', action='store_true')
+a = ap.parse_args()
+if a.cep and (not a.vite_input or a.lang not in ('ja', 'en')):
+    ap.error('--cep requires --vite-input and --lang ja/en')
+sources = sorted(f for f in glob.glob('src/*.js') if not (a.cep and f.endswith('13_webmcp.js')))
 js = '\n'.join(read(f) for f in sources)
 mux = '/*! mp4-muxer v5.2.2 | MIT License | (c) 2023 Vanilagy | see THIRD_PARTY_NOTICES.md */\n' + read('vendor/mp4-muxer.min.js')
 def build(lang):
@@ -32,6 +41,10 @@ def build(lang):
         if marker not in script: raise ValueError('Could not find browser UI entry point')
         inject = read('app/english.js') + ('\n' + i18n.labels_js(lang) if local else '')
         script = script.replace(marker, inject + '\n' + marker, 1)
+    if a.cep:
+        from app.english import localize_cep
+        bridge = read('cep/cep.js')
+        script += '\n' + (localize_cep(bridge) if english else bridge)
     alternates = '\n'.join(f'<link rel="alternate" hreflang="{hl}" href="{i18n.BASE}{f + "/" if f else ""}">' for c, f, hl, _ in i18n.EDITIONS)
     html_lang = dict((c, hl) for c, _, hl, _ in i18n.EDITIONS)[lang]
     html = f'''<!doctype html>
@@ -65,11 +78,22 @@ def build(lang):
 </body>
 </html>
 '''
-    target = (folder + '/' if folder else '') + 'index.html'
+    target = os.path.join(a.out, folder, 'index.html')
+    if a.vite_input:
+        # Temporary adapter for tasks 04/06: keep one lexical J scope until the
+        # engine and localization are modules. Only ignored inputs are assembled.
+        html = html.replace('<style>\n' + read('app/style.css') + '\n</style>', '')
+        html = html.replace('<script>\n' + mux + '\n</script>', '<script src="./mp4-muxer.js"></script>')
+        html = html.replace('<script>\n' + script + '\n</script>', '<script type="module" src="./entry.ts"></script>')
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        for name, content in [('legacy.js', script), ('style.css', read('app/style.css') + ('\nhtml.cep .lang-switch{display:none}\n' if a.cep and english else '')),
+                              ('entry.ts', read('build/entries/legacy.ts')), ('mp4-muxer.js', mux)]:
+            open(os.path.join(os.path.dirname(target), name), 'w', encoding='utf-8').write(content)
     os.makedirs(os.path.dirname(target) or '.', exist_ok=True)
     open(target, 'w', encoding='utf-8').write(html)
     print(target, len(html), 'bytes')
 for code, _, _, _ in i18n.EDITIONS:
+    if a.lang and code != a.lang: continue
     if code in i18n.MODULES and not i18n.has_module(code):
         print('skip', code, '(no translation module yet)'); continue
     build(code)
@@ -79,10 +103,11 @@ alts = ''.join(f'\n    <xhtml:link rel="alternate" hreflang="{hl}" href="{i18n.B
 alts += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{i18n.BASE}"/>'
 today = datetime.date.today().isoformat()
 urls = ''.join(f'\n  <url>\n    <loc>{i18n.BASE}{f + "/" if f else ""}</loc>\n    <lastmod>{today}</lastmod>{alts}\n  </url>' for c, f, hl, _ in i18n.EDITIONS)
-open('sitemap.xml', 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">' + urls + '\n</urlset>\n')
+open(os.path.join(a.out, 'sitemap.xml'), 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">' + urls + '\n</urlset>\n')
 print('sitemap.xml', len(i18n.EDITIONS), 'urls')
-if '--dev' in sys.argv:
-    os.makedirs('dev/www', exist_ok=True)
-    open('dev/www/jizura.js', 'w', encoding='utf-8').write(js)
-    open('dev/www/test.html', 'w', encoding='utf-8').write(read('dev/test.html'))
+if a.dev:
+    dev_out = os.path.join(a.out, 'dev/www')
+    os.makedirs(dev_out, exist_ok=True)
+    open(os.path.join(dev_out, 'jizura.js'), 'w', encoding='utf-8').write(js)
+    open(os.path.join(dev_out, 'test.html'), 'w', encoding='utf-8').write(read('dev/test.html'))
     print('dev/www ready: cd dev/www && python3 -m http.server 8765')

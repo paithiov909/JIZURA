@@ -56,5 +56,9 @@ const data = {
   moods: JJ.MOODS, moodOrder: Object.keys(JJ.MOODS), ghostPairs: JJ.GHOST_PAIRS,
   fonts: Object.fromEntries(Object.entries(JJ.FONTS).map(([k, f]) => [k, { label: f.label, family: f.family.replace(/"/g, ''), weight: f.weight, kind: f.kind, extra: !!f.extra }])),
 };
-fs.writeFileSync(path.join(ROOT, 'ae', 'data.json'), JSON.stringify(data));
+const args = process.argv.slice(2);
+if (args.length && (args.length !== 2 || args[0] !== '--out')) throw new Error('usage: node tools/export_ae_data.js [--out FILE]');
+const output = args.length ? path.resolve(args[1]) : path.join(ROOT, 'ae', 'data.json');
+fs.mkdirSync(path.dirname(output), { recursive: true });
+fs.writeFileSync(output, JSON.stringify(data));
 console.log('ok', data.styleOrder.length, 'styles;', JJ.GROUP_KEYS.map(g => g + ' ' + orders[g].length).join(', '), '; bytes', JSON.stringify(data).length);

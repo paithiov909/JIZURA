@@ -1,8 +1,6 @@
 {
   "name": "jizura-dev-tools",
   "private": true,
-  "description": "Test tools for JIZURA (AE panel mock needs acorn). Install with: cd dev && npm install",
-  "devDependencies": {
-    "acorn": "^8.14.0"
-  }
+  "description": "CommonJS boundary for legacy mocks. Dependencies are installed with npm ci at the repository root.",
+  "type": "commonjs"
 }

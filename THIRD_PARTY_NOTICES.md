@@ -35,3 +35,11 @@ The web app loads the following typefaces at runtime from Google Fonts (https://
 included in this repository. They are distributed by their authors under the SIL Open Font License 1.1:
 Noto Sans JP, Noto Serif JP, Dela Gothic One, Zen Kaku Gothic New, Zen Old Mincho, Kaisei Tokumin,
 M PLUS Rounded 1c, Mochiy Pop One, DotGothic16, Yuji Syuku, IBM Plex Mono, IBM Plex Sans JP.
+
+## Vite 8.3.1 (build tool and web module-preload helper)
+
+The migration workspace uses Vite under the MIT License. Hosted web bundles include its module-preload
+helper. Source: https://github.com/vitejs/vite. Each build output includes `LICENSE.vite.txt`, copied from
+the pinned npm package; `LICENSE.mp4-muxer.txt` and this notice accompany the explicit local muxer asset.
+The offline standalone HTML also embeds the complete muxer license. Other npm packages are development
+tools and are not copied into CEP extensions or the offline HTML.
