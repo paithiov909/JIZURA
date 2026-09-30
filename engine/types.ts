@@ -106,12 +106,10 @@ export interface RandomStream {
   pick<T>(values: T[]): T; chance(probability: number): boolean;
   wpick<T>(values: Array<{ w: number; v: T } | [T, number]>): T;
 }
-export interface EffectDefinition {
-  name: string; pack?: string; ae?: string; special?: boolean; w?: number; tags?: string[];
-  [key: string]: unknown;
-}
+export type { EffectDefinition } from '../effects/types.ts';
+import type { RegistryAPI } from '../effects/types.ts';
 /** Strict consumer boundary. Internal effect/item slots are transitional. */
-export interface Engine extends UtilityAPI {
+export interface Engine extends UtilityAPI, RegistryAPI {
   resolveStyle(project: Project): Style;
   layoutText(item: TextItem): GlyphLayout;
   measure(item: TextItem): { w: number; h: number; lay: GlyphLayout };
@@ -131,9 +129,6 @@ export interface Engine extends UtilityAPI {
   rng(seed: number): RandomStream;
   h(a: number, b?: number, c?: number, d?: number, e?: number): number;
   sid(text: string): number;
-  registry(group: EffectGroup): Record<string, EffectDefinition>;
-  order(group: EffectGroup): string[];
-  register(group: EffectGroup, key: string, definition: EffectDefinition, pack?: string): EffectDefinition;
   GROUP_KEYS: EffectGroup[]; CORE_ORDER: Partial<Record<EffectGroup, string[]>>;
   STYLE_ORDER: string[]; STYLES: Record<string, Style>; FONTS: Record<string, FontMetadata>;
   Renderer: new () => Renderer;

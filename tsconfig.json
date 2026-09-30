@@ -26,6 +26,9 @@
     "dev/cep-offline-spike/*.ts",
     "engine/**/*.ts",
     "tests/engine/**/*.mts",
-    "tests/engine/**/*.ts"
+    "tests/engine/**/*.ts",
+    "effects/**/*.ts",
+    "tests/effects/**/*.mts",
+    "tests/effects/**/*.ts"
   ]
 }

@@ -10,6 +10,7 @@ const python = process.env.PYTHON || 'python3';
 const run = (command: string, args: string[]): void => { execFileSync(command, args, { cwd: repo, stdio: 'inherit' }); };
 const version = (await readFile(path.join(repo, 'VERSION'), 'utf8')).trim();
 if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('VERSION must be a CEP-compatible x.y.z version');
+run(process.execPath, ['build/check-effects.mts']);
 const selected = process.argv[2] || 'all';
 if (!['all', 'web', 'offline', 'ae', 'cep'].includes(selected)) throw new Error(`Unknown target: ${selected}`);
 

@@ -4,27 +4,65 @@ JIZURA is a browser lyric-video (文字PV) engine: lyrics → timed "cuts", each
 **enter** (entrance) + **hold** (idle motion) + **exit** + 0..n **decor** graphics (+ treatment / background / camera / fx,
 which are handled by other packs). Everything renders into a Canvas2D in *design space* and is deterministic from a seed.
 
-A pack is ONE file: `src/11p_<pack>.js`. It only registers new entries; it never edits the core files.
+A pack is a source module in `effects/packs/<pack>.ts`, explicitly imported and installed in
+`effects/index.ts`. New packs do not edit engine core files. They are included in the build;
+there is no runtime downloading or third-party plugin loader.
 
-Existing implementations to read first (they show the house style and all the idioms):
-`src/06_layouts.js` (layouts, `J.mainDraw`, `J.drawFx`), `src/05_anim.js` (enter/hold/exit), `src/07_decor.js` (decor),
-`engine/text.ts` (`J.drawItem` — the text item model), `engine/renderer.ts` (`makeEnv` drawing helpers).
+Read `effects/core/animation.ts`, `effects/core/layouts.ts` (`mainDraw`, `drawFx`),
+`effects/core/decor.ts`, `engine/text.ts` (text items) and `engine/renderer.ts` (drawing helpers).
+`effects/types.ts` defines the group callbacks, metadata and AE declarations.
 
-## File skeleton
+## Source registration contract
 
-```js
-/* JIZURA pack: <pack> — <one line> */
-(() => {
-'use strict';
-const E = J.E;
-const P = '<pack>';            // pack name for J.register
-J.register('layout', 'myKey', { name: '日本語名', tags: ['pop', 'graphic'], w: 1, fits: n => n <= 12, plan(rng, cut, st) { … }, render(env) { … } }, P);
-})();
+```ts
+// effects/packs/example.ts
+import { defineEffectPack, installEffectPack } from '../registry.ts';
+import type { EffectRuntime } from '../types.ts';
+
+const pack = defineEffectPack({
+  id: 'example',
+  install({ register }) {
+    register('hold', 'examplePulse', {
+      name: '呼吸の例', tags: ['calm'], w: 0.5,
+      aeSupport: {
+        kind: 'fallback', id: 'breathe',
+        reason: 'No dedicated ES3 port; use the built-in breathing motion.',
+      },
+      apply(env, item, amount) {
+        item.sx = (item.sx || 1) *
+          (1 + 0.02 * Math.sin(env.ltb * 2) * amount * env.fx.motion);
+      },
+    });
+  },
+});
+export default function install(engine: EffectRuntime): void {
+  installEffectPack(engine, pack);
+}
 ```
-`J.register(group, key, def, pack)` adds the entry to the registry and to the order array. Keys must be unique camelCase and
-must not collide with existing keys (check `J.order(group)`). `name` (Japanese, short, 2–7 chars) is shown in the UI.
-`tags` = moods it suits, any of: `glitch calm pop graphic editorial emotional horror` (`horror` only for the horror set). `w` = base pick weight (1 normal; 0.4–0.7 for
-gimmicky / very specific looks; 1.2–1.5 for strong general-purpose ones).
+
+Import the installer in `effects/index.ts` and append `['example', installExample]` to
+`PACK_STAGES`. Keep the existing sequence intact: registration order affects seeded picks.
+The existing `CORE_ORDER` is captured before packs, and set marking runs after packs.
+A test-only version of this example is retained in `tests/effects/example-pack.ts`; it is
+excluded from production, so it adds no IDs to the baseline registry.
+
+`register(group, id, definition)` requires a unique camelCase ID **within that group**, a
+nonempty `name`, `tags`, a finite nonnegative `w`, the group's callbacks (and `layer` for decor),
+and `aeSupport`. Registration rejects duplicates even within the same pack, before updating
+registry or order. Types prevent using one group's callback contract for another group.
+`name` is the short Japanese UI label (normally 2–7 characters). Translate new labels using
+the locale dictionaries/label installers; AE/CEP distributions support Japanese and English.
+`tags` may contain `glitch calm pop graphic editorial emotional horror`; `w` is the base pick
+weight (1 normal, 0.4–0.7 for specific looks, 1.2–1.5 for general-purpose ones).
+`special`, `set`, `wa` and `extra` are optional selection metadata.
+
+The runtime still exposes `engine.register(group, id, definition, pack)` and `registerAll`
+through the compatibility facade, with the same validation. New packs use this strict
+contract. Migrated baseline modules alone use `registerBaseline`/`registerBaselineAll`:
+the original implicit tags/weights and absent core `pack` fields are preserved to keep
+exported AE metadata byte-for-byte equivalent. Baseline AE ports are explicitly declared in
+`effects/ae-implementations.ts`. `EffectValue` names dynamic item extensions and parameter
+bags in preserved algorithms; this does not claim that every drawing helper is fully typed.
 
 ## Design space & environment
 
@@ -88,7 +126,7 @@ Per-glyph functions: push `(i, g, n) => ({dx, dy, rot, s, sx, sy, a, color, ch, 
 into `it.charFns` (`i` glyph index, `n` glyph count, `g` glyph layout with `g.w g.h g.x g.y`; clipX/clipY are fractions of the glyph box,
 centre 0, e.g. `clipY:[-0.7, 0.2]` shows the top part). Return `null` for "no change". Per-stroke-piece functions (advanced):
 `it.pieceFns.push((ci, pj, piece, ox, oy) => J.PT(dx, dy, rot, s, stretch, stretchDir, a))`, return `J.PID` for rest and `null` for hidden;
-set `pieces: true` on the recipe (see `assemble`, `explode` in 05_anim.js).
+set `pieces: true` on the recipe (see `assemble`, `explode` in effects/core/animation.ts).
 
 ## Randomness, easing, colour
 Deterministic only — never `Math.random()` in render/draw/apply. In `plan(rng, …)` use `rng()`, `rng.range(a,b)`, `rng.int(a,b)`,
@@ -152,14 +190,23 @@ The planner turns the previous cut's exit and this cut's entrance into plain cut
 moods: [mood keys], schemes: [2–4 × {bg, fg, sub, accent, accent2, ink, dim, ghostA, ghostB, grad?, paper?}], fonts: {display, serif,
 body, mono}, texture: {grain, paper, scan}, ghost, bias: {layout, enter, exit}, decor: {decorKey: weight}, hud, glow?, glitchBoost?, useGrad? }`.
 
-### After Effects counterpart (`ae`)
-Every new **layout / enter / exit / hold / decor** entry must declare `ae: '<key>'` = its closest counterpart in the original set, used
-when the browser exports a plan to the After Effects panel:
-- layout: `center mixed vcols marquee tile scatter ring wave huge labels condensed gloss type diag circle stack pill`
-- enter: `cut assemble slice type pop drop stretch wipe blur spin flicker scramble zoom`
-- exit: `cut explode fall drift slice wipe shrink blur stretch scatter glitch`
-- hold: `still jitter drift breathe wave glitchtick`
-- decor: `brackets rings dots arrows slash sparks leaders waveform barcode grid stripes blobs bars shapes counter`
+### After Effects implementation or fallback
+
+Every new effect in **every group** must declare `aeSupport`:
+
+- `{ kind: 'implementation', id: '<same stable ID>' }` requires a dedicated ES3 implementation
+  registered in `ae/*.jsx`, plus that ID in the source catalog `effects/ae-implementations.ts`.
+- `{ kind: 'fallback', id: '<existing AE ID in this group>', reason: '<why>' }` explicitly
+  substitutes a ported effect. Validation reports the group, source ID, target and reason.
+  Registration sets the existing `ae` metadata field for the AE planner; project JSON and
+  AE plan version 2 keep the browser ID, with the AE registry resolving the fallback.
+
+`npm run build` validates registrations before any target builds. `npm run check:effects`
+loads the freshly built Japanese and English ES3 registries and compares their actual IDs
+with the source catalog. A declaration is not evidence of a successful Adobe render.
+Legacy `ae` counterpart fields and `engine/ae-plan.ts`'s `AE_MAP` remain unchanged for existing
+entries. They are planning/export compatibility metadata, separate from the direct port
+used when AE implements the original ID. Never change an existing ID or saved-plan schema.
 
 ### Fonts
 Catalogue keys: `gothic_black gothic_bold gothic_med gothic_light dela zenkaku mincho_black mincho_bold mincho mincho_light tokumin
@@ -169,7 +216,7 @@ elegant heavy mincho). Faces are fetched lazily only when a plan uses them, so p
 (When Google Fonts cannot be reached, sheets render with system fallback fonts — judge layout and motion, not the typeface.)
 
 ### 追加分 / 和風 (random-pick sets)
-`src/11q_sets.js` decides what random picks may use. Entries from packs not listed in `J.BASE_PACKS` count as 追加分 (extra) and
+`effects/sets.ts` decides what random picks may use. Entries from packs not listed in `J.BASE_PACKS` count as 追加分 (extra) and
 are only picked at random when the project's 「追加分の演出も使う」 switch is on. Entries built around a traditional Japanese
 object, pattern or motif (提灯, 障子, 扇, 家紋, 青海波 …) must be listed in `J.WA` (or carry `wa: true`) so the 「和風の演出も使う」
 switch can leave them out. New styles are extra unless listed in `J.BASE_STYLES`; new fonts belong in `J.EXTRA_FONTS`.
@@ -178,7 +225,7 @@ switch can leave them out. New styles are extra unless listed in `J.BASE_STYLES`
 Packs named `typo`, `kinetic` or `horror` (or entries with `set: '<name>'`) belong to a set with its own switch
 (`project.typo` / `project.kinetic` default on, `project.horror` default off) instead of 追加分. Styles join a set with `set: '<name>'`.
 The ホラー mood (`J.MOODS.horror`) is offered by おまかせ only when the horror switch is on, and おまかせ uses horror entries only in that mood.
-Keys use a set prefix (`ty`, `kn`, `hr`); new sets need an entry in `J.SETS` (src/11q_sets.js) and a switch in the UI.
+Keys use a set prefix (`ty`, `kn`, `hr`); new sets need an entry in `J.SETS` (effects/sets.ts) and a switch in the UI.
 
 ### Avoid near-duplicates
 Before designing, list what already exists in your group: `node -e` is not enough for visuals — run
@@ -192,7 +239,7 @@ pre-render), no unbounded loops (cap counts). Guard against `bb === null`, empty
 
 ## Testing loop (do this for every entry)
 ```
-python3 dev/build_test.py <pack> src/11p_<pack>.js          # builds dev/www/t_<pack>.html (core + your pack only)
+python3 dev/build_test.py <pack> effects/packs/<pack>.ts          # builds dev/www/t_<pack>.html (core + your pack only)
 (cd dev/www && python3 -m http.server 8765 &)                 # once
 python3 dev/pack_sheet.py --page t_<pack> --group layout --ids key1,key2 --out out/<pack>
 ```
@@ -203,14 +250,17 @@ Look at every sheet critically — overlapping text, text off-screen, ugly spaci
 graphics that pop instead of animating. `python3 dev/build_test.py all --all-packs && python3 dev/smoke_all.py t_all` renders every
 entry in many combinations; `python3 dev/overview.py <group> out/ov t_all` makes one overview grid per group (groups: layout enter exit hold decor treat bg cam fx trans style).
 `python3 dev/cost_scan.py t_all 45` lists entries whose frames take longer than 45 ms.
-Syntax check: `node -e "new Function(require('fs').readFileSync('src/11p_<pack>.js','utf8'))"`. Finally run `python3 build.py`.
+Run `npm run typecheck`, `npm run test:effects`, `npm run test:engine` and finally `npm run check`. All production/release outputs stay in ignored `dist/`.
 
 ## After Effects
-The AE panel (`ae/*.jsx`, built by `python3 build_ae.py`) has its own registry: `jzReg(group, key, def)` in `ae/05_reg.jsx`, core
-entries in `ae/20_motion.jsx` … `ae/45_core.jsx`, and one file per ported pack (`ae/p_*.jsx`). Planning metadata (weights, tags,
-追加分/和風 flags, fits, durations) is exported from the browser engine into `ae/data.json` by `node tools/export_ae_data.js`, so both
-planners make the same decisions. A browser entry that has no AE port yet is replaced by its closest ported entry (the `ae`
-counterpart, see "After Effects counterpart" above; `J.AE_MAP` in src/11_export.js can override it) — keep giving new entries an `ae`
-counterpart so browser → AE JSON exports keep working.
-Checks (need `cd dev && npm install` once): `node dev/ae_test.js` builds every style × several seeds on an emulated AE object model
-in an ES3 realm; `node dev/ae_check.js --group layout --ids all` checks the ported parts of one group.
+The AE panel has its own ES3 registry: `jzReg(group, key, def)` in `ae/05_reg.jsx`, core
+entries in `ae/20_motion.jsx` … `ae/45_core.jsx`, and one file per ported pack (`ae/p_*.jsx`).
+`npm run build:ae` exports browser planning metadata into ignored `dist/.inputs/ae/data.json`
+and builds both languages. The weights, tags, selection flags, fits tables and durations keep
+both planners in step. For an effect without an AE port, the AE planner uses its declared
+`ae` fallback (`AE_MAP` in `engine/ae-plan.ts` still overrides legacy counterparts).
+
+Run `npm run check` for both language builds, ES3 syntax, catalog validation and AE
+object-model mocks; `npm run test:ae` reruns the model suites after a build. These mocks do
+not certify an actual After Effects installation. Keep Adobe rendering/CEP installation
+results separate. Detailed actual-environment gates belong to tasks 09–11.

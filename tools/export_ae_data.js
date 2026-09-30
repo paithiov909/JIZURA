@@ -17,8 +17,11 @@ global.DOMMatrix = function () { return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }; 
 global.requestAnimationFrame = noop;
 async function main() {
 const { createEngine } = await import('../engine/index.ts');
+const { validateEffects } = await import('../effects/registry.ts');
 const JJ = createEngine(fs.readFileSync(path.join(ROOT, 'VERSION'), 'utf8').trim());
 
+const validation = validateEffects(JJ);
+for (const fallback of validation.fallbacks) console.warn(`AE fallback ${fallback.group}.${fallback.id} -> ${fallback.target}: ${fallback.reason}`);
 const DUR = []; for (let d = 0.2; d <= 4.001; d += 0.1) DUR.push(+d.toFixed(2));
 const NS = [1, 2, 3, 4, 6, 8, 12, 16, 24];
 const r3 = x => Math.round(x * 1000) / 1000;
