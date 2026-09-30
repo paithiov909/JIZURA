@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: kinetic (3) — word-timed cameras, transitions, treatments and decor */
 (() => {
 'use strict';
@@ -369,3 +371,5 @@ reg('decor', 'knWordTicks', {
   } });
 
 })();
+
+}

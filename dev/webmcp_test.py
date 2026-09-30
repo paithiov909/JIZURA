@@ -12,6 +12,7 @@ import io
 import wave
 from pathlib import Path
 import threading
+import subprocess
 from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,9 +31,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 async def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument('--root', type=Path, default=ROOT, help='fresh generated page root')
     ap.add_argument('--browser', default='/usr/bin/google-chrome')
     args = ap.parse_args()
-    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Handler, directory=str(ROOT)))
+    subprocess.run(['node', 'build/build-engine-test.mts'], cwd=ROOT, check=True)
+    adapter = (ROOT / 'src/13_webmcp.js').read_text(encoding='utf-8').replace('export default function install(J)', 'function installWebMCP(J)') + '\ninstallWebMCP(window.J);'
+
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Handler, directory=str(args.root.resolve())))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     base = f'http://127.0.0.1:{server.server_port}/'
     async with async_playwright() as p:
@@ -182,7 +187,7 @@ async def main():
         await page.evaluate("document.getElementById('resetDlg').close('reset')")
         await page.wait_for_function("!J.ui.loading.reset && J.ui.project.lyrics === ''")
         assert not (await state())['audio']['loaded']
-        await page.add_script_tag(content=(ROOT / 'src/13_webmcp.js').read_text())
+        await page.add_script_tag(content=adapter)
         assert await page.evaluate('__tools.size') == 18
         assert not errors, errors
         print('PASS: 18 tools, editing, histories, locks, validation, JSON, reset, real MP4/PNG exports and export outcomes')
@@ -191,8 +196,9 @@ async def main():
         pg = await browser.new_page()
         await pg.set_content('<html><body></body></html>')
         await pg.evaluate(MOCK)
-        for source in sorted((ROOT / 'src').glob('*.js')):
-            await pg.add_script_tag(content=source.read_text())
+        await pg.add_script_tag(content=(ROOT / 'dist/task04/engine/engine.js').read_text(encoding='utf-8'))
+        await pg.evaluate("window.J = window.createJizuraEngine(" + json.dumps((ROOT / 'VERSION').read_text().strip()) + ")")
+        await pg.add_script_tag(content=adapter)
         assert await pg.evaluate('__tools.size === 0 && !J.ui && !!J.plan')
         await pg.close()
         # All editions register identical tool names and their UI remains live.

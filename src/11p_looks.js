@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: looks — text treatments, background graphics, camera moves and post / transition effects */
 (() => {
 'use strict';
@@ -1289,3 +1291,5 @@ fxReg('splitSlide', { name: '上下スライド', tags: ['graphic', 'pop', 'glit
     }
   } });
 })();
+
+}

@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — which entries random picks may use
    1) 追加分 (extra): everything added after the first public
@@ -54,3 +56,5 @@ J.randomOk = (project, g, k) => {
   return true;
 };
 })();
+
+}

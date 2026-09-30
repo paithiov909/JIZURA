@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: exitHold — 36 exits (退場) + 20 holds (待機中の動き)
    Exits:  p 0 (rest) → 1 (fully gone).   Holds: amt 0..1 × fx.motion, subtle idle motion.
    Everything is relative to it.size / the item box and deterministic (it.seed, glyph index, env.step). */
@@ -1101,3 +1103,5 @@ H.echoTrail = {
 
 for (const k of Object.keys(H)) J.register('hold', k, H[k], P);
 })();
+
+}

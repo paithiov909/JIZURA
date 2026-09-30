@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: enterB — 47 more entrances (physics, paper, light, digital devices, graphic masks) */
 (() => {
 'use strict';
@@ -1490,3 +1492,5 @@ function dRange(it, b) {
 
 for (const k of Object.keys(DEFS)) J.register('enter', k, DEFS[k], P);
 })();
+
+}

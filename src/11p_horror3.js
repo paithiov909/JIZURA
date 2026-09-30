@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: horror (3/3) — decorations, backgrounds, camera moves, screen effects, cut transitions and three styles */
 (() => {
 'use strict';
@@ -553,3 +555,5 @@ for (const [k, v] of Object.entries(S)) {
   if (!J.STYLE_ORDER.includes(k)) J.STYLE_ORDER.push(k);
 }
 })();
+
+}

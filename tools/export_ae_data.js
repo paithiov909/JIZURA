@@ -2,7 +2,7 @@
 // style packs, fonts, moods and — for every expression group — the web order and the planning metadata
 // (weights, mood tags, 追加分/和風 flags, fits tables, durations …). The AE panel re-implements the drawing;
 // the decisions about WHAT to use come from this file so both planners stay in step.
-const vm = require('vm'), fs = require('fs'), path = require('path');
+const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
 const noop = () => {};
 const ctx2d = new Proxy({}, { get: (t, k) => k === 'measureText' ? (() => ({ width: 100, actualBoundingBoxAscent: 80, actualBoundingBoxDescent: 10 }))
@@ -15,9 +15,9 @@ global.OffscreenCanvas = function () { return el(); };
 global.Path2D = function () { return new Proxy({}, { get: () => noop }); };
 global.DOMMatrix = function () { return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }; };
 global.requestAnimationFrame = noop;
-for (const f of fs.readdirSync(path.join(ROOT, 'src')).filter(f => f.endsWith('.js') && f !== '12_ui.js').sort())
-  vm.runInThisContext(fs.readFileSync(path.join(ROOT, 'src', f), 'utf8'), { filename: f });
-const JJ = global.J;
+async function main() {
+const { createEngine } = await import('../engine/index.ts');
+const JJ = createEngine(fs.readFileSync(path.join(ROOT, 'VERSION'), 'utf8').trim());
 
 const DUR = []; for (let d = 0.2; d <= 4.001; d += 0.1) DUR.push(+d.toFixed(2));
 const NS = [1, 2, 3, 4, 6, 8, 12, 16, 24];
@@ -62,3 +62,6 @@ const output = args.length ? path.resolve(args[1]) : path.join(ROOT, 'ae', 'data
 fs.mkdirSync(path.dirname(output), { recursive: true });
 fs.writeFileSync(output, JSON.stringify(data));
 console.log('ok', data.styleOrder.length, 'styles;', JJ.GROUP_KEYS.map(g => g + ' ' + orders[g].length).join(', '), '; bytes', JSON.stringify(data).length);
+
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: treattrans — text treatments (neon, chrome, karaoke, reflection, ransom…) + cut-to-cut transitions (カット間のつなぎ) */
 (() => {
 'use strict';
@@ -1130,3 +1132,5 @@ trReg('pixelate', { name: 'モザイク転換', tags: ['glitch', 'pop'], w: 0.6,
   } });
 
 })();
+
+}

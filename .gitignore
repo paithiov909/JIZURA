@@ -4,3 +4,6 @@ __pycache__/
 /dist/
 # One root install; legacy dev tools resolve dependencies from it.
 node_modules/
+
+# Diagnostic browser bundles emitted by build.py/dev/build_test.py.
+/dev/www/

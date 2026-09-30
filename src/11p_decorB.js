@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: decorB — 55 more graphic accents: Japanese motifs, sci-fi HUD, print & stationery, nature / atmosphere, graphic shapes, UI widgets */
 (() => {
 'use strict';
@@ -2414,3 +2416,5 @@ const SETTLE = ['kamon', 'hanabi', 'chochin', 'shimenawa', 'sensu', 'tsukiKumo',
 for (const k of SETTLE) if (DEF[k]) DEF[k].draw = withSettle(DEF[k].draw);
 for (const k of Object.keys(DEF)) J.register('decor', k, DEF[k], PK);
 })();
+
+}

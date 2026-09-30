@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: fxB — more post-processing / accent effects: lens, print, film, glitch and manga-style overlays */
 (() => {
 'use strict';
@@ -805,3 +807,5 @@ fx('loopScroll', { name: '横ループ', tags: ['pop', 'graphic', 'glitch'], w: 
   } });
 
 })();
+
+}

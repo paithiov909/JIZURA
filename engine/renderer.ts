@@ -1,3 +1,7 @@
+import type { Plan, Cut, FrameOptions } from './types.ts';
+import type { LegacyFacade, LegacyValue } from './legacy-types.ts';
+
+export default function install(J: LegacyFacade): void {
 /* ============================================================
    JIZURA — frame renderer: background, chroma passes, HUD, post FX
    ============================================================ */
@@ -5,9 +9,9 @@
 'use strict';
 const E = J.E;
 
-const mk = (w, h) => { const c = document.createElement('canvas'); c.width = Math.max(1, w | 0); c.height = Math.max(1, h | 0); return c; };
+const mk = (w: LegacyValue, h: LegacyValue) => { const c = document.createElement('canvas'); c.width = Math.max(1, w | 0); c.height = Math.max(1, h | 0); return c; };
 
-J.cutAt = (plan, t) => {
+J.cutAt = (plan: Plan, t: number): Cut | null => {
   const cs = plan.cuts; let lo = 0, hi = cs.length - 1, ans = -1;
   while (lo <= hi) { const m = (lo + hi) >> 1; if (cs[m].start <= t) { ans = m; lo = m + 1; } else hi = m - 1; }
   if (ans < 0) return null;
@@ -16,28 +20,45 @@ J.cutAt = (plan, t) => {
 };
 
 class Renderer {
+  declare scratch: LegacyValue;
+  declare small: LegacyValue;
+  declare tiny: LegacyValue;
+  declare grain: LegacyValue;
+  declare scan: LegacyValue;
+  declare paperCache: LegacyValue;
+  declare filterOK: LegacyValue;
+  declare camLayer: LegacyValue;
+  declare transA: LegacyValue;
+  declare transB: LegacyValue;
+  declare transC: LegacyValue;
+  declare morphCache: LegacyValue;
+  declare morphCv: LegacyValue;
+  declare guardP: LegacyValue;
+  declare guardM: LegacyValue;
+  declare small2: LegacyValue;
+
   constructor() {
     this.scratch = mk(2, 2); this.small = mk(2, 2); this.tiny = mk(2, 2);
     this.grain = [];
     for (let k = 0; k < 4; k++) {
-      const g = mk(256, 256), x = g.getContext('2d'), id = x.createImageData(256, 256);
+      const g = mk(256, 256), x = g.getContext('2d')!, id = x.createImageData(256, 256);
       for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
       x.putImageData(id, 0, 0); this.grain.push(g);
     }
-    const sl = mk(1, 4), sx = sl.getContext('2d'); sx.fillStyle = '#fff'; sx.fillRect(0, 0, 1, 4); sx.fillStyle = '#000'; sx.fillRect(0, 3, 1, 1);
+    const sl = mk(1, 4), sx = sl.getContext('2d')!; sx.fillStyle = '#fff'; sx.fillRect(0, 0, 1, 4); sx.fillStyle = '#000'; sx.fillRect(0, 3, 1, 1);
     this.scan = sl;
     this.paperCache = new Map();
-    this.filterOK = (() => { try { const c = mk(4, 4).getContext('2d'); c.filter = 'blur(2px)'; return c.filter === 'blur(2px)'; } catch (e) { return false; } })();
+    this.filterOK = (() => { try { const c = mk(4, 4).getContext('2d')!; c.filter = 'blur(2px)'; return c.filter === 'blur(2px)'; } catch (e) { return false; } })();
   }
 
-  paper(W, H) {
+  paper(W: LegacyValue, H: LegacyValue) {
     const key = W + 'x' + H;
     let p = this.paperCache.get(key);
     if (p) return p;
     const w = Math.round(W / 2), h = Math.round(H / 2);
-    p = mk(w, h); const x = p.getContext('2d');
+    p = mk(w, h); const x = p.getContext('2d')!;
     x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
-    const lo = mk(Math.ceil(w / 24), Math.ceil(h / 24)), lx = lo.getContext('2d'), ld = lx.createImageData(lo.width, lo.height);
+    const lo = mk(Math.ceil(w / 24), Math.ceil(h / 24)), lx = lo.getContext('2d')!, ld = lx.createImageData(lo.width, lo.height);
     for (let i = 0; i < ld.data.length; i += 4) { const v = 225 + Math.random() * 30; ld.data[i] = v; ld.data[i + 1] = v - 2; ld.data[i + 2] = v - 6; ld.data[i + 3] = 255; }
     lx.putImageData(ld, 0, 0);
     x.imageSmoothingEnabled = true; x.globalAlpha = 0.9; x.drawImage(lo, 0, 0, w, h); x.globalAlpha = 1;
@@ -52,10 +73,10 @@ class Renderer {
     return p;
   }
 
-  ensure(c, w, h) { if (c.width !== w || c.height !== h) { c.width = w; c.height = h; } return c; }
+  ensure(c: LegacyValue, w: LegacyValue, h: LegacyValue) { if (c.width !== w || c.height !== h) { c.width = w; c.height = h; } return c; }
 
   /* main entry: draw frame at time t into ctx (canvas px = design * scale) */
-  frame(ctx, plan, t, opt = {}) {
+  frame(ctx: CanvasRenderingContext2D, plan: Plan, t: number, opt: FrameOptions = {}) {
     const W = plan.W, H = plan.H, scale = opt.scale || 1;
     const cw = ctx.canvas.width, ch = ctx.canvas.height;
     const fx = plan.fx, st = plan.style, fps = plan.fps;
@@ -108,7 +129,7 @@ class Renderer {
     const chroma = (fx.chroma ?? 0.7) * (st.ghost ?? 1) * (1 + spike + beatPulse);
     const step = Math.floor(tq / clock + 1e-6);
     const beatInfo = plan.beats && plan.beats.length ? beatAt(plan.beats, tq) : null;
-    const energy = plan.energy ? plan.energy[Math.min(plan.energy.length - 1, Math.max(0, Math.floor(t * plan.energyRate)))] : null;
+    const energy = plan.energy ? plan.energy[Math.min(plan.energy.length - 1, Math.max(0, Math.floor(t * plan.energyRate!)))] : null;
     // ---------- background graphic (per line) ----------
     // 透過PNG 前景／後景 (opt.layer): 'back' = background graphic + the decorations behind the lyrics, 'front' = the rest
     const layer = opt.transparent ? opt.layer || null : null;
@@ -121,7 +142,7 @@ class Renderer {
     }
     const shx = J.rs(step, 71) * shake * 16 * u, shy = J.rs(step, 72) * shake * 11 * u;
     // ---------- content passes ----------
-    const passes = [
+    const passes: LegacyValue = [
       { pass: 'B', lag: 1.6 / 24, off: [-3.4 * chroma * u, -1.3 * chroma * u] },
       { pass: 'A', lag: 0.8 / 24, off: [3.2 * chroma * u, 1.9 * chroma * u] },
       { pass: 'main', lag: 0, off: [0, 0] },
@@ -131,10 +152,10 @@ class Renderer {
     const MC = !opt.noTrans && !opt.glyphLog && mainCut && mainCut.morph && mainCut.index > 0 ? mainCut : null;
     const mPrev = MC ? plan.cuts[MC.index - 1] : null, mlt = MC ? tq - MC.start : 0;
     const morphOn = !!(MC && mPrev && mlt < MC.morph.dur && Math.abs(mPrev.end - MC.start) < 0.06);
-    let mainBB = null, mainEnv = null;
+    let mainBB: LegacyValue = null, mainEnv: LegacyValue = null;
     // camera blur (focus pulls etc.) is applied ONCE to the whole content layer — a blur filter on every
     // individual draw call is extremely slow when a layout draws many text rows
-    let layerBlur = 0, LX = null;
+    let layerBlur = 0, LX: LegacyValue = null;
     if (allowFilter && mainCut && J.CAMERA[mainCut.cam] && mainCut.cam !== 'push') {
       try {
         const e0 = this.makeEnv(ctx, plan, mainCut, sc, { pass: 'main', t: tq, lt: tq - mainCut.start, ltb: tq - mainCut.start, step, scale, allowFilter, energy, beat: beatInfo });
@@ -143,7 +164,7 @@ class Renderer {
       } catch (e) {}
       if (layerBlur) {
         const L = this.ensure(this.camLayer || (this.camLayer = mk(2, 2)), cw, ch);
-        LX = L.getContext('2d'); LX.setTransform(1, 0, 0, 1, 0, 0); LX.globalAlpha = 1; LX.globalCompositeOperation = 'source-over'; LX.filter = 'none';
+        LX = L.getContext('2d')!; LX.setTransform(1, 0, 0, 1, 0, 0); LX.globalAlpha = 1; LX.globalCompositeOperation = 'source-over'; LX.filter = 'none';
         LX.clearRect(0, 0, cw, ch); LX.setTransform(scale, 0, 0, scale, 0, 0);
       }
     }
@@ -169,7 +190,7 @@ class Renderer {
       if (Z) { X.beginPath(); X.rect(Z.x, Z.y, Z.w, Z.h); X.clip(); X.translate(Z.x, Z.y); }
       const W = env.W, H = env.H;
       // camera move for this cut (default: slow push-in)
-      let cam = null;
+      let cam: LegacyValue = null;
       const CD = J.CAMERA[cut.cam] || J.CAMERA.push;
       try { cam = CD.get(env, cut.camP || {}); } catch (e) { cam = null; }
       cam = cam || {};
@@ -199,11 +220,11 @@ class Renderer {
       const prev = plan.cuts[mainCut.index - 1];
       if (lt < dur && prev && Math.abs(prev.end - mainCut.start) < 0.06) {
         const A = this.ensure(this.transA || (this.transA = mk(2, 2)), cw, ch), B = this.ensure(this.transB || (this.transB = mk(2, 2)), cw, ch);
-        const bx = B.getContext('2d'); bx.setTransform(1, 0, 0, 1, 0, 0); bx.globalCompositeOperation = 'copy'; bx.drawImage(ctx.canvas, 0, 0); bx.globalCompositeOperation = 'source-over';
-        this.frame(A.getContext('2d'), plan, Math.max(prev.start, prev.end - 1e-3), Object.assign({}, opt, { noTrans: true, noPost: true, noHud: true }));
+        const bx = B.getContext('2d')!; bx.setTransform(1, 0, 0, 1, 0, 0); bx.globalCompositeOperation = 'copy'; bx.drawImage(ctx.canvas, 0, 0); bx.globalCompositeOperation = 'source-over';
+        this.frame(A.getContext('2d')!, plan, Math.max(prev.start, prev.end - 1e-3), Object.assign({}, opt, { noTrans: true, noPost: true, noHud: true }));
         const psc = st.schemes[prev.scheme % st.schemes.length] || st.schemes[0];
         ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
-        try { J.TRANS[mainCut.trans].draw(ctx, A, B, J.clamp(lt / dur), { cw, ch, sc, scPrev: psc, st, P: mainCut.transP || {}, step, t, scale, allowFilter, seed: mainCut.seed | 0, tmp: (w, h) => this.ensure(this.transC || (this.transC = mk(2, 2)), w, h) }); }
+        try { J.TRANS[mainCut.trans].draw(ctx, A, B, J.clamp(lt / dur), { cw, ch, sc, scPrev: psc, st, P: mainCut.transP || {}, step, t, scale, allowFilter, seed: mainCut.seed | 0, tmp: (w: LegacyValue, h: LegacyValue) => this.ensure(this.transC || (this.transC = mk(2, 2)), w, h) }); }
         catch (e) { console.warn('trans', mainCut.trans, e); }
         ctx.restore();
       }
@@ -223,12 +244,12 @@ class Renderer {
      black: as rendered (black = empty).  green: screened onto #00FF00, so black → green, white stays white and
      the soft greys (ghosts, glow, fades) turn into partial transparency when keyed — the same result as
      screen-blending the black version. */
-  keyFinish(ctx, key, opt) {
+  keyFinish(ctx: LegacyValue, key: LegacyValue, opt: LegacyValue) {
     const cw = ctx.canvas.width, ch = ctx.canvas.height;
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none';
     if (opt.transparent) {
       // keep the alpha: desaturate through a copy
-      const S = this.ensure(this.scratch, cw, ch), sx = S.getContext('2d');
+      const S = this.ensure(this.scratch, cw, ch), sx = S.getContext('2d')!;
       sx.setTransform(1, 0, 0, 1, 0, 0); sx.globalAlpha = 1; sx.globalCompositeOperation = 'copy';
       if (this.filterOK) { sx.filter = 'grayscale(1)'; sx.drawImage(ctx.canvas, 0, 0); sx.filter = 'none'; }
       else {
@@ -246,29 +267,29 @@ class Renderer {
   }
 
   /* モーフ: where every glyph of the previous cut rests at its end, and where this cut's glyphs land (cached) */
-  morphLogs(plan, A, B, cw, ch, scale, opt) {
+  morphLogs(plan: LegacyValue, A: LegacyValue, B: LegacyValue, cw: LegacyValue, ch: LegacyValue, scale: LegacyValue, opt: LegacyValue) {
     if (!this.morphCache || this.morphCache.plan !== plan) this.morphCache = { plan, map: new Map() };
     const key = A.index + ':' + B.index + ':' + cw + 'x' + ch + ':' + scale.toFixed(4), M = this.morphCache.map;
     if (M.has(key)) return M.get(key);
-    const cv = this.ensure(this.morphCv || (this.morphCv = mk(2, 2)), cw, ch), x = cv.getContext('2d');
-    const o2 = { scale, noPost: true, noHud: true, noTrans: true, noGhost: true, transparent: opt.transparent, fast: true };
-    const la = [], lb = [];
+    const cv = this.ensure(this.morphCv || (this.morphCv = mk(2, 2)), cw, ch), x = cv.getContext('2d')!;
+    const o2: LegacyValue = { scale, noPost: true, noHud: true, noTrans: true, noGhost: true, transparent: opt.transparent, fast: true };
+    const la: LegacyValue = [], lb: LegacyValue = [];
     this.frame(x, plan, Math.max(A.start, A.end - 1e-3), Object.assign({}, o2, { glyphLog: la }));
     this.frame(x, plan, B.start + B.morph.dur + 1e-3, Object.assign({}, o2, { glyphLog: lb }));
-    const r = { A: la, B: lb };
+    const r: LegacyValue = { A: la, B: lb };
     M.set(key, r); if (M.size > 24) M.delete(M.keys().next().value);
     return r;
   }
-  drawMorph(ctx, L, e, allowFilter) {
-    const used = new Array(L.A.length).fill(false), pairs = [];
+  drawMorph(ctx: LegacyValue, L: LegacyValue, e: LegacyValue, allowFilter: LegacyValue) {
+    const used = new Array(L.A.length).fill(false), pairs: LegacyValue = [];
     for (const g of L.B) {
       let j = -1;
       for (let q = 0; q < L.A.length; q++) if (!used[q] && L.A[q].ch === g.ch) { j = q; break; }
       if (j >= 0) used[j] = true;
       pairs.push([j >= 0 ? L.A[j] : null, g]);
     }
-    const det = m => Math.sqrt(Math.abs(m[0] * m[3] - m[1] * m[2])) || 1;
-    const put = (g, col, alpha, blur) => {
+    const det = (m: LegacyValue) => Math.sqrt(Math.abs(m[0] * m[3] - m[1] * m[2])) || 1;
+    const put = (g: LegacyValue, col: LegacyValue, alpha: LegacyValue, blur: LegacyValue) => {
       if (alpha <= 0.01) return;
       ctx.globalAlpha = Math.min(1, alpha);
       ctx.filter = allowFilter && blur > 0.4 ? `blur(${blur.toFixed(1)}px)` : 'none';
@@ -278,7 +299,7 @@ class Renderer {
     };
     ctx.save();
     // the rest of the old line melts away (drips, swells, blurs)…
-    L.A.forEach((a, q) => {
+    L.A.forEach((a: LegacyValue, q: LegacyValue) => {
       if (used[q]) return;
       ctx.setTransform(a.m[0], a.m[1], a.m[2], a.m[3], a.m[4], a.m[5]);
       ctx.translate(0, e * a.px * 0.45); ctx.scale(1 + e * 0.12, 1 + e * 0.6);
@@ -287,7 +308,7 @@ class Renderer {
     // …shared characters glide to their new place, new ones condense out of a blur
     for (const [a, b] of pairs) {
       if (a) {
-        const m = a.m.map((v, i) => v + (b.m[i] - v) * e);
+        const m = a.m.map((v: LegacyValue, i: LegacyValue) => v + (b.m[i] - v) * e);
         ctx.setTransform(m[0], m[1], m[2], m[3], m[4], m[5]);
         const k = (a.px / b.px) + (1 - a.px / b.px) * e; ctx.scale(k, k);
         put(b, /^#[0-9a-f]{3,8}$/i.test(a.color) && /^#[0-9a-f]{3,8}$/i.test(b.color) ? J.mix(a.color, b.color, e) : (e < 0.5 ? a.color : b.color), a.a + (b.a - a.a) * e, 0);
@@ -300,7 +321,7 @@ class Renderer {
     }
     ctx.restore();
   }
-  makeEnv(ctx, plan, cut, sc, o) {
+  makeEnv(ctx: LegacyValue, plan: LegacyValue, cut: LegacyValue, sc: LegacyValue, o: LegacyValue) {
     const W = o.zone ? o.zone.w : plan.W, H = o.zone ? o.zone.h : plan.H;   // 中央を空ける: a cut lives in its side band
     const env = Object.assign({ ctx, W, H, sc, st: plan.style, fx: plan.fx, fps: plan.fps, cut, plan }, o);
     if (cut) {
@@ -308,19 +329,19 @@ class Renderer {
       env.pOut = cut.outDur > 0 ? J.clamp((o.lt - (cut.dur - cut.outDur)) / cut.outDur) : 0;
     } else { env.pIn = 1; env.pOut = 0; }
     const ghost = env.pass !== 'main';
-    const colOf = (c, g) => (ghost ? (g === false ? null : env.passColor) : c);
-    env.draw = it => J.drawItem(env, it);
-    env.rect = (x, y, w, h, c, a = 1, g = true) => { const col = colOf(c, g); if (!col || a <= 0) return; ctx.globalAlpha = a; ctx.fillStyle = col; ctx.fillRect(x, y, w, h); ctx.globalAlpha = 1; };
-    env.line = (pts, c, lw = 1, a = 1, g = true) => {
+    const colOf = (c: LegacyValue, g: LegacyValue) => (ghost ? (g === false ? null : env.passColor) : c);
+    env.draw = (it: LegacyValue) => J.drawItem(env, it);
+    env.rect = (x: LegacyValue, y: LegacyValue, w: LegacyValue, h: LegacyValue, c: LegacyValue, a: LegacyValue = 1, g: LegacyValue = true) => { const col = colOf(c, g); if (!col || a <= 0) return; ctx.globalAlpha = a; ctx.fillStyle = col; ctx.fillRect(x, y, w, h); ctx.globalAlpha = 1; };
+    env.line = (pts: LegacyValue, c: LegacyValue, lw: LegacyValue = 1, a: LegacyValue = 1, g: LegacyValue = true) => {
       const col = colOf(c, g); if (!col || a <= 0 || pts.length < 2) return;
       ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = 'miter'; ctx.lineCap = 'butt';
       ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke(); ctx.globalAlpha = 1;
     };
-    env.polyPartial = (pts, e, c, lw = 1, a = 1, g = true) => {
+    env.polyPartial = (pts: LegacyValue, e: LegacyValue, c: LegacyValue, lw: LegacyValue = 1, a: LegacyValue = 1, g: LegacyValue = true) => {
       if (e <= 0) return;
-      let L = 0; const seg = [];
+      let L = 0; const seg: LegacyValue = [];
       for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); seg.push(d); L += d; }
-      let rem = L * J.clamp(e); const out = [pts[0]];
+      let rem = L * J.clamp(e); const out: LegacyValue = [pts[0]];
       for (let i = 1; i < pts.length && rem > 0; i++) {
         const d = seg[i - 1];
         if (rem >= d) { out.push(pts[i]); rem -= d; }
@@ -328,7 +349,7 @@ class Renderer {
       }
       env.line(out, c, lw, a, g);
     };
-    env.circle = (cx, cy, r, fill, stroke, lw = 1, a = 1, g = true) => {
+    env.circle = (cx: LegacyValue, cy: LegacyValue, r: LegacyValue, fill: LegacyValue, stroke: LegacyValue, lw: LegacyValue = 1, a: LegacyValue = 1, g: LegacyValue = true) => {
       if (r <= 0 || a <= 0) return;
       const f = fill ? colOf(fill, g) : null, s = stroke ? colOf(stroke, g) : null;
       if (!f && !s) return;
@@ -337,11 +358,11 @@ class Renderer {
       if (s) { ctx.strokeStyle = s; ctx.lineWidth = lw; ctx.stroke(); }
       ctx.globalAlpha = 1;
     };
-    env.arc = (cx, cy, r, a0, a1, c, lw = 1, a = 1, g = true) => {
+    env.arc = (cx: LegacyValue, cy: LegacyValue, r: LegacyValue, a0: LegacyValue, a1: LegacyValue, c: LegacyValue, lw: LegacyValue = 1, a: LegacyValue = 1, g: LegacyValue = true) => {
       const col = colOf(c, g); if (!col || a <= 0 || r <= 0) return;
       ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); ctx.arc(cx, cy, r, a0 * J.DEG, a1 * J.DEG); ctx.stroke(); ctx.globalAlpha = 1;
     };
-    env.rrect = (x, y, w, h, r, fill, a = 1, g = true, stroke, lw = 1) => {
+    env.rrect = (x: LegacyValue, y: LegacyValue, w: LegacyValue, h: LegacyValue, r: LegacyValue, fill: LegacyValue, a: LegacyValue = 1, g: LegacyValue = true, stroke: LegacyValue, lw: LegacyValue = 1) => {
       if (a <= 0 || w <= 0 || h <= 0) return;
       const f = fill ? (ghost ? colOf(fill, g) : fill) : null, s = stroke ? colOf(stroke, g) : null;
       if (!f && !s) return;
@@ -352,14 +373,14 @@ class Renderer {
       if (s) { ctx.strokeStyle = s; ctx.lineWidth = lw; ctx.stroke(); }
       ctx.globalAlpha = 1;
     };
-    env.poly = (pts, c, a = 1, g = true) => {
+    env.poly = (pts: LegacyValue, c: LegacyValue, a: LegacyValue = 1, g: LegacyValue = true) => {
       const col = colOf(c, g); if (!col || a <= 0) return;
-      ctx.globalAlpha = a; ctx.fillStyle = col; ctx.beginPath(); pts.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+      ctx.globalAlpha = a; ctx.fillStyle = col; ctx.beginPath(); pts.forEach((p: LegacyValue, i: LegacyValue) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
     };
-    env.blob = (pts, c, a = 1, g = true) => {
+    env.blob = (pts: LegacyValue, c: LegacyValue, a: LegacyValue = 1, g: LegacyValue = true) => {
       const col = colOf(c, g); if (!col || a <= 0) return;
       ctx.globalAlpha = a; ctx.fillStyle = col; ctx.beginPath();
-      const n = pts.length, mid = (i) => [(pts[i % n][0] + pts[(i + 1) % n][0]) / 2, (pts[i % n][1] + pts[(i + 1) % n][1]) / 2];
+      const n = pts.length, mid = (i: LegacyValue) => [(pts[i % n][0] + pts[(i + 1) % n][0]) / 2, (pts[i % n][1] + pts[(i + 1) % n][1]) / 2];
       const m0 = mid(0); ctx.moveTo(m0[0], m0[1]);
       for (let i = 1; i <= n; i++) { const p = pts[i % n], m = mid(i); ctx.quadraticCurveTo(p[0], p[1], m[0], m[1]); }
       ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
@@ -367,12 +388,12 @@ class Renderer {
     return env;
   }
 
-  drawCut(env) {
+  drawCut(env: LegacyValue) {
     const cut = env.cut, L = J.LAYOUTS[cut.layout] || J.LAYOUTS.center;
     const decor = cut.decor || [];
     if (env.layer !== 'front') for (const d of decor) { const D = J.DECOR[d.id]; if (D && D.layer === 'back') try { D.draw(env, null, d); } catch (e) { console.warn(e); } }
     if (env.layer === 'back') return null;                // 後景だけ: the lyrics and the front decorations go to the other layer
-    let bb = null;
+    let bb: LegacyValue = null;
     try { bb = L.render(env); } catch (e) { console.warn('layout', cut.layout, e); }
     for (const d of decor) { const D = J.DECOR[d.id]; if (D && D.layer === 'front') try { D.draw(env, bb, d); } catch (e) { console.warn(e); } }
     return bb;
@@ -384,13 +405,13 @@ class Renderer {
        - afterwards, alpha is limited to where content was (before the effect) plus where the effect drew the
          content again (shifted / scaled / mirrored copies of the scratch copy), so washes, flashes and strobes
          tint the lyrics and the graphics but never turn the empty background opaque                            */
-  alphaGuard(ctx, S, sc) {
+  alphaGuard(ctx: LegacyValue, S: LegacyValue, sc: LegacyValue) {
     const cw = ctx.canvas.width, ch = ctx.canvas.height, R = this;
-    const P = this.ensure(this.guardP || (this.guardP = mk(2, 2)), cw, ch), px = P.getContext('2d');
-    const M = this.ensure(this.guardM || (this.guardM = mk(2, 2)), cw, ch), mx = M.getContext('2d');
-    let cleared = false, bgN = null;
-    const content = img => img === S;                  // the scratch copy of the frame (temp canvases may carry an opaque background)
-    const own = ['fillRect', 'drawImage'];
+    const P = this.ensure(this.guardP || (this.guardP = mk(2, 2)), cw, ch), px = P.getContext('2d')!;
+    const M = this.ensure(this.guardM || (this.guardM = mk(2, 2)), cw, ch), mx = M.getContext('2d')!;
+    let cleared = false, bgN: LegacyValue = null;
+    const content = (img: LegacyValue) => img === S;                  // the scratch copy of the frame (temp canvases may carry an opaque background)
+    const own: LegacyValue = ['fillRect', 'drawImage'];
     return {
       begin() {
         cleared = false;
@@ -398,14 +419,14 @@ class Renderer {
         px.setTransform(1, 0, 0, 1, 0, 0); px.globalAlpha = 1; px.globalCompositeOperation = 'copy'; px.filter = 'none'; px.drawImage(ctx.canvas, 0, 0);
         mx.setTransform(1, 0, 0, 1, 0, 0); mx.globalAlpha = 1; mx.globalCompositeOperation = 'source-over'; mx.filter = 'none'; mx.clearRect(0, 0, cw, ch);
         const proto = Object.getPrototypeOf(ctx);
-        ctx.fillRect = function (x, y, w, h) {
+        ctx.fillRect = function (x: LegacyValue, y: LegacyValue, w: LegacyValue, h: LegacyValue) {
           const T = this.getTransform(), full = this.globalCompositeOperation === 'source-over' && this.globalAlpha >= 0.999 && typeof this.fillStyle === 'string' &&
             /^#[0-9a-f]{6}$/i.test(this.fillStyle) && T.b === 0 && T.c === 0 && T.e + x * T.a <= 1 && T.f + y * T.d <= 1 && T.e + (x + w) * T.a >= cw - 1 && T.f + (y + h) * T.d >= ch - 1;
           if (full) { cleared = true; mx.clearRect(0, 0, cw, ch); return proto.clearRect.call(this, x, y, w, h); }
           if (this.globalCompositeOperation === 'source-over' && typeof this.fillStyle === 'string' && /^#[0-9a-f]{6}$/i.test(this.fillStyle) && this.globalAlpha >= 0.999 && this.fillStyle === bgN) return proto.clearRect.call(this, x, y, w, h);
           return proto.fillRect.call(this, x, y, w, h);
         };
-        ctx.drawImage = function (img, ...a) {
+        ctx.drawImage = function (img: LegacyValue, ...a: LegacyValue[]) {
           if (content(img)) { mx.setTransform(this.getTransform()); mx.globalAlpha = this.globalAlpha; proto.drawImage.call(mx, img, ...a); }
           return proto.drawImage.call(this, img, ...a);
         };
@@ -421,14 +442,14 @@ class Renderer {
     };
   }
 
-  post(ctx, plan, t, tq, step, sc, scale, opt, allowFilter) {
+  post(ctx: LegacyValue, plan: LegacyValue, t: LegacyValue, tq: LegacyValue, step: LegacyValue, sc: LegacyValue, scale: LegacyValue, opt: LegacyValue, allowFilter: LegacyValue) {
     const cw = ctx.canvas.width, ch = ctx.canvas.height;
     const fx = plan.fx, st = plan.style;
-    const active = plan.events.filter(ev => t >= ev.t && t < ev.t + Math.max(ev.dur, 1 / plan.fps));
-    const needScratch = active.some(ev => ['slice', 'block', 'zoom', 'mosaic'].includes(ev.type) || (J.FXE[ev.type] && J.FXE[ev.type].scratch)) || (!opt.fast && (st.glow || 0) > 0);
+    const active = plan.events.filter((ev: LegacyValue) => t >= ev.t && t < ev.t + Math.max(ev.dur, 1 / plan.fps));
+    const needScratch = active.some((ev: LegacyValue) => ['slice', 'block', 'zoom', 'mosaic'].includes(ev.type) || (J.FXE[ev.type] && J.FXE[ev.type].scratch)) || (!opt.fast && (st.glow || 0) > 0);
     const S = needScratch ? this.ensure(this.scratch, cw, ch) : null;
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
-    const copy = () => { const sx = S.getContext('2d'); sx.globalCompositeOperation = 'copy'; sx.drawImage(ctx.canvas, 0, 0); sx.globalCompositeOperation = 'source-over'; };
+    const copy = () => { const sx = S.getContext('2d')!; sx.globalCompositeOperation = 'copy'; sx.drawImage(ctx.canvas, 0, 0); sx.globalCompositeOperation = 'source-over'; };
     const clock24 = Math.floor(t * 24);           // glitch randomness changes at most 24 times a second at any output fps
     const guard = opt.transparent ? this.alphaGuard(ctx, S, sc) : null;   // 透過: effects must not fill the empty background
     for (const ev of active) {
@@ -440,7 +461,7 @@ class Renderer {
       if (D && D.draw) {
         if (D.scratch) copy();
         try {
-          D.draw(ctx, ev, k, { cw, ch, S, sc, st: plan.style, step: st2, t, scale, renderer: this, allowFilter, opt, transparent: !!opt.transparent, tmp: (w, h) => this.ensure(this.tiny, w, h), tmp2: (w, h) => this.ensure(this.small2 || (this.small2 = mk(2, 2)), w, h) });
+          D.draw(ctx, ev, k, { cw, ch, S, sc, st: plan.style, step: st2, t, scale, renderer: this, allowFilter, opt, transparent: !!opt.transparent, tmp: (w: LegacyValue, h: LegacyValue) => this.ensure(this.tiny, w, h), tmp2: (w: LegacyValue, h: LegacyValue) => this.ensure(this.small2 || (this.small2 = mk(2, 2)), w, h) });
         } catch (e) { console.warn('fx', ev.type, e); }
         ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none'; ctx.imageSmoothingEnabled = true;
         if (guard) guard.end();
@@ -479,7 +500,7 @@ class Renderer {
         ctx.globalAlpha = 1;
       } else if (ev.type === 'mosaic') {
         copy();
-        const T = this.ensure(this.tiny, Math.max(8, Math.round(cw / 42)), Math.max(8, Math.round(ch / 42))), tx = T.getContext('2d');
+        const T = this.ensure(this.tiny, Math.max(8, Math.round(cw / 42)), Math.max(8, Math.round(ch / 42))), tx = T.getContext('2d')!;
         tx.imageSmoothingEnabled = true; tx.drawImage(S, 0, 0, T.width, T.height);
         ctx.imageSmoothingEnabled = false; ctx.globalAlpha = 0.85 * (1 - k); ctx.drawImage(T, 0, 0, cw, ch); ctx.globalAlpha = 1; ctx.imageSmoothingEnabled = true;
       }
@@ -490,7 +511,7 @@ class Renderer {
     const glow = (st.glow || 0.6) * 0.5 * (fx.texture ?? 0.6);
     if (!opt.fast && allowFilter && glow > 0.05 && !opt.transparent) {
       const sw = Math.round(cw / 4), sh = Math.round(ch / 4);
-      const Sm = this.ensure(this.small, sw, sh), sx = Sm.getContext('2d');
+      const Sm = this.ensure(this.small, sw, sh), sx = Sm.getContext('2d')!;
       sx.filter = `blur(${Math.max(2, Math.round(sw / 160))}px)`; sx.globalCompositeOperation = 'copy'; sx.drawImage(ctx.canvas, 0, 0, sw, sh); sx.filter = 'none'; sx.globalCompositeOperation = 'source-over';
       ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = glow * 0.55; ctx.drawImage(Sm, 0, 0, cw, ch); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
     }
@@ -524,17 +545,19 @@ class Renderer {
   }
 }
 /* beat context at time t: time since the previous beat, beat length and index */
-function beatAt(beats, t) {
+function beatAt(beats: LegacyValue, t: LegacyValue) {
   let lo = 0, hi = beats.length - 1, i = -1;
   while (lo <= hi) { const m = (lo + hi) >> 1; if (beats[m] <= t) { i = m; lo = m + 1; } else hi = m - 1; }
   if (i < 0) return null;
   const len = i + 1 < beats.length ? beats[i + 1] - beats[i] : (i > 0 ? beats[i] - beats[i - 1] : 0.5);
   return { since: t - beats[i], len: Math.max(0.2, len), index: i };
 }
-function prevBeat(beats, t) {
-  let lo = 0, hi = beats.length - 1, ans = null;
+function prevBeat(beats: LegacyValue, t: LegacyValue) {
+  let lo = 0, hi = beats.length - 1, ans: LegacyValue = null;
   while (lo <= hi) { const m = (lo + hi) >> 1; if (beats[m] <= t) { ans = beats[m]; lo = m + 1; } else hi = m - 1; }
   return ans;
 }
 J.Renderer = Renderer;
 })();
+
+}

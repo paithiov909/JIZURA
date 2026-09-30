@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — decor (graphic elements around / behind the lyric) + HUD
    ============================================================ */
@@ -258,3 +260,5 @@ J.drawHUD = (env, plan) => {
   env.line([[W * 0.3, H - m - L * 0.9], [J.lerp(W * 0.3, W * 0.7, u), H - m - L * 0.9]], sc.accent, 2, 0.9, false);
 };
 })();
+
+}

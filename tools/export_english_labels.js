@@ -2,18 +2,18 @@
 'use strict';
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const root = path.resolve(__dirname, '..');
-// Metadata export has no editor or browser tool surface. Loading WebMCP here
-// broke the English AE/core build because this VM intentionally has no UI DOM.
-const files = fs.readdirSync(path.join(root, 'src')).filter(f => f.endsWith('.js') && !['12_ui.js', '13_webmcp.js'].includes(f)).sort();
-const context = vm.createContext({
-  window: {}, document: { createElement: () => ({ getContext: () => ({ measureText: () => ({ width: 100 }) }) }) },
-  console, Intl, URL, Map, Set, TextEncoder, TextDecoder, performance: { now: () => 0 }
-});
-for (const file of files) vm.runInContext(fs.readFileSync(path.join(root, 'src', file), 'utf8'), context, { filename: file });
-vm.runInContext(fs.readFileSync(path.join(root, 'app/english.js'), 'utf8'), context, { filename: 'english.js' });
-const J = context.window.J;
+// Use the same explicit, UI-free engine graph as the browser and Node tests.
+global.window = global;
+global.document = { createElement: () => ({ getContext: () => ({ measureText: () => ({ width: 100 }) }) }) };
+async function main() {
+const { createEngine } = await import('../engine/index.ts');
+const J = createEngine(fs.readFileSync(path.join(root, 'VERSION'), 'utf8').trim());
+vm.runInNewContext(fs.readFileSync(path.join(root, 'app/english.js'), 'utf8'), { J }, { filename: 'english.js' });
 const labels = { styles: {}, moods: {}, groups: {} };
 for (const key of J.STYLE_ORDER) labels.styles[key] = { name: J.STYLES[key].name, desc: J.STYLES[key].desc };
 for (const key of Object.keys(J.MOODS)) labels.moods[key] = J.MOODS[key].name;
 for (const group of J.GROUP_KEYS) labels.groups[group] = Object.fromEntries(J.order(group).map(key => [key, J.registry(group)[key].name]));
 process.stdout.write(JSON.stringify(labels));
+
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

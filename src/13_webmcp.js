@@ -1,3 +1,4 @@
+export default function install(J) {
 /* WebMCP browser adapter. No server, polyfill, or dependency; editor owns all mutations. */
 (() => {
 'use strict';
@@ -278,3 +279,5 @@ async function register() {
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', register, { once: true }); else void register();
 })();
+
+}

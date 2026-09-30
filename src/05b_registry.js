@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* ============================================================
    JIZURA — registries for the newer expression groups + a single
    registration helper used by every expression pack (src/11p_*.js)
@@ -71,3 +73,5 @@ J.registerAll = (group, defs, pack) => { for (const k of Object.keys(defs)) J.re
 /* items whose tags include a mood key (used by おまかせ) */
 J.taggedWith = (group, mood) => J.order(group).filter(k => { const d = J.registry(group)[k]; return d && d.tags && d.tags.includes(mood); });
 })();
+
+}

@@ -1,3 +1,5 @@
+/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+export default function install(J) {
 /* JIZURA pack: kinetic (1) — kinetic typography layouts: word-timed stacks, turns, swaps, dives and flows */
 (() => {
 'use strict';
@@ -964,3 +966,5 @@ reg('knPadGrid', {
 }, P);
 
 })();
+
+}
