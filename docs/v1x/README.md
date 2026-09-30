@@ -62,6 +62,8 @@ Task 03 result (2026-09-30): the [root TS/Vite workspace](BUILD.md) builds all f
 
 Task 04 result (2026-09-30): the [explicit TypeScript engine](04-engine-modules.md#result--2026-09-30) preserves fixture projects/plans and AE v2 output without global-source assembly. Nine Node contract tests, twenty production browser cases, twelve controlled pixel comparisons, both AE model suites and the preserved spike checks passed. UI/pack installer adapters and dynamic effect/item slots have documented removal paths. Actual Adobe verification remains deferred. Next: tasks 05 and 06; task 09 follows task 05.
 
+Task 05 result (2026-09-30): the [typed effect modules and source contribution contract](05-effect-modules.md#result--2026-09-30) preserve all 860 selectable IDs and two special layouts, ordering, selection flags and exported AE metadata. Six effect tests, nine engine tests, all builds, twenty production browser cases, twelve controlled frame comparisons and both 87-build AE model suites passed. Both built ES3 registries match the declared ports. The retained sample is test-only; algorithm-local dynamic bags and actual Adobe verification remain documented limitations. Next: task 09; task 07 follows task 06.
+
 ## Distribution design
 
 - CI runs focused checks on task PRs and on `codex/v1x-integration`. It creates no release or Pages deployment there.

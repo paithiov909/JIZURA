@@ -70,7 +70,7 @@ test('legacy timingOrder migration keeps overrides, lineTimes and ranges attache
 
 test('partial/untrusted projects preserve baseline sanitation and enable new registered IDs', () => {
   const engine = createEngine(version);
-  engine.register('layout', 'contractOnly', { name: 'Contract', special: false }, 'test');
+  engine.register('layout', 'contractOnly', { name: 'Contract', special: false, tags: [], w: 1, aeSupport: { kind: 'fallback', id: 'center', reason: 'Contract-only layout' }, fits: () => true, plan: () => ({}), render: () => null }, 'test');
   const project = engine.mergeProject({ enabled: { layout: { center: false } }, colors: {
     enabled: true, fg: '#abc', bg: '<script>', accentOn: true }, fonts: { display: 'gothic_black', body: 'missing' },
     locks: { tech: { layout: true, bad: 1, 'bad key': true }, params: { seed: true } },
@@ -86,7 +86,7 @@ test('partial/untrusted projects preserve baseline sanitation and enable new reg
 
 test('instances isolate registry/style/language/typeset state and cached streams', () => {
   const a = createEngine(version), b = createEngine(version);
-  a.register('layout', 'onlyA', { name: 'A', special: true }, 'test');
+  a.register('layout', 'onlyA', { name: 'A', special: true, tags: [], w: 1, aeSupport: { kind: 'fallback', id: 'center', reason: 'Instance test' }, fits: () => true, plan: () => ({}), render: () => null }, 'test');
   assert('onlyA' in a.registry('layout'));
   assert(!('onlyA' in b.registry('layout')));
   a.STYLES.noir.name = 'changed';

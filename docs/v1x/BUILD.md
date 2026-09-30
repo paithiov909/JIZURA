@@ -7,7 +7,7 @@ npm ci
 npm run check
 ```
 
-`check` runs the TS/config/engine typecheck, UI-free Node engine contract tests, all builds, output/syntax validation, Japanese and English ScriptUI object-model mocks. No Adobe installation or browser is required for this command. Typechecking covers the migrated engine public boundaries and TS implementations, with explicit dynamic effect/item slots. It does **not** cover the unconverted installer JS or ExtendScript; the ES2021 and ES3 parsers and runtime mocks are separate evidence.
+`check` runs the TS/config/engine typecheck, UI-free Node engine and effect contract tests, all builds, output/syntax validation, source AE-port catalog comparisons, Japanese and English ScriptUI object-model mocks. No Adobe installation or browser is required for this command. Typechecking covers the migrated engine public boundaries and TS implementations, with strict effect registration/metadata/group callback contracts and explicit dynamic drawing/item slots. It does **not** cover the unconverted installer JS or ExtendScript; the ES2021 and ES3 parsers and runtime mocks are separate evidence.
 
 | Command | Output | Format |
 | --- | --- | --- |
@@ -17,6 +17,8 @@ npm run check
 | `npm run build:ae` | `dist/ae/JIZURA_AE.jsx`, `JIZURA_AE_en.jsx`, `ja/jizura_core.jsx`, `en/jizura_core.jsx` | Separately assembled ASCII-escaped ES3 |
 | `npm run build:cep` | `dist/cep/com.852wa.jizura/`, `com.852wa.jizura.en/`, `JIZURA_CEP.zip`, `JIZURA_CEP_en.zip` | Classic local IIFE/CSS/vendor and ES3 host/core; existing installers/signing helpers |
 | `npm run check:outputs` | Console report | Run after all builds; validates routes, version, resources, script syntax, both CEP host/core plan mocks |
+| `npm run test:effects` | Console report | Baseline registry, source contribution example, invalid metadata/IDs, selection flags and fallback validation |
+| `npm run check:effects` | `dist/task05/effect-validation.json` | Run after `build:ae`; compare declared ports with both freshly built ES3 registries |
 | `npm run test:ae` | Console report | Run after `build:ae`; 87 builds per language with the baseline plan |
 
 Every target can build independently without prebuilt tracked HTML, JSX or `ae/data.json`. The CEP command regenerates its own metadata/cores and does not need `build:ae`. `VERSION` remains the only application version source; the root package has no application version. Builds reject non-`x.y.z` versions and output validation checks propagation into each target and manifest. Outputs include project/third-party notices and muxer/Vite licenses; the standalone HTML also embeds the full muxer license. Do not commit `dist/`, npm dependencies or generated assets.
@@ -65,3 +67,25 @@ The browser engine check builds a UI-free IIFE from actual modules into `dist/ta
 Historical CLI helpers now use the module graph too. For isolated generated outputs, use `python3 build.py --out dist/task04/legacy-all`, `python3 build.py --out dist/task04/legacy-cli --lang ja --dev`, or `python3 dev/build_test.py NAME --all-packs`. The pack diagnostic accepts explicit source paths and filters the registered installer sequence, rather than sorting filenames; its `dev/www/` output is ignored. `dev/webmcp_test.py --root dist/task04/legacy-all` tests fresh CLI pages and the module-only no-UI guard without replacing tracked root pages.
 
 See [task 04](04-engine-modules.md) for the compatibility-facade removal path and recorded checks.
+
+## Effect checks (task 05)
+
+`effects/index.ts` owns the explicit core/pack/set stage lists. The engine consumes those
+lists without naming individual packs; core initialization installs the registry first,
+then registers motion/layout/decor in the original public order. `build.py` follows relative
+imports and re-exports recursively, including nested TypeScript dependencies, when copying
+localized build inputs. Diagnostic selection uses `effects/packs/*.ts` paths, for example:
+
+```sh
+python3 dev/build_test.py enter effects/packs/enter.ts
+npm run typecheck
+npm run test:effects
+npm run check
+```
+
+The production inventory remains 860 selectable effects and two special layouts. The
+contribution example is test-only; no baseline fixtures or release assets are changed.
+`build/check-effects.mts` validates metadata before each root build and reports declared
+fallbacks. With `--ae`, it loads the built ES3 registry and compares its IDs to the explicit
+source catalog, without running the AE UI or rendering. See [the contribution contract](../EXPRESSION_PACKS.md)
+and [task 05](05-effect-modules.md) for recorded verification and remaining dynamic slots.

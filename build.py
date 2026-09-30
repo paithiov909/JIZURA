@@ -19,9 +19,19 @@ a = ap.parse_args()
 if a.cep and (not a.vite_input or a.lang not in ('ja', 'en')):
     ap.error('--cep requires --vite-input and --lang ja/en')
 # Explicit imports in engine/index.ts define initialization, never filename sort.
-engine_paths = re.findall(r"^import \w+ from '([^']+)';", read('engine/index.ts'), re.M)
-sources = [str((Path('engine') / source).resolve().relative_to(Path(ROOT))) for source in engine_paths]
-sources += ['src/12_ui.js'] + ([] if a.cep else ['src/13_webmcp.js'])
+def module_sources(entries):
+    seen, ordered = set(), []
+    def visit(source):
+        if source in seen: return
+        seen.add(source)
+        ordered.append(source)
+        content = read(source)
+        for relative in re.findall(r"(?:from\s+|import\s*)['\"](\.[^'\"]+)['\"]", content):
+            dependency = (Path(ROOT) / source).parent / relative
+            visit(str(dependency.resolve().relative_to(ROOT)))
+    for entry in entries: visit(entry)
+    return ordered
+sources = module_sources(['engine/index.ts', 'src/12_ui.js'] + ([] if a.cep else ['src/13_webmcp.js']))
 mux = '/*! mp4-muxer v5.2.2 | MIT License | (c) 2023 Vanilagy | see THIRD_PARTY_NOTICES.md */\n' + read('vendor/mp4-muxer.min.js')
 def build(lang):
     english = lang == 'en'
@@ -43,7 +53,7 @@ def build(lang):
     def emit_modules(directory):
         os.makedirs(directory, exist_ok=True)
         # Copy dependencies independently of their names; entry imports determine execution.
-        for source in sources + ['engine/index.ts', 'engine/types.ts', 'engine/utility-types.ts', 'engine/legacy-types.ts']:
+        for source in sources:
             content = read(source)
             if english: content = localize_js(content, source)
             elif local: content = i18n.localize_js(lang, content, source)
