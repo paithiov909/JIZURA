@@ -1,4 +1,5 @@
 import type { UtilityAPI } from './utility-types.ts';
+import type { BrowserServices } from '../ui/services/types.ts';
 export type EffectGroup = 'layout' | 'enter' | 'exit' | 'hold' | 'decor' | 'treat' | 'bg' | 'cam' | 'fx' | 'trans';
 export type LyricLanguage = 'ja' | 'en' | 'zh-Hant' | 'zh-Hans' | 'ko';
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
@@ -23,6 +24,7 @@ export interface Project {
   colors: Record<string, string | boolean>; fonts: Record<string, string>; userFonts?: UserFont[];
   exportRange?: { from: number; to: number } | null; appVersion?: string; audioName?: string;
   includeAudio?: boolean;
+  quality?: 'standard' | 'high' | 'max';
 }
 export interface CutSnapshot extends Pick<Cut, 'layout' | 'enter' | 'exit' | 'hold' | 'params' | 'decor' | 'treat' | 'treatP' | 'cam' | 'camP' | 'scheme' | 'seed' | 'bg' | 'bgP' | 'inDur' | 'outDur' | 'trans' | 'transP' | 'transDur' | 'morph' | 'weightGrow'> {
   utext: string; kime: boolean; recap: boolean; twinParams: Parameters | null;
@@ -109,7 +111,7 @@ export interface RandomStream {
 export type { EffectDefinition } from '../effects/types.ts';
 import type { RegistryAPI } from '../effects/types.ts';
 /** Strict consumer boundary. Internal effect/item slots are transitional. */
-export interface Engine extends UtilityAPI, RegistryAPI {
+export interface Engine extends UtilityAPI, RegistryAPI, BrowserServices {
   resolveStyle(project: Project): Style;
   layoutText(item: TextItem): GlyphLayout;
   measure(item: TextItem): { w: number; h: number; lay: GlyphLayout };

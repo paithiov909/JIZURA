@@ -1,4 +1,4 @@
-/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+/* Browser service installer; the engine owns per-instance state. */
 export default function install(J) {
 /* ============================================================
    JIZURA — audio: decode, energy envelope, onset, BPM & beat grid

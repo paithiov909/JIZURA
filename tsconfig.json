@@ -32,6 +32,8 @@
     "tests/i18n/**/*.mts",
     "tests/i18n/**/*.ts",
     "tests/effects/**/*.mts",
-    "tests/effects/**/*.ts"
+    "tests/effects/**/*.ts",
+    "ui/**/*.ts",
+    "tests/ui/**/*.ts"
   ]
 }

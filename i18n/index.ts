@@ -36,7 +36,7 @@ export function createI18n(language: string) {
     for (const [key, name] of Object.entries(locale.moods)) if (engine.MOODS[key]) engine.MOODS[key].name = name;
     engine.SAMPLE_LYRICS = locale.sampleLyrics;
   }
-  function applyDocument(document: Document): void {
+  function applyDocument(document: Document, options: { offline?: boolean } = {}): void {
     const walker = document.createTreeWalker(document.body, 128 /* SHOW_COMMENT */);
     while (walker.nextNode()) {
       const comment = walker.currentNode;
@@ -59,7 +59,9 @@ export function createI18n(language: string) {
     const select = document.createElement('select'); select.setAttribute('aria-label', locale.languageLabel);
     for (const edition of EDITIONS) {
       const option = document.createElement('option');
-      option.value = (locale.folder ? '../' : '') + (edition.folder ? edition.folder + '/' : '') + 'index.html';
+      option.value = options.offline
+        ? `JIZURA${edition.folder ? '_' + edition.folder : ''}.html`
+        : (locale.folder ? '../' : '') + (edition.folder ? edition.folder + '/' : '') + 'index.html';
       option.lang = edition.htmlLang; option.textContent = edition.nativeName; option.selected = edition.code === locale.code;
       select.append(option);
     }

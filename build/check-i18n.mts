@@ -22,7 +22,7 @@ function checkKey(key: string): void {
   if (!keys.has(key)) throw new Error('Unknown translation key: ' + key);
   used.add(key);
 }
-const body = await readFile(path.join(repo, 'app/body.html'), 'utf8');
+const body = await readFile(path.join(repo, 'ui/body.html'), 'utf8');
 for (const match of body.matchAll(/<!--i18n:([^>]+)-->/g)) checkKey(match[1]!);
 for (const match of body.matchAll(/data-i18n-attrs="([^"]+)"/g)) for (const binding of match[1]!.split(' ')) checkKey(binding.slice(binding.indexOf(':') + 1));
 function visit(node: unknown): void {
@@ -39,7 +39,7 @@ function visit(node: unknown): void {
   }
   for (const value of Object.values(item)) if (Array.isArray(value)) value.forEach(visit); else if (value && typeof value === 'object') visit(value);
 }
-for (const file of ['src/12_ui.js', 'src/11_export.js', 'cep/cep.js']) visit(parse(await readFile(path.join(repo, file), 'utf8'), { ecmaVersion: 2021, sourceType: 'module' }));
+for (const file of ['ui/editor.js', 'ui/services/export.js', 'cep/cep.js']) visit(parse(await readFile(path.join(repo, file), 'utf8'), { ecmaVersion: 2021, sourceType: 'module' }));
 const unused = [...keys].filter(key => !used.has(key));
 if (unused.length) throw new Error('Unused translation keys: ' + unused.join(', '));
 // Extension contributors must supply new labels before the supported build passes.

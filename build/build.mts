@@ -24,7 +24,7 @@ async function reset(directory: string): Promise<void> {
 async function prepare(target: 'web' | 'offline' | 'cep', language?: 'ja' | 'en'): Promise<string> {
   const root = path.join(dist, '.inputs', target, language || '');
   await reset(root);
-  await prepareBrowser(root, version, language, target === 'cep');
+  await prepareBrowser(root, version, language, target === 'cep', target === 'offline');
   return root;
 }
 
