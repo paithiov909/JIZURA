@@ -15,3 +15,7 @@ Read `build.py`, `build_ae.py`, `build_cep.py`, `docs/EXPRESSION_PACKS.md`, `doc
 - Record which checks passed at baseline and which need a real AE installation. Baseline failures remain visible rather than being silently normalized.
 
 **Handoff to:** task 02, and tasks 04–11 as their comparison reference.
+
+## Result
+
+The captured baseline, comparison rules, and recorded check results are in [CONTRACT-v1.md](CONTRACT-v1.md). Reproducible fixtures are in `tests/baseline/v1/`; capture code is in `dev/baseline_capture.py` and `dev/baseline_ae_registry.js`. The English AE/CEP build failure is recorded there for later tasks.

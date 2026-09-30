@@ -1,0 +1,99 @@
+{
+  "seed": 7,
+  "planSummary": {
+    "duration": 5,
+    "W": 1080,
+    "H": 1920,
+    "lines": [
+      {
+        "index": 0,
+        "src": 0,
+        "lrc": 0,
+        "text": "Hello world",
+        "start": 0,
+        "end": 2,
+        "visEnd": 2,
+        "note": null,
+        "impact": false,
+        "emph": [],
+        "chunks": [
+          "Hello",
+          "world"
+        ],
+        "seed": 2142502143
+      },
+      {
+        "index": 1,
+        "src": 1,
+        "lrc": 2,
+        "text": "Good night",
+        "start": 2,
+        "end": 4.5,
+        "visEnd": 4.5,
+        "note": null,
+        "impact": false,
+        "emph": [],
+        "chunks": [
+          "Good night"
+        ],
+        "seed": 487261815
+      }
+    ],
+    "cuts": [
+      {
+        "text": "Hello",
+        "line": 0,
+        "layout": "arcTop",
+        "enter": "tyRubyDrop",
+        "hold": "drift",
+        "exit": "drift",
+        "decor": [
+          "bracketsJP"
+        ],
+        "treat": "none",
+        "bg": "eqBars",
+        "cam": "push",
+        "trans": null,
+        "start": 0,
+        "end": 1,
+        "seed": 3882436896
+      },
+      {
+        "text": "world",
+        "line": 0,
+        "layout": "dotMatrix",
+        "enter": "flicker",
+        "hold": "tyOutlineBlink",
+        "exit": "blurOutStagger",
+        "decor": [
+          "indexNum"
+        ],
+        "treat": "none",
+        "bg": "eqBars",
+        "cam": "knTiltKick",
+        "trans": null,
+        "start": 1,
+        "end": 2,
+        "seed": 1045279935
+      },
+      {
+        "text": "Good night",
+        "line": 1,
+        "layout": "circle",
+        "enter": "waveIn",
+        "hold": "float",
+        "exit": "knWordKick",
+        "decor": [
+          "tyTypeScale"
+        ],
+        "treat": "none",
+        "bg": "sunburst",
+        "cam": "knJumpCut",
+        "trans": null,
+        "start": 2,
+        "end": 4.5,
+        "seed": 1339273842
+      }
+    ]
+  }
+}

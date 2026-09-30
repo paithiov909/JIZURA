@@ -1,0 +1,6098 @@
+{
+  "groups": {
+    "layout": [
+      {
+        "id": "center",
+        "pack": "core",
+        "name": "中央",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "mixed",
+        "pack": "core",
+        "name": "大小ミックス",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "vcols",
+        "pack": "core",
+        "name": "縦書き",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "marquee",
+        "pack": "core",
+        "name": "流れる帯",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tile",
+        "pack": "core",
+        "name": "敷き詰め",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "scatter",
+        "pack": "core",
+        "name": "散らし",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "ring",
+        "pack": "core",
+        "name": "円環",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "wave",
+        "pack": "core",
+        "name": "波の軌跡",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "huge",
+        "pack": "core",
+        "name": "画面突き抜け",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "labels",
+        "pack": "core",
+        "name": "ラベル貼り",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "condensed",
+        "pack": "core",
+        "name": "縦長圧縮",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "gloss",
+        "pack": "core",
+        "name": "注釈",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "type",
+        "pack": "core",
+        "name": "タイプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "diag",
+        "pack": "core",
+        "name": "斜め帯",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "circle",
+        "pack": "core",
+        "name": "円窓",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "stack",
+        "pack": "core",
+        "name": "残像スタック",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "pill",
+        "pack": "core",
+        "name": "カプセル",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "hrFlashlight",
+        "pack": "horror",
+        "name": "懐中電灯",
+        "ae": "circle",
+        "special": false
+      },
+      {
+        "id": "hrDoorGap",
+        "pack": "horror",
+        "name": "扉の隙間",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "hrWallScrawl",
+        "pack": "horror",
+        "name": "壁の落書き",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "hrCctv",
+        "pack": "horror",
+        "name": "監視モニター",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "hrOuija",
+        "pack": "horror",
+        "name": "降霊盤",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "hrMissing",
+        "pack": "horror",
+        "name": "尋ね人",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "hrWrongOne",
+        "pack": "horror",
+        "name": "一字だけ違う",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "hrRisingDark",
+        "pack": "horror",
+        "name": "闇から這い出る",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "hrRedacted",
+        "pack": "horror",
+        "name": "黒塗り文書",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "hrStaticTv",
+        "pack": "horror",
+        "name": "砂嵐のテレビ",
+        "ae": "circle",
+        "special": false
+      },
+      {
+        "id": "hrSpiritPhoto",
+        "pack": "horror",
+        "name": "心霊写真",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "hrWrongShadow",
+        "pack": "horror",
+        "name": "影が違う",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "knSlamStack",
+        "pack": "kinetic",
+        "name": "積み上げ",
+        "ae": "justified",
+        "special": false
+      },
+      {
+        "id": "knQuarterTurn",
+        "pack": "kinetic",
+        "name": "直角ターン",
+        "ae": "sideways",
+        "special": false
+      },
+      {
+        "id": "knSwapCenter",
+        "pack": "kinetic",
+        "name": "入れ替わり",
+        "ae": "slotMachine",
+        "special": false
+      },
+      {
+        "id": "knZoomDive",
+        "pack": "kinetic",
+        "name": "文字へ潜る",
+        "ae": "zoomRepeat",
+        "special": false
+      },
+      {
+        "id": "knFlowSnap",
+        "pack": "kinetic",
+        "name": "流れて整列",
+        "ae": "gridCells",
+        "special": false
+      },
+      {
+        "id": "knSeesaw",
+        "pack": "kinetic",
+        "name": "シーソー",
+        "ae": "bounceLine",
+        "special": false
+      },
+      {
+        "id": "knTypeSlam",
+        "pack": "kinetic",
+        "name": "タイプ→スラム",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "knRhythmCuts",
+        "pack": "kinetic",
+        "name": "語のカット割り",
+        "ae": "panels",
+        "special": false
+      },
+      {
+        "id": "knPathRide",
+        "pack": "kinetic",
+        "name": "ループ軌道",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "knGearWords",
+        "pack": "kinetic",
+        "name": "歯車",
+        "ae": "circleWords",
+        "special": false
+      },
+      {
+        "id": "knCollide",
+        "pack": "kinetic",
+        "name": "正面衝突",
+        "ae": "splitHalves",
+        "special": false
+      },
+      {
+        "id": "knTumble",
+        "pack": "kinetic",
+        "name": "箱転がし",
+        "ae": "dominoes",
+        "special": false
+      },
+      {
+        "id": "knReflow",
+        "pack": "kinetic",
+        "name": "縦から横へ",
+        "ae": "halfVertical",
+        "special": false
+      },
+      {
+        "id": "knPadGrid",
+        "pack": "kinetic",
+        "name": "パッド",
+        "ae": "gridCells",
+        "special": false
+      },
+      {
+        "id": "lowerThird",
+        "pack": "layoutsA",
+        "name": "下部テロップ",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "corners",
+        "pack": "layoutsA",
+        "name": "対角配置",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "staircase",
+        "pack": "layoutsA",
+        "name": "階段",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "zigzag",
+        "pack": "layoutsA",
+        "name": "ジグザグ",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "arcTop",
+        "pack": "layoutsA",
+        "name": "虹の弧",
+        "ae": "ring",
+        "special": false
+      },
+      {
+        "id": "spiral",
+        "pack": "layoutsA",
+        "name": "螺旋",
+        "ae": "ring",
+        "special": false
+      },
+      {
+        "id": "gridCells",
+        "pack": "layoutsA",
+        "name": "升目",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "dropCap",
+        "pack": "layoutsA",
+        "name": "大きな頭文字",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "justified",
+        "pack": "layoutsA",
+        "name": "版面",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "frameBox",
+        "pack": "layoutsA",
+        "name": "額縁",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "bubble",
+        "pack": "layoutsA",
+        "name": "吹き出し",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "subtitleBar",
+        "pack": "layoutsA",
+        "name": "字幕帯",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "ticker",
+        "pack": "layoutsA",
+        "name": "ティッカー",
+        "ae": "marquee",
+        "special": false
+      },
+      {
+        "id": "splitScreen",
+        "pack": "layoutsA",
+        "name": "二分割",
+        "ae": "diag",
+        "special": false
+      },
+      {
+        "id": "mirror",
+        "pack": "layoutsA",
+        "name": "鏡像",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "sideways",
+        "pack": "layoutsA",
+        "name": "縦倒し",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "edgeFrame",
+        "pack": "layoutsA",
+        "name": "外周",
+        "ae": "marquee",
+        "special": false
+      },
+      {
+        "id": "perspective",
+        "pack": "layoutsA",
+        "name": "奥行き",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "hanko",
+        "pack": "layoutsA",
+        "name": "落款",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "genkou",
+        "pack": "layoutsA",
+        "name": "原稿用紙",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "panels",
+        "pack": "layoutsA",
+        "name": "コマ割り",
+        "ae": "diag",
+        "special": false
+      },
+      {
+        "id": "filmstrip",
+        "pack": "layoutsA",
+        "name": "フィルム",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "quote",
+        "pack": "layoutsA",
+        "name": "引用",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "ruler",
+        "pack": "layoutsA",
+        "name": "寸法線",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "searchBar",
+        "pack": "layoutsA",
+        "name": "検索窓",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "chat",
+        "pack": "layoutsA",
+        "name": "チャット",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "notification",
+        "pack": "layoutsA",
+        "name": "通知",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "ticket",
+        "pack": "layoutsA",
+        "name": "チケット",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "rain",
+        "pack": "layoutsB",
+        "name": "文字の雨",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "hanging",
+        "pack": "layoutsB",
+        "name": "吊り下げ",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "orbit",
+        "pack": "layoutsB",
+        "name": "周回",
+        "ae": "ring",
+        "special": false
+      },
+      {
+        "id": "tunnel",
+        "pack": "layoutsB",
+        "name": "トンネル",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "wordCloud",
+        "pack": "layoutsB",
+        "name": "ワードクラウド",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "bounceLine",
+        "pack": "layoutsB",
+        "name": "跳ねる",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "elastic",
+        "pack": "layoutsB",
+        "name": "ゴム",
+        "ae": "condensed",
+        "special": false
+      },
+      {
+        "id": "crossBands",
+        "pack": "layoutsB",
+        "name": "交差帯",
+        "ae": "diag",
+        "special": false
+      },
+      {
+        "id": "stickerBomb",
+        "pack": "layoutsB",
+        "name": "ステッカー",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "neon",
+        "pack": "layoutsB",
+        "name": "ネオン",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "keycaps",
+        "pack": "layoutsB",
+        "name": "キーキャップ",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "bubbles",
+        "pack": "layoutsB",
+        "name": "泡",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "slotMachine",
+        "pack": "layoutsB",
+        "name": "スロット",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "flipBoard",
+        "pack": "layoutsB",
+        "name": "パタパタ",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "credits",
+        "pack": "layoutsB",
+        "name": "エンドロール",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "zoomRepeat",
+        "pack": "layoutsB",
+        "name": "連続拡大",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "splitHalves",
+        "pack": "layoutsB",
+        "name": "上下割り",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "columnsBig",
+        "pack": "layoutsB",
+        "name": "大小縦組",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "circleWords",
+        "pack": "layoutsB",
+        "name": "同心円",
+        "ae": "ring",
+        "special": false
+      },
+      {
+        "id": "dotMatrix",
+        "pack": "layoutsB",
+        "name": "ドット表示",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "depthStack",
+        "pack": "layoutsB",
+        "name": "奥行き重ね",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "typeSpecimen",
+        "pack": "layoutsB",
+        "name": "書体見本",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "kanjiFocus",
+        "pack": "layoutsB",
+        "name": "一字強調",
+        "ae": "huge",
+        "special": false
+      },
+      {
+        "id": "halfVertical",
+        "pack": "layoutsB",
+        "name": "縦横混植",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "curtain",
+        "pack": "layoutsB",
+        "name": "幕",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "equalizer",
+        "pack": "layoutsB",
+        "name": "イコライザー",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "tape",
+        "pack": "layoutsB",
+        "name": "テープ",
+        "ae": "diag",
+        "special": false
+      },
+      {
+        "id": "magazine",
+        "pack": "layoutsC",
+        "name": "見開き",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "headlineDeck",
+        "pack": "layoutsC",
+        "name": "見出しとリード",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "contents",
+        "pack": "layoutsC",
+        "name": "目次",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "footnote",
+        "pack": "layoutsC",
+        "name": "脚注",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "proofread",
+        "pack": "layoutsC",
+        "name": "校正刷り",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "numbered",
+        "pack": "layoutsC",
+        "name": "番号付き",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "poster",
+        "pack": "layoutsC",
+        "name": "ポスター",
+        "ae": "huge",
+        "special": false
+      },
+      {
+        "id": "swissGrid",
+        "pack": "layoutsC",
+        "name": "スイスグリッド",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "dictionary",
+        "pack": "layoutsC",
+        "name": "辞書",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "ema",
+        "pack": "layoutsC",
+        "name": "絵馬",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "ransom",
+        "pack": "layoutsC",
+        "name": "切り抜き文字",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "newspaper",
+        "pack": "layoutsC",
+        "name": "新聞",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "vinyl",
+        "pack": "layoutsC",
+        "name": "レコード",
+        "ae": "ring",
+        "special": false
+      },
+      {
+        "id": "cassette",
+        "pack": "layoutsC",
+        "name": "カセット",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "bookSpine",
+        "pack": "layoutsC",
+        "name": "背表紙",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "polaroid",
+        "pack": "layoutsC",
+        "name": "ポラロイド",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "stampSheet",
+        "pack": "layoutsC",
+        "name": "切手シート",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "postcard",
+        "pack": "layoutsC",
+        "name": "はがき",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "letterPaper",
+        "pack": "layoutsC",
+        "name": "便箋",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "calendar",
+        "pack": "layoutsC",
+        "name": "カレンダー",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "chochin",
+        "pack": "layoutsC",
+        "name": "提灯",
+        "ae": "circle",
+        "special": false
+      },
+      {
+        "id": "routeMap",
+        "pack": "layoutsC",
+        "name": "路線図",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "stationSign",
+        "pack": "layoutsC",
+        "name": "駅名標",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "noren",
+        "pack": "layoutsC",
+        "name": "暖簾",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "tanzaku",
+        "pack": "layoutsC",
+        "name": "短冊",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "omikuji",
+        "pack": "layoutsC",
+        "name": "おみくじ",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "kakejiku",
+        "pack": "layoutsC",
+        "name": "掛け軸",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "shoji",
+        "pack": "layoutsC",
+        "name": "障子",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "clapper",
+        "pack": "layoutsC",
+        "name": "カチンコ",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "warningLabel",
+        "pack": "layoutsC",
+        "name": "警告ラベル",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "priceTag",
+        "pack": "layoutsC",
+        "name": "値札",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "nameTag",
+        "pack": "layoutsC",
+        "name": "名札",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "stickyNotes",
+        "pack": "layoutsC",
+        "name": "付箋",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "karuta",
+        "pack": "layoutsC",
+        "name": "かるた札",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "cube",
+        "pack": "layoutsD",
+        "name": "立方体",
+        "ae": "pill",
+        "special": false
+      },
+      {
+        "id": "cylinder",
+        "pack": "layoutsD",
+        "name": "円筒",
+        "ae": "ring",
+        "special": false
+      },
+      {
+        "id": "flipCards",
+        "pack": "layoutsD",
+        "name": "カードめくり",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "accordion",
+        "pack": "layoutsD",
+        "name": "蛇腹",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "flag",
+        "pack": "layoutsD",
+        "name": "はためく旗",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "ribbon",
+        "pack": "layoutsD",
+        "name": "リボン",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "pendulum",
+        "pack": "layoutsD",
+        "name": "振り子",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "pile",
+        "pack": "layoutsD",
+        "name": "文字の山",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "blocks",
+        "pack": "layoutsD",
+        "name": "積み木",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "balloons",
+        "pack": "layoutsD",
+        "name": "文字風船",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "magnets",
+        "pack": "layoutsD",
+        "name": "マグネット",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "tiles",
+        "pack": "layoutsD",
+        "name": "文字タイル",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "bulbs",
+        "pack": "layoutsD",
+        "name": "電球サイン",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "ledScroll",
+        "pack": "layoutsD",
+        "name": "電光掲示板",
+        "ae": "marquee",
+        "special": false
+      },
+      {
+        "id": "billboard",
+        "pack": "layoutsD",
+        "name": "看板",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "crowdBubbles",
+        "pack": "layoutsD",
+        "name": "吹き出しの群れ",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "crossword",
+        "pack": "layoutsD",
+        "name": "クロスワード",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "wordSearch",
+        "pack": "layoutsD",
+        "name": "文字探し",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "puzzle",
+        "pack": "layoutsD",
+        "name": "パズル",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "shadowPlay",
+        "pack": "layoutsD",
+        "name": "影絵",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "kaleido",
+        "pack": "layoutsD",
+        "name": "万華鏡",
+        "ae": "ring",
+        "special": false
+      },
+      {
+        "id": "dominoes",
+        "pack": "layoutsD",
+        "name": "ドミノ",
+        "ae": "labels",
+        "special": false
+      },
+      {
+        "id": "burst",
+        "pack": "layoutsD",
+        "name": "ドカン",
+        "ae": "circle",
+        "special": false
+      },
+      {
+        "id": "fisheye",
+        "pack": "layoutsD",
+        "name": "魚眼レンズ",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "wall",
+        "pack": "layoutsD",
+        "name": "壁面パース",
+        "ae": "diag",
+        "special": false
+      },
+      {
+        "id": "origami",
+        "pack": "layoutsD",
+        "name": "折り紙",
+        "ae": "circle",
+        "special": false
+      },
+      {
+        "id": "zipper",
+        "pack": "layoutsD",
+        "name": "ジッパー",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "sliceStack",
+        "pack": "layoutsD",
+        "name": "スライス積層",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "glitchGrid",
+        "pack": "layoutsD",
+        "name": "グリッチ格子",
+        "ae": "tile",
+        "special": false
+      },
+      {
+        "id": "mosaicTiles",
+        "pack": "layoutsD",
+        "name": "タイル画",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "maskReveal",
+        "pack": "layoutsD",
+        "name": "文字窓",
+        "ae": "huge",
+        "special": false
+      },
+      {
+        "id": "contour",
+        "pack": "layoutsD",
+        "name": "等高線",
+        "ae": "huge",
+        "special": false
+      },
+      {
+        "id": "halftoneBig",
+        "pack": "layoutsD",
+        "name": "網点巨大文字",
+        "ae": "huge",
+        "special": false
+      },
+      {
+        "id": "stencil",
+        "pack": "layoutsD",
+        "name": "ステンシル",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "tyKeySplit",
+        "pack": "typo",
+        "name": "大字挟み",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "tyCropGiant",
+        "pack": "typo",
+        "name": "見切れ大文字",
+        "ae": "huge",
+        "special": false
+      },
+      {
+        "id": "tyCross",
+        "pack": "typo",
+        "name": "十字組",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "tyBandHide",
+        "pack": "typo",
+        "name": "帯隠れ",
+        "ae": "diag",
+        "special": false
+      },
+      {
+        "id": "tyRuby",
+        "pack": "typo",
+        "name": "ルビ振り",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "tyBaseline",
+        "pack": "typo",
+        "name": "罫線組",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "tyScaleSteps",
+        "pack": "typo",
+        "name": "級数上げ",
+        "ae": "mixed",
+        "special": false
+      },
+      {
+        "id": "tyJustify",
+        "pack": "typo",
+        "name": "幅揃え",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "tyIndexTable",
+        "pack": "typo",
+        "name": "一覧表",
+        "ae": "gloss",
+        "special": false
+      },
+      {
+        "id": "tySplitType",
+        "pack": "typo",
+        "name": "断ち割り",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "tyErode",
+        "pack": "typo",
+        "name": "削り反復",
+        "ae": "stack",
+        "special": false
+      },
+      {
+        "id": "tyVRuler",
+        "pack": "typo",
+        "name": "縦目盛り",
+        "ae": "vcols",
+        "special": false
+      },
+      {
+        "id": "tyFullTrack",
+        "pack": "typo",
+        "name": "全幅字送り",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "tyStatCount",
+        "pack": "typo",
+        "name": "字数表示",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "tyMargin",
+        "pack": "typo",
+        "name": "余白",
+        "ae": "center",
+        "special": false
+      },
+      {
+        "id": "tyRotBlock",
+        "pack": "typo",
+        "name": "回転ブロック",
+        "ae": "sideways",
+        "special": false
+      },
+      {
+        "id": "tySquare",
+        "pack": "typo",
+        "name": "方形組",
+        "ae": "gridCells",
+        "special": false
+      },
+      {
+        "id": "tyLineFocus",
+        "pack": "typo",
+        "name": "行中強調",
+        "ae": "center",
+        "special": false
+      }
+    ],
+    "enter": [
+      {
+        "id": "cut",
+        "pack": "core",
+        "name": "カット",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "assemble",
+        "pack": "core",
+        "name": "分解→集合",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "slice",
+        "pack": "core",
+        "name": "スライス",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "type",
+        "pack": "core",
+        "name": "タイプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "pop",
+        "pack": "core",
+        "name": "ポップ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "drop",
+        "pack": "core",
+        "name": "落下",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "stretch",
+        "pack": "core",
+        "name": "伸縮",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "wipe",
+        "pack": "core",
+        "name": "ワイプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "blur",
+        "pack": "core",
+        "name": "ブラー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "spin",
+        "pack": "core",
+        "name": "回転",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "flicker",
+        "pack": "core",
+        "name": "点滅",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "scramble",
+        "pack": "core",
+        "name": "スクランブル",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "zoom",
+        "pack": "core",
+        "name": "ズーム",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "riseMask",
+        "pack": "enter",
+        "name": "下から出現",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "dropMask",
+        "pack": "enter",
+        "name": "上から出現",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "slideL",
+        "pack": "enter",
+        "name": "左からスライド",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "slideR",
+        "pack": "enter",
+        "name": "右からスライド",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "slideWhole",
+        "pack": "enter",
+        "name": "全体スライド",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "flipX",
+        "pack": "enter",
+        "name": "縦軸フリップ",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "flipY",
+        "pack": "enter",
+        "name": "横軸フリップ",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "domino",
+        "pack": "enter",
+        "name": "ドミノ",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "fold",
+        "pack": "enter",
+        "name": "折り開き",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "unroll",
+        "pack": "enter",
+        "name": "巻き開き",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "strokeDraw",
+        "pack": "enter",
+        "name": "線画から塗り",
+        "ae": "assemble",
+        "special": false
+      },
+      {
+        "id": "outlineFill",
+        "pack": "enter",
+        "name": "輪郭→塗り",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "splitJoin",
+        "pack": "enter",
+        "name": "上下合体",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "vSlice",
+        "pack": "enter",
+        "name": "縦スライス",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "shutter",
+        "pack": "enter",
+        "name": "シャッター",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "iris",
+        "pack": "enter",
+        "name": "アイリス",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "diagWipe",
+        "pack": "enter",
+        "name": "斜めワイプ",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "blinds",
+        "pack": "enter",
+        "name": "ブラインド",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "checker",
+        "pack": "enter",
+        "name": "市松",
+        "ae": "flicker",
+        "special": false
+      },
+      {
+        "id": "randomOrder",
+        "pack": "enter",
+        "name": "ランダム順",
+        "ae": "flicker",
+        "special": false
+      },
+      {
+        "id": "bounceBig",
+        "pack": "enter",
+        "name": "大ジャンプ",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "squashDrop",
+        "pack": "enter",
+        "name": "潰れて着地",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "rubber",
+        "pack": "enter",
+        "name": "ゴム伸び",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "glitchIn",
+        "pack": "enter",
+        "name": "グリッチ出現",
+        "ae": "scramble",
+        "special": false
+      },
+      {
+        "id": "echoIn",
+        "pack": "enter",
+        "name": "残像集束",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "whip",
+        "pack": "enter",
+        "name": "ホイップ",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "skewIn",
+        "pack": "enter",
+        "name": "スキュー",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "trackIn",
+        "pack": "enter",
+        "name": "字間収束",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "trackOut",
+        "pack": "enter",
+        "name": "字間拡張",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "blurStagger",
+        "pack": "enter",
+        "name": "ブラー段差",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "fadeStagger",
+        "pack": "enter",
+        "name": "字ごとフェード",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "waveIn",
+        "pack": "enter",
+        "name": "波立ち",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "spiralIn",
+        "pack": "enter",
+        "name": "螺旋集合",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "zoomOut",
+        "pack": "enter",
+        "name": "巨大→等倍",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "resolve",
+        "pack": "enter",
+        "name": "解読",
+        "ae": "scramble",
+        "special": false
+      },
+      {
+        "id": "magnet",
+        "pack": "enter",
+        "name": "磁石",
+        "ae": "assemble",
+        "special": false
+      },
+      {
+        "id": "inkBleed",
+        "pack": "enter",
+        "name": "にじみ",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "neonOn",
+        "pack": "enter",
+        "name": "ネオン点灯",
+        "ae": "flicker",
+        "special": false
+      },
+      {
+        "id": "cursorSweep",
+        "pack": "enter",
+        "name": "カーソル掃引",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "stamp",
+        "pack": "enter",
+        "name": "スタンプ",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "springIn",
+        "pack": "enterB",
+        "name": "バネ",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "pendulum",
+        "pack": "enterB",
+        "name": "振り子",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "rollIn",
+        "pack": "enterB",
+        "name": "転がり",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "slingshot",
+        "pack": "enterB",
+        "name": "パチンコ",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "rockSettle",
+        "pack": "enterB",
+        "name": "ぐらぐら着地",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "bounceBall",
+        "pack": "enterB",
+        "name": "バウンドボール",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "snapRail",
+        "pack": "enterB",
+        "name": "スナップ整列",
+        "ae": "assemble",
+        "special": false
+      },
+      {
+        "id": "fanOpen",
+        "pack": "enterB",
+        "name": "扇開き",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "cylinder",
+        "pack": "enterB",
+        "name": "円筒回転",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "shuffle",
+        "pack": "enterB",
+        "name": "シャッフル",
+        "ae": "scramble",
+        "special": false
+      },
+      {
+        "id": "stopMotion",
+        "pack": "enterB",
+        "name": "コマ撮り",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "ripple",
+        "pack": "enterB",
+        "name": "波紋",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "zipper",
+        "pack": "enterB",
+        "name": "ジッパー",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "zoomAlt",
+        "pack": "enterB",
+        "name": "交互ズーム",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "tiltUp",
+        "pack": "enterB",
+        "name": "起立",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "stickerPeel",
+        "pack": "enterB",
+        "name": "シール貼り",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "crumple",
+        "pack": "enterB",
+        "name": "くしゃ戻り",
+        "ae": "assemble",
+        "special": false
+      },
+      {
+        "id": "noteUnfold",
+        "pack": "enterB",
+        "name": "手紙開き",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "tornJoin",
+        "pack": "enterB",
+        "name": "破れ合わせ",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "splitFlap",
+        "pack": "enterB",
+        "name": "パタパタ",
+        "ae": "scramble",
+        "special": false
+      },
+      {
+        "id": "overexpose",
+        "pack": "enterB",
+        "name": "露出オーバー",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "glint",
+        "pack": "enterB",
+        "name": "グリント",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "loupe",
+        "pack": "enterB",
+        "name": "ルーペ",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "filmFeed",
+        "pack": "enterB",
+        "name": "フィルム送り",
+        "ae": "flicker",
+        "special": false
+      },
+      {
+        "id": "backlight",
+        "pack": "enterB",
+        "name": "逆光",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "lightLeak",
+        "pack": "enterB",
+        "name": "光漏れ",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "heatHaze",
+        "pack": "enterB",
+        "name": "陽炎",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "crtOn",
+        "pack": "enterB",
+        "name": "CRT電源",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "interlace",
+        "pack": "enterB",
+        "name": "インターレース",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "loadingBar",
+        "pack": "enterB",
+        "name": "ローディング",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "dither",
+        "pack": "enterB",
+        "name": "ディザ",
+        "ae": "flicker",
+        "special": false
+      },
+      {
+        "id": "odometer",
+        "pack": "enterB",
+        "name": "ドラム回転",
+        "ae": "scramble",
+        "special": false
+      },
+      {
+        "id": "matrixRain",
+        "pack": "enterB",
+        "name": "データ降下",
+        "ae": "scramble",
+        "special": false
+      },
+      {
+        "id": "hatchFill",
+        "pack": "enterB",
+        "name": "ハッチ→ベタ",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "brushReveal",
+        "pack": "enterB",
+        "name": "筆払い",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "inkDrop",
+        "pack": "enterB",
+        "name": "インク滴",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "quarters",
+        "pack": "enterB",
+        "name": "四方集結",
+        "ae": "assemble",
+        "special": false
+      },
+      {
+        "id": "invertBox",
+        "pack": "enterB",
+        "name": "反転抜け",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "printRegister",
+        "pack": "enterB",
+        "name": "版ズレ",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "echoCount",
+        "pack": "enterB",
+        "name": "カウントイン",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "liquidFill",
+        "pack": "enterB",
+        "name": "水位上昇",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "windBlown",
+        "pack": "enterB",
+        "name": "風に乗って",
+        "ae": "assemble",
+        "special": false
+      },
+      {
+        "id": "strokeOrder",
+        "pack": "enterB",
+        "name": "一画ずつ",
+        "ae": "assemble",
+        "special": false
+      },
+      {
+        "id": "clockWipe",
+        "pack": "enterB",
+        "name": "時計回り",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "shadowFirst",
+        "pack": "enterB",
+        "name": "影落とし",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "bubbles",
+        "pack": "enterB",
+        "name": "泡",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "tokoroten",
+        "pack": "enterB",
+        "name": "ところてん",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "hrBlinkCreep",
+        "pack": "horror",
+        "name": "瞬きの間に",
+        "ae": "flicker",
+        "special": false
+      },
+      {
+        "id": "hrJumpScare",
+        "pack": "horror",
+        "name": "飛び出し",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "hrUneasy",
+        "pack": "horror",
+        "name": "間の悪い出現",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "hrVhold",
+        "pack": "horror",
+        "name": "垂直同期",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "hrMirrorSnap",
+        "pack": "horror",
+        "name": "鏡文字",
+        "ae": "flicker",
+        "special": false
+      },
+      {
+        "id": "hrManifest",
+        "pack": "horror",
+        "name": "浮かび上がる",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "hrClawReveal",
+        "pack": "horror",
+        "name": "爪痕から",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "knWordSlam",
+        "pack": "kinetic",
+        "name": "語ごとスラム",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "knTypeToSlam",
+        "pack": "kinetic",
+        "name": "打鍵→拡大",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "knReplaceIn",
+        "pack": "kinetic",
+        "name": "入れ替わり登場",
+        "ae": "scramble",
+        "special": false
+      },
+      {
+        "id": "knHingeDrop",
+        "pack": "kinetic",
+        "name": "蝶番おろし",
+        "ae": "drop",
+        "special": false
+      },
+      {
+        "id": "knLoopIn",
+        "pack": "kinetic",
+        "name": "ループ入り",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "knPushIn",
+        "pack": "kinetic",
+        "name": "押し込み",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "knInertia",
+        "pack": "kinetic",
+        "name": "急ブレーキ",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "knWordSpin",
+        "pack": "kinetic",
+        "name": "語ごと回転",
+        "ae": "spin",
+        "special": false
+      },
+      {
+        "id": "knDiveIn",
+        "pack": "kinetic",
+        "name": "手前から語",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "knStretchOut",
+        "pack": "kinetic",
+        "name": "伸び出し",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "tyKeyFirst",
+        "pack": "typo",
+        "name": "キー字先行",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "tyLineWipe",
+        "pack": "typo",
+        "name": "行送りワイプ",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "tyZoomOne",
+        "pack": "typo",
+        "name": "一字ずつ拡大",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "tyUnderLift",
+        "pack": "typo",
+        "name": "下線から立つ",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "tyDotGrow",
+        "pack": "typo",
+        "name": "点から字",
+        "ae": "pop",
+        "special": false
+      },
+      {
+        "id": "tyBracketOpen",
+        "pack": "typo",
+        "name": "括弧が開く",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "tyRetype",
+        "pack": "typo",
+        "name": "打ち直し",
+        "ae": "type",
+        "special": false
+      },
+      {
+        "id": "tyRubyDrop",
+        "pack": "typo",
+        "name": "ルビから",
+        "ae": "drop",
+        "special": false
+      }
+    ],
+    "hold": [
+      {
+        "id": "still",
+        "pack": "core",
+        "name": "静止",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "jitter",
+        "pack": "core",
+        "name": "ジッター",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "drift",
+        "pack": "core",
+        "name": "ドリフト",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "breathe",
+        "pack": "core",
+        "name": "呼吸",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "wave",
+        "pack": "core",
+        "name": "ウェーブ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "glitchtick",
+        "pack": "core",
+        "name": "グリッチ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "float",
+        "pack": "exitHold",
+        "name": "ふわふわ",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "sway",
+        "pack": "exitHold",
+        "name": "ゆらぎ",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "pulse",
+        "pack": "exitHold",
+        "name": "脈動",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "shimmer",
+        "pack": "exitHold",
+        "name": "きらめき",
+        "ae": "still",
+        "special": false
+      },
+      {
+        "id": "colorRun",
+        "pack": "exitHold",
+        "name": "色が走る",
+        "ae": "still",
+        "special": false
+      },
+      {
+        "id": "rotateSlow",
+        "pack": "exitHold",
+        "name": "ゆっくり回転",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "trackBreathe",
+        "pack": "exitHold",
+        "name": "字間の呼吸",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "skewWobble",
+        "pack": "exitHold",
+        "name": "斜め揺れ",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "beatHop",
+        "pack": "exitHold",
+        "name": "拍で跳ねる",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "hWave",
+        "pack": "exitHold",
+        "name": "横波",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "heartbeat",
+        "pack": "exitHold",
+        "name": "鼓動",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "orbitSmall",
+        "pack": "exitHold",
+        "name": "小さな円運動",
+        "ae": "jitter",
+        "special": false
+      },
+      {
+        "id": "jelly",
+        "pack": "exitHold",
+        "name": "ゼリー",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "scanBand",
+        "pack": "exitHold",
+        "name": "走査帯",
+        "ae": "glitchtick",
+        "special": false
+      },
+      {
+        "id": "noiseDrift",
+        "pack": "exitHold",
+        "name": "ノイズ漂流",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "tilt",
+        "pack": "exitHold",
+        "name": "シーソー",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "zoomSlow",
+        "pack": "exitHold",
+        "name": "じわ寄り",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "stretchPulse",
+        "pack": "exitHold",
+        "name": "横伸び拍",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "glitchJump",
+        "pack": "exitHold",
+        "name": "時々ずれる",
+        "ae": "glitchtick",
+        "special": false
+      },
+      {
+        "id": "echoTrail",
+        "pack": "exitHold",
+        "name": "残像を引く",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "glowFlicker",
+        "pack": "exitB",
+        "name": "灯火のゆらぎ",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "windGust",
+        "pack": "exitB",
+        "name": "突風",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "dangle",
+        "pack": "exitB",
+        "name": "ぶら下がり",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "eqBounce",
+        "pack": "exitB",
+        "name": "音圧で伸びる",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "flashBox",
+        "pack": "exitB",
+        "name": "拍で反転",
+        "ae": "glitchtick",
+        "special": false
+      },
+      {
+        "id": "glintSweep",
+        "pack": "exitB",
+        "name": "光沢",
+        "ae": "still",
+        "special": false
+      },
+      {
+        "id": "flipSwap",
+        "pack": "exitB",
+        "name": "時々裏返る",
+        "ae": "glitchtick",
+        "special": false
+      },
+      {
+        "id": "shadowSway",
+        "pack": "exitB",
+        "name": "影が揺れる",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "magnetJiggle",
+        "pack": "exitB",
+        "name": "磁力",
+        "ae": "jitter",
+        "special": false
+      },
+      {
+        "id": "typeRattle",
+        "pack": "exitB",
+        "name": "タイプの震え",
+        "ae": "jitter",
+        "special": false
+      },
+      {
+        "id": "focusRack",
+        "pack": "exitB",
+        "name": "ピント送り",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "pluckString",
+        "pack": "exitB",
+        "name": "弦の振動",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "hrTwitch",
+        "pack": "horror",
+        "name": "痙攣",
+        "ae": "glitchtick",
+        "special": false
+      },
+      {
+        "id": "hrStare",
+        "pack": "horror",
+        "name": "見つめる字",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "hrLagOne",
+        "pack": "horror",
+        "name": "遅れる一字",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "hrFlickerLight",
+        "pack": "horror",
+        "name": "切れかけの灯",
+        "ae": "glitchtick",
+        "special": false
+      },
+      {
+        "id": "knWordPulse",
+        "pack": "kinetic",
+        "name": "語ごとの拍",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "knCounterRock",
+        "pack": "kinetic",
+        "name": "逆回転ゆれ",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "knWordRide",
+        "pack": "kinetic",
+        "name": "語の波乗り",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "knTickShift",
+        "pack": "kinetic",
+        "name": "刻みシフト",
+        "ae": "jitter",
+        "special": false
+      },
+      {
+        "id": "knBeatLean",
+        "pack": "kinetic",
+        "name": "拍で傾く",
+        "ae": "jitter",
+        "special": false
+      },
+      {
+        "id": "knGapBreath",
+        "pack": "kinetic",
+        "name": "語間の呼吸",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "tyKeyPulse",
+        "pack": "typo",
+        "name": "一字の鼓動",
+        "ae": "breathe",
+        "special": false
+      },
+      {
+        "id": "tyReadCursor",
+        "pack": "typo",
+        "name": "読み送り",
+        "ae": "wave",
+        "special": false
+      },
+      {
+        "id": "tyOutlineBlink",
+        "pack": "typo",
+        "name": "白抜き明滅",
+        "ae": "glitchtick",
+        "special": false
+      },
+      {
+        "id": "tyTrackStep",
+        "pack": "typo",
+        "name": "字間ステップ",
+        "ae": "breathe",
+        "special": false
+      }
+    ],
+    "exit": [
+      {
+        "id": "cut",
+        "pack": "core",
+        "name": "カット",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "explode",
+        "pack": "core",
+        "name": "爆散",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "fall",
+        "pack": "core",
+        "name": "崩落",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "drift",
+        "pack": "core",
+        "name": "霧散",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "slice",
+        "pack": "core",
+        "name": "スライス退場",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "wipe",
+        "pack": "core",
+        "name": "ワイプ退場",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "shrink",
+        "pack": "core",
+        "name": "収縮",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "blur",
+        "pack": "core",
+        "name": "ブラー退場",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "stretch",
+        "pack": "core",
+        "name": "伸縮退場",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "scatter",
+        "pack": "core",
+        "name": "飛散",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "glitch",
+        "pack": "core",
+        "name": "グリッチ退場",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "sinkMask",
+        "pack": "exitHold",
+        "name": "沈む",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "riseOut",
+        "pack": "exitHold",
+        "name": "上へ抜ける",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "slideOutL",
+        "pack": "exitHold",
+        "name": "左へ流れる",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "slideOutR",
+        "pack": "exitHold",
+        "name": "右へ流れる",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "flipOutX",
+        "pack": "exitHold",
+        "name": "扉が閉まる",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "flipOutY",
+        "pack": "exitHold",
+        "name": "パタン倒れ",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "foldOut",
+        "pack": "exitHold",
+        "name": "折り畳み",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "squash",
+        "pack": "exitHold",
+        "name": "潰れる",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "trackOutWide",
+        "pack": "exitHold",
+        "name": "字間が開く",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "collapse",
+        "pack": "exitHold",
+        "name": "吸い込み",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "zoomThrough",
+        "pack": "exitHold",
+        "name": "手前へ抜ける",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "zoomFar",
+        "pack": "exitHold",
+        "name": "奥へ遠ざかる",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "spinOut",
+        "pack": "exitHold",
+        "name": "回って消える",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "twist",
+        "pack": "exitHold",
+        "name": "ねじれ",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "waveOut",
+        "pack": "exitHold",
+        "name": "波で崩れる",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "blurOutStagger",
+        "pack": "exitHold",
+        "name": "字ごとボケ",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "undraw",
+        "pack": "exitHold",
+        "name": "線に戻る",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "outlineOut",
+        "pack": "exitHold",
+        "name": "塗りが抜ける",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "irisClose",
+        "pack": "exitHold",
+        "name": "アイリス",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "diagWipeOut",
+        "pack": "exitHold",
+        "name": "斜めワイプ",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "blindsClose",
+        "pack": "exitHold",
+        "name": "ブラインド",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "checkerOut",
+        "pack": "exitHold",
+        "name": "市松",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "splitApart",
+        "pack": "exitHold",
+        "name": "上下に割れる",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "vSliceDrop",
+        "pack": "exitHold",
+        "name": "縦スライス落下",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "melt",
+        "pack": "exitHold",
+        "name": "溶ける",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "dissolve",
+        "pack": "exitHold",
+        "name": "ほろほろ",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "backspace",
+        "pack": "exitHold",
+        "name": "バックスペース",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "scrambleOut",
+        "pack": "exitHold",
+        "name": "記号化",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "glitchDissolve",
+        "pack": "exitHold",
+        "name": "ブロック化",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "echoOut",
+        "pack": "exitHold",
+        "name": "残響",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "whipOut",
+        "pack": "exitHold",
+        "name": "ホイップ",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "gravity",
+        "pack": "exitHold",
+        "name": "重力落下",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "popOut",
+        "pack": "exitHold",
+        "name": "弾ける",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "burn",
+        "pack": "exitHold",
+        "name": "焼失",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "sweepCover",
+        "pack": "exitHold",
+        "name": "バーで隠す",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "shatterLite",
+        "pack": "exitHold",
+        "name": "四分割飛散",
+        "ae": "explode",
+        "special": false
+      },
+      {
+        "id": "peelOff",
+        "pack": "exitB",
+        "name": "ステッカー剥がし",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "crumpleOut",
+        "pack": "exitB",
+        "name": "丸めて捨てる",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "tearOut",
+        "pack": "exitB",
+        "name": "破り捨て",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "scorchOut",
+        "pack": "exitB",
+        "name": "焦げて消える",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "overexposeOut",
+        "pack": "exitB",
+        "name": "白飛び",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "scanOut",
+        "pack": "exitB",
+        "name": "走査線消去",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "stripesOut",
+        "pack": "exitB",
+        "name": "ストライプ消去",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "halftoneOut",
+        "pack": "exitB",
+        "name": "網点に消える",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "eraserOut",
+        "pack": "exitB",
+        "name": "黒板消し",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "vacuumOut",
+        "pack": "exitB",
+        "name": "一点に吸われる",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "sandOut",
+        "pack": "exitB",
+        "name": "砂になって飛ぶ",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "shredOut",
+        "pack": "exitB",
+        "name": "シュレッダー",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "dominoOut",
+        "pack": "exitB",
+        "name": "ドミノ倒し",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "hingeOut",
+        "pack": "exitB",
+        "name": "片留めが外れる",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "rocketOff",
+        "pack": "exitB",
+        "name": "打ち上げ",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "bounceOff",
+        "pack": "exitB",
+        "name": "弾んで去る",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "balloonOff",
+        "pack": "exitB",
+        "name": "風船で飛ぶ",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "deflateOut",
+        "pack": "exitB",
+        "name": "しぼんで飛ぶ",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "hazeOut",
+        "pack": "exitB",
+        "name": "陽炎に消える",
+        "ae": "blur",
+        "special": false
+      },
+      {
+        "id": "glassBreak",
+        "pack": "exitB",
+        "name": "ガラス割れ",
+        "ae": "explode",
+        "special": false
+      },
+      {
+        "id": "zipOut",
+        "pack": "exitB",
+        "name": "ジッパー",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "clapShut",
+        "pack": "exitB",
+        "name": "中央で閉じる",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "lampOff",
+        "pack": "exitB",
+        "name": "消灯",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "slotOut",
+        "pack": "exitB",
+        "name": "スロット回転",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "clockOut",
+        "pack": "exitB",
+        "name": "時計ワイプ",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "matrixOut",
+        "pack": "exitB",
+        "name": "デジタル雨",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "tornadoOut",
+        "pack": "exitB",
+        "name": "竜巻",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "rollUpOut",
+        "pack": "exitB",
+        "name": "巻き取る",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "snakeOut",
+        "pack": "exitB",
+        "name": "列になって去る",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "flutterOut",
+        "pack": "exitB",
+        "name": "ひらひら落ちる",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "rollOff",
+        "pack": "exitB",
+        "name": "転がって去る",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "fanClose",
+        "pack": "exitB",
+        "name": "扇を閉じる",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "rgbSplitOut",
+        "pack": "exitB",
+        "name": "色分解",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "shockOut",
+        "pack": "exitB",
+        "name": "衝撃波",
+        "ae": "explode",
+        "special": false
+      },
+      {
+        "id": "floodOut",
+        "pack": "exitB",
+        "name": "水没",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "slashOut",
+        "pack": "exitB",
+        "name": "一刀両断",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "mosaicOut",
+        "pack": "exitB",
+        "name": "モザイク",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "scribbleOut",
+        "pack": "exitB",
+        "name": "ぐしゃぐしゃ消し",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "candleOut",
+        "pack": "exitB",
+        "name": "吹き消す",
+        "ae": "drift",
+        "special": false
+      },
+      {
+        "id": "hrPulledDown",
+        "pack": "horror",
+        "name": "引きずり込み",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "hrLookBack",
+        "pack": "horror",
+        "name": "一字残る",
+        "ae": "cut",
+        "special": false
+      },
+      {
+        "id": "hrTurnAway",
+        "pack": "horror",
+        "name": "背を向ける",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "hrShiver",
+        "pack": "horror",
+        "name": "震えて消える",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "hrSwallow",
+        "pack": "horror",
+        "name": "闇に呑まれる",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "hrFlickerDie",
+        "pack": "horror",
+        "name": "明滅して消える",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "hrDrain",
+        "pack": "horror",
+        "name": "滴り落ちる",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "knWordKick",
+        "pack": "kinetic",
+        "name": "語ごと蹴り出し",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "knPushOut",
+        "pack": "kinetic",
+        "name": "押し出し退場",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "knDiveGlyph",
+        "pack": "kinetic",
+        "name": "一字へ突入",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "knLaunch",
+        "pack": "kinetic",
+        "name": "急発進",
+        "ae": "stretch",
+        "special": false
+      },
+      {
+        "id": "knWordBlink",
+        "pack": "kinetic",
+        "name": "一語ずつ消灯",
+        "ae": "cut",
+        "special": false
+      },
+      {
+        "id": "knCloseGap",
+        "pack": "kinetic",
+        "name": "詰めて消える",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "knJumpCutOut",
+        "pack": "kinetic",
+        "name": "ジャンプカット",
+        "ae": "glitch",
+        "special": false
+      },
+      {
+        "id": "knStackAway",
+        "pack": "kinetic",
+        "name": "積んで落とす",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "tyStrike",
+        "pack": "typo",
+        "name": "線で消す",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "tyToDot",
+        "pack": "typo",
+        "name": "点に戻る",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "tyLineFeed",
+        "pack": "typo",
+        "name": "改行送り",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "tyBracketClose",
+        "pack": "typo",
+        "name": "括弧閉じ",
+        "ae": "wipe",
+        "special": false
+      },
+      {
+        "id": "tyToIndex",
+        "pack": "typo",
+        "name": "番号に変わる",
+        "ae": "scatter",
+        "special": false
+      },
+      {
+        "id": "tyKeyLast",
+        "pack": "typo",
+        "name": "一字残し",
+        "ae": "shrink",
+        "special": false
+      },
+      {
+        "id": "tyUnderSink",
+        "pack": "typo",
+        "name": "下線へ沈む",
+        "ae": "fall",
+        "special": false
+      },
+      {
+        "id": "tyFoldVert",
+        "pack": "typo",
+        "name": "縦組に折れる",
+        "ae": "fall",
+        "special": false
+      }
+    ],
+    "decor": [
+      {
+        "id": "brackets",
+        "pack": "core",
+        "name": "枠マーク",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "rings",
+        "pack": "core",
+        "name": "座標の円",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "dots",
+        "pack": "core",
+        "name": "ドットの輪",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "arrows",
+        "pack": "core",
+        "name": "矢印",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "slash",
+        "pack": "core",
+        "name": "スラッシュ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "sparks",
+        "pack": "core",
+        "name": "スパーク",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "leaders",
+        "pack": "core",
+        "name": "引き出し線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "waveform",
+        "pack": "core",
+        "name": "波形",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "barcode",
+        "pack": "core",
+        "name": "バーコード",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "grid",
+        "pack": "core",
+        "name": "グリッド",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "stripes",
+        "pack": "core",
+        "name": "ストライプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "blobs",
+        "pack": "core",
+        "name": "インクの染み",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "bars",
+        "pack": "core",
+        "name": "荒い帯",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "shapes",
+        "pack": "core",
+        "name": "図形",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "counter",
+        "pack": "core",
+        "name": "大きな数字",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "crosshair",
+        "pack": "decor",
+        "name": "照準線",
+        "ae": "brackets",
+        "special": false
+      },
+      {
+        "id": "cropMarks",
+        "pack": "decor",
+        "name": "トンボ",
+        "ae": "brackets",
+        "special": false
+      },
+      {
+        "id": "reticle",
+        "pack": "decor",
+        "name": "ロックオン",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "radar",
+        "pack": "decor",
+        "name": "レーダー",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "progressRing",
+        "pack": "decor",
+        "name": "進行リング",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "timecodeBar",
+        "pack": "decor",
+        "name": "タイムコード",
+        "ae": "barcode",
+        "special": false
+      },
+      {
+        "id": "rulerEdge",
+        "pack": "decor",
+        "name": "端の定規",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "dimension",
+        "pack": "decor",
+        "name": "寸法線",
+        "ae": "leaders",
+        "special": false
+      },
+      {
+        "id": "indexNum",
+        "pack": "decor",
+        "name": "通し番号",
+        "ae": "counter",
+        "special": false
+      },
+      {
+        "id": "dateStamp",
+        "pack": "decor",
+        "name": "日付写真",
+        "ae": "barcode",
+        "special": false
+      },
+      {
+        "id": "qrBlock",
+        "pack": "decor",
+        "name": "QR風ブロック",
+        "ae": "barcode",
+        "special": false
+      },
+      {
+        "id": "glitchRects",
+        "pack": "decor",
+        "name": "グリッチ片",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "concentricSquares",
+        "pack": "decor",
+        "name": "同心四角",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "triangleSpin",
+        "pack": "decor",
+        "name": "回転三角",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "lineBurst",
+        "pack": "decor",
+        "name": "放射線",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "plusGrid",
+        "pack": "decor",
+        "name": "プラス格子",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "guides",
+        "pack": "decor",
+        "name": "ガイド線",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "waveLine",
+        "pack": "decor",
+        "name": "波線",
+        "ae": "waveform",
+        "special": false
+      },
+      {
+        "id": "spiralLine",
+        "pack": "decor",
+        "name": "渦巻き",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "halftonePatch",
+        "pack": "decor",
+        "name": "網点",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "checkerStrip",
+        "pack": "decor",
+        "name": "市松の帯",
+        "ae": "stripes",
+        "special": false
+      },
+      {
+        "id": "beatRing",
+        "pack": "decor",
+        "name": "拍の輪",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "orbitDots",
+        "pack": "decor",
+        "name": "周回する点",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "constellation",
+        "pack": "decor",
+        "name": "星座",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "confetti",
+        "pack": "decor",
+        "name": "紙吹雪",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "petals",
+        "pack": "decor",
+        "name": "花びら",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "rainStreaks",
+        "pack": "decor",
+        "name": "雨の筋",
+        "ae": "slash",
+        "special": false
+      },
+      {
+        "id": "snow",
+        "pack": "decor",
+        "name": "雪",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "lightLeak",
+        "pack": "decor",
+        "name": "光漏れ",
+        "ae": "blobs",
+        "special": false
+      },
+      {
+        "id": "bokeh",
+        "pack": "decor",
+        "name": "ボケ玉",
+        "ae": "blobs",
+        "special": false
+      },
+      {
+        "id": "speedCorner",
+        "pack": "decor",
+        "name": "集中線",
+        "ae": "slash",
+        "special": false
+      },
+      {
+        "id": "risingParticles",
+        "pack": "decor",
+        "name": "立ち上る粒",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "twinkle",
+        "pack": "decor",
+        "name": "きらめき",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "brushStroke",
+        "pack": "decor",
+        "name": "筆の払い",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "tapePieces",
+        "pack": "decor",
+        "name": "マスキングテープ",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "scribbleCircle",
+        "pack": "decor",
+        "name": "手描きの囲み",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "scribbleUnder",
+        "pack": "decor",
+        "name": "手描き下線",
+        "ae": "slash",
+        "special": false
+      },
+      {
+        "id": "crossOut",
+        "pack": "decor",
+        "name": "推敲の走り書き",
+        "ae": "slash",
+        "special": false
+      },
+      {
+        "id": "highlightMark",
+        "pack": "decor",
+        "name": "蛍光マーカー",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "heartsStars",
+        "pack": "decor",
+        "name": "ハートと星",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "watermarkKanji",
+        "pack": "decor",
+        "name": "透かし大漢字",
+        "ae": "counter",
+        "special": false
+      },
+      {
+        "id": "verticalStrip",
+        "pack": "decor",
+        "name": "縦書き帯",
+        "ae": "leaders",
+        "special": false
+      },
+      {
+        "id": "romajiLine",
+        "pack": "decor",
+        "name": "ローマ字",
+        "ae": "leaders",
+        "special": false
+      },
+      {
+        "id": "bracketsJP",
+        "pack": "decor",
+        "name": "隅付き括弧",
+        "ae": "brackets",
+        "special": false
+      },
+      {
+        "id": "seal",
+        "pack": "decor",
+        "name": "落款",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "kamon",
+        "pack": "decorB",
+        "name": "家紋",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "seigaiha",
+        "pack": "decorB",
+        "name": "青海波",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "asanoha",
+        "pack": "decorB",
+        "name": "麻の葉",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "hanabi",
+        "pack": "decorB",
+        "name": "花火",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "chochin",
+        "pack": "decorB",
+        "name": "提灯",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "shimenawa",
+        "pack": "decorB",
+        "name": "注連縄",
+        "ae": "leaders",
+        "special": false
+      },
+      {
+        "id": "sensu",
+        "pack": "decorB",
+        "name": "扇",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "tsukiKumo",
+        "pack": "decorB",
+        "name": "月に雲",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "momiji",
+        "pack": "decorB",
+        "name": "紅葉",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "namiGashira",
+        "pack": "decorB",
+        "name": "波頭",
+        "ae": "waveform",
+        "special": false
+      },
+      {
+        "id": "kasumi",
+        "pack": "decorB",
+        "name": "霞",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "hexGrid",
+        "pack": "decorB",
+        "name": "六角格子",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "spectrumRing",
+        "pack": "decorB",
+        "name": "円形スペクトラム",
+        "ae": "waveform",
+        "special": false
+      },
+      {
+        "id": "dataColumns",
+        "pack": "decorB",
+        "name": "データ列",
+        "ae": "barcode",
+        "special": false
+      },
+      {
+        "id": "spinner",
+        "pack": "decorB",
+        "name": "読み込み",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "headingTape",
+        "pack": "decorB",
+        "name": "方位テープ",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "glyphLock",
+        "pack": "decorB",
+        "name": "文字ロック",
+        "ae": "brackets",
+        "special": false
+      },
+      {
+        "id": "atomOrbit",
+        "pack": "decorB",
+        "name": "原子軌道",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "sonarArcs",
+        "pack": "decorB",
+        "name": "音波",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "circuit",
+        "pack": "decorB",
+        "name": "回路",
+        "ae": "leaders",
+        "special": false
+      },
+      {
+        "id": "swatches",
+        "pack": "decorB",
+        "name": "色見本",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "ruledLines",
+        "pack": "decorB",
+        "name": "罫線ノート",
+        "ae": "grid",
+        "special": false
+      },
+      {
+        "id": "registration",
+        "pack": "decorB",
+        "name": "見当合わせ",
+        "ae": "brackets",
+        "special": false
+      },
+      {
+        "id": "punchHoles",
+        "pack": "decorB",
+        "name": "パンチ穴",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "staple",
+        "pack": "decorB",
+        "name": "ホチキス",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "paperClip",
+        "pack": "decorB",
+        "name": "クリップ",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "indexTabs",
+        "pack": "decorB",
+        "name": "見出しタブ",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "vines",
+        "pack": "decorB",
+        "name": "蔓",
+        "ae": "leaders",
+        "special": false
+      },
+      {
+        "id": "cloudPuffs",
+        "pack": "decorB",
+        "name": "雲",
+        "ae": "blobs",
+        "special": false
+      },
+      {
+        "id": "starField",
+        "pack": "decorB",
+        "name": "星空",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "moonPhases",
+        "pack": "decorB",
+        "name": "月齢",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "sunRays",
+        "pack": "decorB",
+        "name": "陽射し",
+        "ae": "stripes",
+        "special": false
+      },
+      {
+        "id": "rainRipples",
+        "pack": "decorB",
+        "name": "雨の波紋",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "bubbles",
+        "pack": "decorB",
+        "name": "シャボン玉",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "smoke",
+        "pack": "decorB",
+        "name": "煙",
+        "ae": "blobs",
+        "special": false
+      },
+      {
+        "id": "dandelion",
+        "pack": "decorB",
+        "name": "綿毛",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "fireflies",
+        "pack": "decorB",
+        "name": "蛍",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "memphis",
+        "pack": "decorB",
+        "name": "メンフィス",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "zigzagRibbon",
+        "pack": "decorB",
+        "name": "ジグザグリボン",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "polkaPatch",
+        "pack": "decorB",
+        "name": "水玉",
+        "ae": "dots",
+        "special": false
+      },
+      {
+        "id": "stripeCircle",
+        "pack": "decorB",
+        "name": "縞の円",
+        "ae": "stripes",
+        "special": false
+      },
+      {
+        "id": "decoCorners",
+        "pack": "decorB",
+        "name": "装飾コーナー",
+        "ae": "brackets",
+        "special": false
+      },
+      {
+        "id": "halfCircles",
+        "pack": "decorB",
+        "name": "半円の積層",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "loopArrows",
+        "pack": "decorB",
+        "name": "循環矢印",
+        "ae": "arrows",
+        "special": false
+      },
+      {
+        "id": "starburst",
+        "pack": "decorB",
+        "name": "スターバースト",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "tally",
+        "pack": "decorB",
+        "name": "正の字",
+        "ae": "counter",
+        "special": false
+      },
+      {
+        "id": "cursorClick",
+        "pack": "decorB",
+        "name": "カーソル",
+        "ae": "arrows",
+        "special": false
+      },
+      {
+        "id": "windowChrome",
+        "pack": "decorB",
+        "name": "ウィンドウ",
+        "ae": "brackets",
+        "special": false
+      },
+      {
+        "id": "progressBar",
+        "pack": "decorB",
+        "name": "読み込みバー",
+        "ae": "bars",
+        "special": false
+      },
+      {
+        "id": "toggleSwitch",
+        "pack": "decorB",
+        "name": "トグル",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "notifBell",
+        "pack": "decorB",
+        "name": "通知",
+        "ae": "counter",
+        "special": false
+      },
+      {
+        "id": "likeCounter",
+        "pack": "decorB",
+        "name": "いいね",
+        "ae": "counter",
+        "special": false
+      },
+      {
+        "id": "mediaControls",
+        "pack": "decorB",
+        "name": "再生ボタン",
+        "ae": "shapes",
+        "special": false
+      },
+      {
+        "id": "volumeBars",
+        "pack": "decorB",
+        "name": "音量",
+        "ae": "waveform",
+        "special": false
+      },
+      {
+        "id": "musicNotes",
+        "pack": "decorB",
+        "name": "音符",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "hrScratches",
+        "pack": "horror",
+        "name": "引っ掻き傷",
+        "ae": "slash",
+        "special": false
+      },
+      {
+        "id": "hrSigil",
+        "pack": "horror",
+        "name": "魔法陣",
+        "ae": "rings",
+        "special": false
+      },
+      {
+        "id": "hrWatchEye",
+        "pack": "horror",
+        "name": "見ている目",
+        "ae": "reticle",
+        "special": false
+      },
+      {
+        "id": "hrStaticPatch",
+        "pack": "horror",
+        "name": "砂嵐の欠片",
+        "ae": "glitchRects",
+        "special": false
+      },
+      {
+        "id": "hrDustBeam",
+        "pack": "horror",
+        "name": "光の筋と埃",
+        "ae": "sparks",
+        "special": false
+      },
+      {
+        "id": "hrDrips",
+        "pack": "horror",
+        "name": "垂れる墨",
+        "ae": "blobs",
+        "special": false
+      },
+      {
+        "id": "hrCracks",
+        "pack": "horror",
+        "name": "ひび割れ",
+        "ae": "lineBurst",
+        "special": false
+      },
+      {
+        "id": "knSpeedTrail",
+        "pack": "kinetic",
+        "name": "追従スピード線",
+        "ae": "slash",
+        "special": false
+      },
+      {
+        "id": "knWordTicks",
+        "pack": "kinetic",
+        "name": "語カウンター",
+        "ae": "counter",
+        "special": false
+      },
+      {
+        "id": "tyColophon",
+        "pack": "typo",
+        "name": "奥付",
+        "ae": "leaders",
+        "special": false
+      },
+      {
+        "id": "tyRunningHead",
+        "pack": "typo",
+        "name": "柱とノンブル",
+        "ae": "timecodeBar",
+        "special": false
+      },
+      {
+        "id": "tyGlyphBody",
+        "pack": "typo",
+        "name": "字割り線",
+        "ae": "guides",
+        "special": false
+      },
+      {
+        "id": "tyTextRule",
+        "pack": "typo",
+        "name": "文字罫",
+        "ae": "verticalStrip",
+        "special": false
+      },
+      {
+        "id": "tyTypeScale",
+        "pack": "typo",
+        "name": "級数見本",
+        "ae": "indexNum",
+        "special": false
+      },
+      {
+        "id": "tyBigPunct",
+        "pack": "typo",
+        "name": "大きな約物",
+        "ae": "bracketsJP",
+        "special": false
+      }
+    ],
+    "treat": [
+      {
+        "id": "none",
+        "pack": "core",
+        "name": "なし",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "hrInkBleed",
+        "pack": "horror",
+        "name": "滲み垂れ",
+        "ae": "softShadow",
+        "special": false
+      },
+      {
+        "id": "hrEroded",
+        "pack": "horror",
+        "name": "風化",
+        "ae": "halftone",
+        "special": false
+      },
+      {
+        "id": "hrRedact",
+        "pack": "horror",
+        "name": "黒塗り",
+        "ae": "boxed",
+        "special": false
+      },
+      {
+        "id": "hrDoubleExp",
+        "pack": "horror",
+        "name": "二重露光",
+        "ae": "echoOutline",
+        "special": false
+      },
+      {
+        "id": "knWordScale",
+        "pack": "kinetic",
+        "name": "大小語",
+        "ae": "sizeWave",
+        "special": false
+      },
+      {
+        "id": "knWordPlate",
+        "pack": "kinetic",
+        "name": "語ごと反転",
+        "ae": "boxed",
+        "special": false
+      },
+      {
+        "id": "outline",
+        "pack": "looks",
+        "name": "袋文字",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "outlineFill",
+        "pack": "looks",
+        "name": "縁取り",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "doubleOutline",
+        "pack": "looks",
+        "name": "二重縁",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "extrude",
+        "pack": "looks",
+        "name": "立体",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "longShadow",
+        "pack": "looks",
+        "name": "長い影",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "hardShadow",
+        "pack": "looks",
+        "name": "ずらし影",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "softShadow",
+        "pack": "looks",
+        "name": "ぼかし影",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "glow",
+        "pack": "looks",
+        "name": "発光",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "marker",
+        "pack": "looks",
+        "name": "マーカー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "underline",
+        "pack": "looks",
+        "name": "下線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "strike",
+        "pack": "looks",
+        "name": "取り消し線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "boxed",
+        "pack": "looks",
+        "name": "箱組",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "gradientV",
+        "pack": "looks",
+        "name": "縦グラデ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "splitColor",
+        "pack": "looks",
+        "name": "上下二色",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "halftone",
+        "pack": "looks",
+        "name": "網点",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "stripes",
+        "pack": "looks",
+        "name": "ストライプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "hatch",
+        "pack": "looks",
+        "name": "斜線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "dotted",
+        "pack": "looks",
+        "name": "点線輪郭",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "alternate",
+        "pack": "looks",
+        "name": "交互色",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "italic",
+        "pack": "looks",
+        "name": "斜体",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "wide",
+        "pack": "looks",
+        "name": "平体",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tall",
+        "pack": "looks",
+        "name": "長体",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "echoOutline",
+        "pack": "looks",
+        "name": "輪郭の残響",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "emphasisDots",
+        "pack": "looks",
+        "name": "傍点",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "neonOutline",
+        "pack": "treattrans",
+        "name": "ネオン管",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "chrome",
+        "pack": "treattrans",
+        "name": "クローム",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "rainbow",
+        "pack": "treattrans",
+        "name": "虹色",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "glitchSplit",
+        "pack": "treattrans",
+        "name": "色版ズレ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "shadowStack",
+        "pack": "treattrans",
+        "name": "多重影",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "stencilGap",
+        "pack": "treattrans",
+        "name": "ステンシル字",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "waterline",
+        "pack": "treattrans",
+        "name": "水位",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "karaoke",
+        "pack": "treattrans",
+        "name": "カラオケ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "sizeWave",
+        "pack": "treattrans",
+        "name": "大小リズム",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "rotateAlt",
+        "pack": "treattrans",
+        "name": "揺れ字",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "baselineShift",
+        "pack": "treattrans",
+        "name": "段違い",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "fauxBold",
+        "pack": "treattrans",
+        "name": "極太",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "circled",
+        "pack": "treattrans",
+        "name": "丸囲み",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "bracketsQuote",
+        "pack": "treattrans",
+        "name": "かぎ括弧",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "reflection",
+        "pack": "treattrans",
+        "name": "映り込み",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "inline",
+        "pack": "treattrans",
+        "name": "インライン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "sticker",
+        "pack": "treattrans",
+        "name": "シール縁",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "gradientSweep",
+        "pack": "treattrans",
+        "name": "光沢スイープ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "kerningWide",
+        "pack": "treattrans",
+        "name": "字間広め",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "monoGrid",
+        "pack": "treattrans",
+        "name": "原稿用紙風",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "outlineOffset",
+        "pack": "treattrans",
+        "name": "版ズレ袋文字",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "toneShadow",
+        "pack": "treattrans",
+        "name": "トーン影",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "fadeChars",
+        "pack": "treattrans",
+        "name": "余韻",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "cutShift",
+        "pack": "treattrans",
+        "name": "断ち切り",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "focusPull",
+        "pack": "treattrans",
+        "name": "ぼかし送り",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "spotChar",
+        "pack": "treattrans",
+        "name": "一字マーク",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "ransom",
+        "pack": "treattrans",
+        "name": "切り貼り文字",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tyHollowKey",
+        "pack": "typo",
+        "name": "一字抜き",
+        "ae": "spotChar",
+        "special": false
+      },
+      {
+        "id": "tyHeadRules",
+        "pack": "typo",
+        "name": "天地罫",
+        "ae": "underline",
+        "special": false
+      },
+      {
+        "id": "tyHeadBig",
+        "pack": "typo",
+        "name": "頭字強調",
+        "ae": "sizeWave",
+        "special": false
+      },
+      {
+        "id": "tyIndexSup",
+        "pack": "typo",
+        "name": "字番号",
+        "ae": "emphasisDots",
+        "special": false
+      }
+    ],
+    "bg": [
+      {
+        "id": "none",
+        "pack": "core",
+        "name": "無地",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "auroraRibbons",
+        "pack": "bgcamB",
+        "name": "オーロラ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "meshBlobs",
+        "pack": "bgcamB",
+        "name": "メッシュグラデ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "duotoneSweep",
+        "pack": "bgcamB",
+        "name": "二色スイープ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "horizonGlow",
+        "pack": "bgcamB",
+        "name": "惑星の縁",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "seigaiha",
+        "pack": "bgcamB",
+        "name": "青海波",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "asanoha",
+        "pack": "bgcamB",
+        "name": "麻の葉",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "houndstooth",
+        "pack": "bgcamB",
+        "name": "千鳥格子",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "herringbone",
+        "pack": "bgcamB",
+        "name": "ヘリンボーン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "argyle",
+        "pack": "bgcamB",
+        "name": "アーガイル",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tartan",
+        "pack": "bgcamB",
+        "name": "タータン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "chevron",
+        "pack": "bgcamB",
+        "name": "山形",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "isoCubes",
+        "pack": "bgcamB",
+        "name": "立方体",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "hexGrid",
+        "pack": "bgcamB",
+        "name": "六角格子",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "triTess",
+        "pack": "bgcamB",
+        "name": "三角モザイク",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "moire",
+        "pack": "bgcamB",
+        "name": "モアレ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "squareTunnel",
+        "pack": "bgcamB",
+        "name": "四角トンネル",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "spiralArms",
+        "pack": "bgcamB",
+        "name": "渦巻き",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "topoLines",
+        "pack": "bgcamB",
+        "name": "等高線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "ridgePlot",
+        "pack": "bgcamB",
+        "name": "稜線グラフ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "starfield",
+        "pack": "bgcamB",
+        "name": "星空",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "nightMoon",
+        "pack": "bgcamB",
+        "name": "月夜",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "skyline",
+        "pack": "bgcamB",
+        "name": "街並み",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "sunsetSun",
+        "pack": "bgcamB",
+        "name": "夕日",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "oceanWaves",
+        "pack": "bgcamB",
+        "name": "海の波",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "rainWindow",
+        "pack": "bgcamB",
+        "name": "雨の窓",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "snowLayers",
+        "pack": "bgcamB",
+        "name": "雪",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "fireworks",
+        "pack": "bgcamB",
+        "name": "花火",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "cloudLayers",
+        "pack": "bgcamB",
+        "name": "雲",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "mountains",
+        "pack": "bgcamB",
+        "name": "山並み",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "filmStrip",
+        "pack": "bgcamB",
+        "name": "フィルム",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "vhsBand",
+        "pack": "bgcamB",
+        "name": "VHSノイズ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tornPaper",
+        "pack": "bgcamB",
+        "name": "破れ紙",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "godRays",
+        "pack": "bgcamB",
+        "name": "光芒",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "vignettePulse",
+        "pack": "bgcamB",
+        "name": "色の周辺光",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "kaleidoscope",
+        "pack": "bgcamB",
+        "name": "万華鏡",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "marble",
+        "pack": "bgcamB",
+        "name": "大理石",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "paperCut",
+        "pack": "bgcamB",
+        "name": "切り絵",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "hrFailingLamp",
+        "pack": "horror",
+        "name": "切れかけの灯",
+        "ae": "vignettePulse",
+        "special": false
+      },
+      {
+        "id": "hrCorridor",
+        "pack": "horror",
+        "name": "暗い廊下",
+        "ae": "squareTunnel",
+        "special": false
+      },
+      {
+        "id": "hrMold",
+        "pack": "horror",
+        "name": "広がる染み",
+        "ae": "meshBlobs",
+        "special": false
+      },
+      {
+        "id": "hrDeadTrees",
+        "pack": "horror",
+        "name": "枯れ木の森",
+        "ae": "mountains",
+        "special": false
+      },
+      {
+        "id": "sunburst",
+        "pack": "looks",
+        "name": "放射",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "concentric",
+        "pack": "looks",
+        "name": "同心円",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "halftoneFade",
+        "pack": "looks",
+        "name": "網点グラデ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "bigStripes",
+        "pack": "looks",
+        "name": "大きな斜線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "splitV",
+        "pack": "looks",
+        "name": "左右二色",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "splitH",
+        "pack": "looks",
+        "name": "上下二色",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "splitDiag",
+        "pack": "looks",
+        "name": "斜め二色",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "gradientSweep",
+        "pack": "looks",
+        "name": "グラデ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "spotlight",
+        "pack": "looks",
+        "name": "スポットライト",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tvBars",
+        "pack": "looks",
+        "name": "テレビの帯",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "checker",
+        "pack": "looks",
+        "name": "市松",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "bigChar",
+        "pack": "looks",
+        "name": "巨大文字",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "speedLines",
+        "pack": "looks",
+        "name": "集中線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "scanBars",
+        "pack": "looks",
+        "name": "走査線の帯",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "dotGrid",
+        "pack": "looks",
+        "name": "ドット格子",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "retroGrid",
+        "pack": "looks",
+        "name": "レトロ格子",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "bokehBg",
+        "pack": "looks",
+        "name": "ボケ玉",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "particlesBg",
+        "pack": "looks",
+        "name": "舞い上がる粒",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "ripples",
+        "pack": "looks",
+        "name": "波紋",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "polka",
+        "pack": "looks",
+        "name": "水玉",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "eqBars",
+        "pack": "looks",
+        "name": "背景イコライザー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "borderFrame",
+        "pack": "looks",
+        "name": "太枠",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "letterbox",
+        "pack": "looks",
+        "name": "シネスコ帯",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "noiseField",
+        "pack": "looks",
+        "name": "ノイズの揺らぎ",
+        "ae": null,
+        "special": false
+      }
+    ],
+    "cam": [
+      {
+        "id": "push",
+        "pack": "core",
+        "name": "ゆっくり寄る",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "orbitDrift",
+        "pack": "bgcamB",
+        "name": "周回",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "barrelRoll",
+        "pack": "bgcamB",
+        "name": "バレルロール",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "pendulumSway",
+        "pack": "bgcamB",
+        "name": "振り子",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "focusIn",
+        "pack": "bgcamB",
+        "name": "ピント合わせ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "rackFocus",
+        "pack": "bgcamB",
+        "name": "ピンぼけ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "earthquake",
+        "pack": "bgcamB",
+        "name": "地震",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "floatNoise",
+        "pack": "bgcamB",
+        "name": "浮遊",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "vertigo",
+        "pack": "bgcamB",
+        "name": "めまい",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tiltDown",
+        "pack": "bgcamB",
+        "name": "ティルトダウン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "spiralIn",
+        "pack": "bgcamB",
+        "name": "渦ズーム",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "snapPan",
+        "pack": "bgcamB",
+        "name": "スナップパン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "jelly",
+        "pack": "bgcamB",
+        "name": "ぷるん",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "hrNervous",
+        "pack": "horror",
+        "name": "怯えた手持ち",
+        "ae": "handheld",
+        "special": false
+      },
+      {
+        "id": "hrDutchSnap",
+        "pack": "horror",
+        "name": "不意の傾き",
+        "ae": "dutch",
+        "special": false
+      },
+      {
+        "id": "knReadPan",
+        "pack": "kinetic",
+        "name": "読み追い",
+        "ae": "snapPan",
+        "special": false
+      },
+      {
+        "id": "knTiltKick",
+        "pack": "kinetic",
+        "name": "語で傾く",
+        "ae": "dutch",
+        "special": false
+      },
+      {
+        "id": "knCardFlip",
+        "pack": "kinetic",
+        "name": "カード返し",
+        "ae": "barrelRoll",
+        "special": false
+      },
+      {
+        "id": "knShearKick",
+        "pack": "kinetic",
+        "name": "シアーキック",
+        "ae": "jelly",
+        "special": false
+      },
+      {
+        "id": "knJumpCut",
+        "pack": "kinetic",
+        "name": "ジャンプカット",
+        "ae": "stepZoom",
+        "special": false
+      },
+      {
+        "id": "knRushIn",
+        "pack": "kinetic",
+        "name": "奥から突進",
+        "ae": "crashZoom",
+        "special": false
+      },
+      {
+        "id": "pullOut",
+        "pack": "looks",
+        "name": "引き",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "panL",
+        "pack": "looks",
+        "name": "左パン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "panR",
+        "pack": "looks",
+        "name": "右パン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tiltUp",
+        "pack": "looks",
+        "name": "ティルト",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "dutch",
+        "pack": "looks",
+        "name": "ダッチ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "handheld",
+        "pack": "looks",
+        "name": "手持ち",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "beatPunch",
+        "pack": "looks",
+        "name": "拍でズーム",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "whipIn",
+        "pack": "looks",
+        "name": "ホイップイン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "crashZoom",
+        "pack": "looks",
+        "name": "クラッシュズーム",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "bounce",
+        "pack": "looks",
+        "name": "バウンス",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "roll",
+        "pack": "looks",
+        "name": "ロール",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "driftDiag",
+        "pack": "looks",
+        "name": "斜めドリフト",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "shakeHard",
+        "pack": "looks",
+        "name": "強い揺れ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "dollyIn",
+        "pack": "looks",
+        "name": "ドリー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "stepZoom",
+        "pack": "looks",
+        "name": "段階ズーム",
+        "ae": null,
+        "special": false
+      }
+    ],
+    "fx": [
+      {
+        "id": "chroma",
+        "pack": "core",
+        "name": "色ズレの跳ね",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "shake",
+        "pack": "core",
+        "name": "揺れ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "slice",
+        "pack": "core",
+        "name": "スライスグリッチ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "block",
+        "pack": "core",
+        "name": "ブロックグリッチ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "invert",
+        "pack": "core",
+        "name": "反転",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "flash",
+        "pack": "core",
+        "name": "フラッシュ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "zoom",
+        "pack": "core",
+        "name": "ズームブラー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "mosaic",
+        "pack": "core",
+        "name": "モザイク",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "radialChroma",
+        "pack": "fxB",
+        "name": "放射色収差",
+        "ae": "chroma",
+        "special": false
+      },
+      {
+        "id": "bloomFlash",
+        "pack": "fxB",
+        "name": "ブルーム",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "bulge",
+        "pack": "fxB",
+        "name": "魚眼",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "pixelSort",
+        "pack": "fxB",
+        "name": "ピクセルソート",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "interlace",
+        "pack": "fxB",
+        "name": "インターレース",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "macroBlock",
+        "pack": "fxB",
+        "name": "ブロックノイズ",
+        "ae": "block",
+        "special": false
+      },
+      {
+        "id": "halftone",
+        "pack": "fxB",
+        "name": "網点",
+        "ae": "mosaic",
+        "special": false
+      },
+      {
+        "id": "duotone",
+        "pack": "fxB",
+        "name": "ダブルトーン",
+        "ae": "chroma",
+        "special": false
+      },
+      {
+        "id": "ditherBit",
+        "pack": "fxB",
+        "name": "1bitディザ",
+        "ae": "mosaic",
+        "special": false
+      },
+      {
+        "id": "rotateSnap",
+        "pack": "fxB",
+        "name": "傾きスナップ",
+        "ae": "shake",
+        "special": false
+      },
+      {
+        "id": "echoFrames",
+        "pack": "fxB",
+        "name": "残像エコー",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "kaleido",
+        "pack": "fxB",
+        "name": "万華鏡",
+        "ae": "block",
+        "special": false
+      },
+      {
+        "id": "bandInvert",
+        "pack": "fxB",
+        "name": "帯反転",
+        "ae": "invert",
+        "special": false
+      },
+      {
+        "id": "lightRays",
+        "pack": "fxB",
+        "name": "光芒",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "anamorphic",
+        "pack": "fxB",
+        "name": "アナモフレア",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "heartbeat",
+        "pack": "fxB",
+        "name": "鼓動",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "tvStatic",
+        "pack": "fxB",
+        "name": "砂嵐",
+        "ae": "block",
+        "special": false
+      },
+      {
+        "id": "dustScratches",
+        "pack": "fxB",
+        "name": "フィルム傷",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "filmAdvance",
+        "pack": "fxB",
+        "name": "フィルム送り",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "perspectiveTilt",
+        "pack": "fxB",
+        "name": "パース揺れ",
+        "ae": "shake",
+        "special": false
+      },
+      {
+        "id": "ripple",
+        "pack": "fxB",
+        "name": "波紋",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "focusLines",
+        "pack": "fxB",
+        "name": "集中線",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "speedLines",
+        "pack": "fxB",
+        "name": "流線",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "starGlint",
+        "pack": "fxB",
+        "name": "キラッ",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "colorBars",
+        "pack": "fxB",
+        "name": "カラーバー",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "zoomStutter",
+        "pack": "fxB",
+        "name": "ズーム連打",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "negativeRing",
+        "pack": "fxB",
+        "name": "反転リング",
+        "ae": "invert",
+        "special": false
+      },
+      {
+        "id": "edgeDetect",
+        "pack": "fxB",
+        "name": "輪郭抽出",
+        "ae": "invert",
+        "special": false
+      },
+      {
+        "id": "shatter",
+        "pack": "fxB",
+        "name": "ガラス割れ",
+        "ae": "block",
+        "special": false
+      },
+      {
+        "id": "defocus",
+        "pack": "fxB",
+        "name": "ピンぼけ",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "snapshot",
+        "pack": "fxB",
+        "name": "シャッター",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "squash",
+        "pack": "fxB",
+        "name": "伸縮",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "scanBar",
+        "pack": "fxB",
+        "name": "スキャン",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "loopScroll",
+        "pack": "fxB",
+        "name": "横ループ",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "hrSubliminal",
+        "pack": "horror",
+        "name": "サブリミナル",
+        "ae": "invert",
+        "special": false
+      },
+      {
+        "id": "hrSignalLoss",
+        "pack": "horror",
+        "name": "映像の途切れ",
+        "ae": "blackFrame",
+        "special": false
+      },
+      {
+        "id": "hrPassingShadow",
+        "pack": "horror",
+        "name": "横切る影",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "panelWipe",
+        "pack": "looks",
+        "name": "パネルワイプ",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "irisTrans",
+        "pack": "looks",
+        "name": "アイリス",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "doors",
+        "pack": "looks",
+        "name": "扉",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "blindsTrans",
+        "pack": "looks",
+        "name": "ブラインド",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "rgbSplit",
+        "pack": "looks",
+        "name": "RGB分離",
+        "ae": "chroma",
+        "special": false
+      },
+      {
+        "id": "smear",
+        "pack": "looks",
+        "name": "横スミア",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "vhsRoll",
+        "pack": "looks",
+        "name": "VHSロール",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "trackingNoise",
+        "pack": "looks",
+        "name": "トラッキングノイズ",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "mirrorFlash",
+        "pack": "looks",
+        "name": "ミラー",
+        "ae": "block",
+        "special": false
+      },
+      {
+        "id": "strobe",
+        "pack": "looks",
+        "name": "ストロボ",
+        "ae": "invert",
+        "special": false
+      },
+      {
+        "id": "posterize",
+        "pack": "looks",
+        "name": "ポスタリゼ",
+        "ae": "mosaic",
+        "special": false
+      },
+      {
+        "id": "hueShift",
+        "pack": "looks",
+        "name": "色相シフト",
+        "ae": "chroma",
+        "special": false
+      },
+      {
+        "id": "tileShift",
+        "pack": "looks",
+        "name": "タイルずらし",
+        "ae": "block",
+        "special": false
+      },
+      {
+        "id": "filmBurn",
+        "pack": "looks",
+        "name": "フィルム焼け",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "whipBlur",
+        "pack": "looks",
+        "name": "ホイップブラー",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "blackFrame",
+        "pack": "looks",
+        "name": "黒コマ",
+        "ae": "invert",
+        "special": false
+      },
+      {
+        "id": "whiteFrame",
+        "pack": "looks",
+        "name": "白コマ",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "gridRepeat",
+        "pack": "looks",
+        "name": "画面分割",
+        "ae": "block",
+        "special": false
+      },
+      {
+        "id": "waveWarp",
+        "pack": "looks",
+        "name": "波ゆがみ",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "pixelDrift",
+        "pack": "looks",
+        "name": "ピクセルずれ",
+        "ae": "slice",
+        "special": false
+      },
+      {
+        "id": "zoomPunch",
+        "pack": "looks",
+        "name": "ズームパンチ",
+        "ae": "zoom",
+        "special": false
+      },
+      {
+        "id": "lightSweep",
+        "pack": "looks",
+        "name": "光の筋",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "crtOff",
+        "pack": "looks",
+        "name": "ブラウン管オフ",
+        "ae": "flash",
+        "special": false
+      },
+      {
+        "id": "splitSlide",
+        "pack": "looks",
+        "name": "上下スライド",
+        "ae": "slice",
+        "special": false
+      }
+    ],
+    "trans": [
+      {
+        "id": "hrStaticCut",
+        "pack": "horror",
+        "name": "砂嵐カット",
+        "ae": "pixelate",
+        "special": false
+      },
+      {
+        "id": "hrBlink",
+        "pack": "horror",
+        "name": "まばたき",
+        "ae": "irisOpen",
+        "special": false
+      },
+      {
+        "id": "knCornerSwing",
+        "pack": "kinetic",
+        "name": "コーナースイング",
+        "ae": "spinOut",
+        "special": false
+      },
+      {
+        "id": "knStutterCut",
+        "pack": "kinetic",
+        "name": "刻みカット",
+        "ae": "flashCross",
+        "special": false
+      },
+      {
+        "id": "knStripSlam",
+        "pack": "kinetic",
+        "name": "短冊スラム",
+        "ae": "sliceShift",
+        "special": false
+      },
+      {
+        "id": "wipe",
+        "pack": "treattrans",
+        "name": "エッジワイプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "diagonalWipe",
+        "pack": "treattrans",
+        "name": "斜め帯ワイプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "clockWipe",
+        "pack": "treattrans",
+        "name": "クロックワイプ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "irisOpen",
+        "pack": "treattrans",
+        "name": "アイリスイン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "pushSlide",
+        "pack": "treattrans",
+        "name": "プッシュ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "cover",
+        "pack": "treattrans",
+        "name": "カバー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "uncover",
+        "pack": "treattrans",
+        "name": "アンカバー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "zoomThrough",
+        "pack": "treattrans",
+        "name": "ズームスルー",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "doorsOpen",
+        "pack": "treattrans",
+        "name": "観音開き",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "blinds",
+        "pack": "treattrans",
+        "name": "ブラインド転換",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "checker",
+        "pack": "treattrans",
+        "name": "市松転換",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "blockDissolve",
+        "pack": "treattrans",
+        "name": "ブロック崩し",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "whipPan",
+        "pack": "treattrans",
+        "name": "ホイップパン",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "spinOut",
+        "pack": "treattrans",
+        "name": "回転アウト",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "inkBlob",
+        "pack": "treattrans",
+        "name": "インク",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "shatterTiles",
+        "pack": "treattrans",
+        "name": "タイル崩落",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "sliceShift",
+        "pack": "treattrans",
+        "name": "短冊ずらし",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "cubeTurn",
+        "pack": "treattrans",
+        "name": "キューブ",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "flashCross",
+        "pack": "treattrans",
+        "name": "フラッシュ転換",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "pixelate",
+        "pack": "treattrans",
+        "name": "モザイク転換",
+        "ae": null,
+        "special": false
+      },
+      {
+        "id": "tyRuleWipe",
+        "pack": "typo",
+        "name": "罫線ワイプ",
+        "ae": "blinds",
+        "special": false
+      },
+      {
+        "id": "tyGridCells",
+        "pack": "typo",
+        "name": "升目送り",
+        "ae": "checker",
+        "special": false
+      }
+    ]
+  },
+  "styles": [
+    "noir",
+    "crimson",
+    "caution",
+    "magenta",
+    "paper",
+    "hud",
+    "mint",
+    "specimen",
+    "transit",
+    "blueprint",
+    "rouge",
+    "mono",
+    "hrRuin",
+    "hrNightRec",
+    "hrCurse",
+    "sakura",
+    "ocean",
+    "sunset",
+    "forest",
+    "vapor",
+    "newsprint",
+    "synth80",
+    "kraft",
+    "candy",
+    "acid",
+    "sumi",
+    "gold"
+  ],
+  "fonts": [
+    "gothic_black",
+    "gothic_bold",
+    "gothic_med",
+    "gothic_light",
+    "dela",
+    "zenkaku",
+    "mincho_black",
+    "mincho_bold",
+    "mincho",
+    "mincho_light",
+    "tokumin",
+    "round",
+    "pop",
+    "dot",
+    "brush",
+    "mono",
+    "reggae",
+    "rampart",
+    "potta",
+    "kiwi",
+    "klee",
+    "shippori",
+    "sansui"
+  ]
+}

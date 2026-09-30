@@ -1,0 +1,226 @@
+{
+  "seed": 42,
+  "planSummary": {
+    "duration": 10,
+    "W": 1920,
+    "H": 1080,
+    "lines": [
+      {
+        "index": 0,
+        "src": 2,
+        "lrc": 0,
+        "text": "夜明けの色を覚えてる",
+        "start": 0,
+        "end": 2.4,
+        "visEnd": 2.4,
+        "note": null,
+        "impact": false,
+        "emph": [],
+        "chunks": [
+          "夜明けの色を",
+          "覚えてる"
+        ],
+        "seed": 325576935
+      },
+      {
+        "index": 1,
+        "src": 3,
+        "lrc": 2.4,
+        "text": "透明なまま",
+        "start": 2.4,
+        "end": 4.8,
+        "visEnd": 4.8,
+        "note": null,
+        "impact": true,
+        "emph": [
+          "透明"
+        ],
+        "chunks": [
+          "透明なまま"
+        ],
+        "seed": 1326477576
+      },
+      {
+        "index": 2,
+        "src": 4,
+        "lrc": 4.8,
+        "text": "",
+        "interlude": true,
+        "secs": 2,
+        "start": 4.8,
+        "end": 7,
+        "visEnd": 7,
+        "note": null,
+        "impact": false,
+        "emph": [],
+        "chunks": [],
+        "seed": 2851906275
+      },
+      {
+        "index": 3,
+        "src": 5,
+        "lrc": 7,
+        "text": "Good night",
+        "start": 7,
+        "end": 9.5,
+        "visEnd": 9.5,
+        "note": "またね",
+        "impact": false,
+        "emph": [],
+        "chunks": [
+          "Good",
+          "night"
+        ],
+        "seed": 853547183
+      }
+    ],
+    "cuts": [
+      {
+        "text": "夜明けの色を",
+        "line": 0,
+        "layout": "tyMargin",
+        "enter": "scramble",
+        "hold": "orbitSmall",
+        "exit": "tyUnderSink",
+        "decor": [
+          "glitchRects"
+        ],
+        "treat": "wide",
+        "bg": "splitH",
+        "cam": "knCardFlip",
+        "trans": null,
+        "start": 0,
+        "end": 0.8503496503496503,
+        "seed": 1515984455
+      },
+      {
+        "text": "覚えてる",
+        "line": 0,
+        "layout": "arcTop",
+        "enter": "drop",
+        "hold": "float",
+        "exit": "gravity",
+        "decor": [
+          "dimension"
+        ],
+        "treat": "none",
+        "bg": "splitH",
+        "cam": "dutch",
+        "trans": null,
+        "start": 0.8503496503496503,
+        "end": 1.4769230769230768,
+        "seed": 3546481500
+      },
+      {
+        "text": "夜明けの色を覚えてる",
+        "line": 0,
+        "layout": "tile",
+        "enter": "stretch",
+        "hold": "shimmer",
+        "exit": "shrink",
+        "decor": [
+          "reticle"
+        ],
+        "treat": "none",
+        "bg": "splitH",
+        "cam": "push",
+        "trans": null,
+        "start": 1.4769230769230768,
+        "end": 2.4,
+        "seed": 1633222737
+      },
+      {
+        "text": "透明なまま",
+        "line": 1,
+        "layout": "tyRuby",
+        "enter": "inkBleed",
+        "hold": "drift",
+        "exit": "sinkMask",
+        "decor": [
+          "spiralLine",
+          "brushStroke"
+        ],
+        "treat": "none",
+        "bg": "none",
+        "cam": "bounce",
+        "trans": null,
+        "start": 2.4,
+        "end": 4.8,
+        "seed": 1655871718
+      },
+      {
+        "text": "",
+        "line": 2,
+        "layout": "interlude",
+        "enter": "blur",
+        "hold": "still",
+        "exit": "blur",
+        "decor": [
+          "grid",
+          "tapePieces"
+        ],
+        "treat": "none",
+        "bg": "scanBars",
+        "cam": "push",
+        "trans": null,
+        "start": 4.8,
+        "end": 7,
+        "seed": 879540950
+      },
+      {
+        "text": "Good",
+        "line": 3,
+        "layout": "tySplitType",
+        "enter": "blurStagger",
+        "hold": "knCounterRock",
+        "exit": "dissolve",
+        "decor": [
+          "verticalStrip"
+        ],
+        "treat": "none",
+        "bg": "checker",
+        "cam": "knCardFlip",
+        "trans": null,
+        "start": 7,
+        "end": 7.706179066834805,
+        "seed": 1937833473
+      },
+      {
+        "text": "night",
+        "line": 3,
+        "layout": "center",
+        "enter": "knTypeToSlam",
+        "hold": "stretchPulse",
+        "exit": "knWordKick",
+        "decor": [
+          "brushStroke"
+        ],
+        "treat": "hatch",
+        "bg": "checker",
+        "cam": "panL",
+        "trans": null,
+        "start": 7.706179066834805,
+        "end": 8.538461538461538,
+        "seed": 2305583813
+      },
+      {
+        "text": "Good night",
+        "line": 3,
+        "layout": "equalizer",
+        "enter": "iris",
+        "hold": "stretchPulse",
+        "exit": "whipOut",
+        "decor": [
+          "plusGrid"
+        ],
+        "treat": "echoOutline",
+        "bg": "checker",
+        "cam": "knRushIn",
+        "trans": null,
+        "start": 8.538461538461538,
+        "end": 9.5,
+        "seed": 2187684126
+      }
+    ]
+  }
+}

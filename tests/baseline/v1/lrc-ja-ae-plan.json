@@ -1,0 +1,1011 @@
+{
+  "version": 2,
+  "generator": "JIZURA",
+  "appVersion": "0.10.0",
+  "title": "Baseline Song",
+  "artist": "JIZURA",
+  "W": 1920,
+  "H": 1080,
+  "fps": 24,
+  "duration": 10,
+  "styleKey": "noir",
+  "style": {
+    "name": "ノワール・クロマ",
+    "desc": "黒地・白文字・シアン/琥珀の色ズレ",
+    "schemes": [
+      {
+        "bg": "#060607",
+        "fg": "#F5EEEA",
+        "sub": "#BDB6B2",
+        "accent": "#F5A50C",
+        "accent2": "#16F4D4",
+        "ink": "#F5EEEA",
+        "dim": "#2A2A2E",
+        "ghostA": "#F5A50C",
+        "ghostB": "#16F4D4"
+      },
+      {
+        "bg": "#F2EDE8",
+        "fg": "#0B0B0C",
+        "sub": "#4A4644",
+        "accent": "#E0600C",
+        "accent2": "#0FAE98",
+        "ink": "#0B0B0C",
+        "dim": "#D9D2CC",
+        "ghostA": "#F5A50C",
+        "ghostB": "#16C4B4",
+        "swap": true
+      }
+    ],
+    "fonts": {
+      "display": [
+        "gothic_black",
+        "dela",
+        "zenkaku"
+      ],
+      "serif": [
+        "mincho_light",
+        "mincho"
+      ],
+      "body": [
+        "gothic_med"
+      ],
+      "mono": [
+        "mono"
+      ]
+    },
+    "texture": {
+      "grain": 0.9,
+      "paper": 0,
+      "scan": 0
+    },
+    "ghost": 1,
+    "bias": {
+      "layout": {
+        "vcols": 2,
+        "condensed": 2,
+        "marquee": 1.6,
+        "tile": 1.4,
+        "center": 1.2
+      },
+      "enter": {
+        "assemble": 2.2,
+        "slice": 1.8,
+        "stretch": 1.4
+      },
+      "exit": {
+        "explode": 1.8,
+        "fall": 1.2,
+        "drift": 1.4
+      }
+    },
+    "decor": {
+      "rings": 0.8,
+      "hud": 0.4,
+      "slash": 0.6
+    },
+    "hud": false
+  },
+  "fx": {
+    "motion": 0.7,
+    "glitch": 0.55,
+    "chroma": 0.7,
+    "decor": 0.5,
+    "density": 0.55,
+    "texture": 0.6,
+    "flash": true,
+    "onTwos": true,
+    "koma": 12,
+    "hud": "auto",
+    "bgSwitch": 0.35,
+    "hideNo": false,
+    "hideTime": false
+  },
+  "seed": 42,
+  "lines": [
+    {
+      "index": 0,
+      "src": 2,
+      "lrc": 0,
+      "text": "夜明けの色を覚えてる",
+      "start": 0,
+      "end": 2.4,
+      "visEnd": 2.4,
+      "note": null,
+      "impact": false,
+      "emph": [],
+      "chunks": [
+        "夜明けの色を",
+        "覚えてる"
+      ],
+      "seed": 325576935
+    },
+    {
+      "index": 1,
+      "src": 3,
+      "lrc": 2.4,
+      "text": "透明なまま",
+      "start": 2.4,
+      "end": 4.8,
+      "visEnd": 4.8,
+      "note": null,
+      "impact": true,
+      "emph": [
+        "透明"
+      ],
+      "chunks": [
+        "透明なまま"
+      ],
+      "seed": 1326477576
+    },
+    {
+      "index": 2,
+      "src": 4,
+      "lrc": 4.8,
+      "text": "",
+      "interlude": true,
+      "secs": 2,
+      "start": 4.8,
+      "end": 7,
+      "visEnd": 7,
+      "note": null,
+      "impact": false,
+      "emph": [],
+      "chunks": [],
+      "seed": 2851906275
+    },
+    {
+      "index": 3,
+      "src": 5,
+      "lrc": 7,
+      "text": "Good night",
+      "start": 7,
+      "end": 9.5,
+      "visEnd": 9.5,
+      "note": "またね",
+      "impact": false,
+      "emph": [],
+      "chunks": [
+        "Good",
+        "night"
+      ],
+      "seed": 853547183
+    }
+  ],
+  "cuts": [
+    {
+      "hold": "orbitSmall",
+      "inDur": 0.3061258741258741,
+      "outDur": 0.2551048951048951,
+      "stagger": 0.058329812047304586,
+      "decor": [
+        {
+          "id": "glitchRects",
+          "seed": 719323434,
+          "n": 1,
+          "right": false,
+          "low": true,
+          "accent": true,
+          "corner": false,
+          "big": false,
+          "mode": "index",
+          "from": 14,
+          "to": 71,
+          "v": 4,
+          "r": 0.5054373685270548
+        }
+      ],
+      "params": {
+        "font": "mincho",
+        "pos": "bl",
+        "mark": false
+      },
+      "scheme": 0,
+      "emph": false,
+      "words": [
+        "夜明けの",
+        "色を"
+      ],
+      "note": null,
+      "treat": "wide",
+      "treatP": {},
+      "bg": "splitH",
+      "bgP": {
+        "seed": 845731553,
+        "side": -1,
+        "pos": 0.43379949063062667,
+        "c": "lay",
+        "k": 0.09675333487801253
+      },
+      "cam": "knCardFlip",
+      "camP": {
+        "vert": true,
+        "dir": 1
+      },
+      "text": "夜明けの色を",
+      "lineText": "夜明けの色を覚えてる",
+      "line": 0,
+      "start": 0,
+      "end": 0.8503496503496503,
+      "layout": "tyMargin",
+      "enter": "scramble",
+      "exit": "tyUnderSink",
+      "seed": 1515984455,
+      "recap": false,
+      "trans": null,
+      "transP": {},
+      "transDur": 0,
+      "zone": null,
+      "utext": "夜明けの色を",
+      "dur": 0.8503496503496503,
+      "index": 0
+    },
+    {
+      "hold": "float",
+      "inDur": 0.22556643356643355,
+      "outDur": 0.3,
+      "stagger": 0.056089551276527344,
+      "decor": [
+        {
+          "id": "dimension",
+          "seed": 952669952,
+          "n": 3,
+          "right": false,
+          "low": true,
+          "accent": false,
+          "corner": false,
+          "big": false,
+          "mode": "count",
+          "from": 17,
+          "to": 748,
+          "v": 2,
+          "r": 0.2173401943873614
+        }
+      ],
+      "params": {
+        "font": "mincho",
+        "span": 133.171515641734,
+        "guide": "ticks",
+        "under": "no"
+      },
+      "scheme": 0,
+      "emph": false,
+      "words": [
+        "覚えてる"
+      ],
+      "note": null,
+      "treat": "none",
+      "treatP": {},
+      "bg": "splitH",
+      "bgP": {
+        "seed": 845731553,
+        "side": -1,
+        "pos": 0.43379949063062667,
+        "c": "lay",
+        "k": 0.09675333487801253
+      },
+      "cam": "dutch",
+      "camP": {
+        "dir": -1,
+        "a": 3.3248734534718096
+      },
+      "text": "覚えてる",
+      "lineText": "夜明けの色を覚えてる",
+      "line": 0,
+      "start": 0.8503496503496503,
+      "end": 1.4769230769230768,
+      "layout": "arcTop",
+      "enter": "drop",
+      "exit": "gravity",
+      "seed": 3546481500,
+      "recap": false,
+      "trans": null,
+      "transP": {},
+      "transDur": 0,
+      "zone": null,
+      "utext": "覚えてる",
+      "dur": 0.6265734265734265,
+      "index": 1
+    },
+    {
+      "hold": "shimmer",
+      "inDur": 0.3323076923076923,
+      "outDur": 0.27692307692307694,
+      "stagger": 0.028737043003784494,
+      "decor": [
+        {
+          "id": "reticle",
+          "seed": 331176568,
+          "n": 1,
+          "right": true,
+          "low": false,
+          "accent": false,
+          "corner": true,
+          "big": true,
+          "mode": "index",
+          "from": 13,
+          "to": 932,
+          "v": 2,
+          "r": 0.6792036569677293
+        }
+      ],
+      "params": {
+        "unit": "chunk",
+        "knock": "stroke",
+        "flicker": true,
+        "font": "zenkaku",
+        "tileFont": "dela",
+        "rowsN": 16
+      },
+      "scheme": 0,
+      "emph": false,
+      "words": [
+        "夜明けの",
+        "色を",
+        "覚えてる"
+      ],
+      "note": null,
+      "treat": "none",
+      "treatP": {},
+      "bg": "splitH",
+      "bgP": {
+        "seed": 845731553,
+        "side": -1,
+        "pos": 0.43379949063062667,
+        "c": "lay",
+        "k": 0.09675333487801253
+      },
+      "cam": "push",
+      "camP": {},
+      "text": "夜明けの色を覚えてる",
+      "lineText": "夜明けの色を覚えてる",
+      "line": 0,
+      "start": 1.4769230769230768,
+      "end": 2.4,
+      "layout": "tile",
+      "enter": "stretch",
+      "exit": "shrink",
+      "seed": 1633222737,
+      "recap": true,
+      "trans": null,
+      "transP": {},
+      "transDur": 0,
+      "zone": null,
+      "utext": "夜明けの色を覚えてる",
+      "dur": 0.9230769230769231,
+      "index": 2
+    },
+    {
+      "hold": "drift",
+      "inDur": 0.8,
+      "outDur": 0.55,
+      "stagger": 0.049455993776209656,
+      "decor": [
+        {
+          "id": "spiralLine",
+          "seed": 472738982,
+          "n": 3,
+          "right": false,
+          "low": true,
+          "accent": true,
+          "corner": false,
+          "big": true,
+          "mode": "count",
+          "from": 18,
+          "to": 77,
+          "v": 3,
+          "r": 0.13666320336051285
+        },
+        {
+          "id": "brushStroke",
+          "seed": 244233214,
+          "n": 1,
+          "right": true,
+          "low": false,
+          "accent": true,
+          "corner": false,
+          "big": true,
+          "mode": "index",
+          "from": 0,
+          "to": 741,
+          "v": 2,
+          "r": 0.5323452255688608
+        }
+      ],
+      "params": {
+        "font": "zenkaku",
+        "idx": false,
+        "up": true
+      },
+      "scheme": 0,
+      "emph": true,
+      "words": [
+        "透明なまま"
+      ],
+      "note": null,
+      "treat": "none",
+      "treatP": {},
+      "bg": "none",
+      "bgP": {},
+      "cam": "bounce",
+      "camP": {
+        "a": 0.06290770142804832
+      },
+      "text": "透明なまま",
+      "lineText": "透明なまま",
+      "line": 1,
+      "start": 2.4,
+      "end": 4.8,
+      "layout": "tyRuby",
+      "enter": "inkBleed",
+      "exit": "sinkMask",
+      "seed": 1655871718,
+      "recap": false,
+      "trans": null,
+      "transP": {},
+      "transDur": 0,
+      "zone": null,
+      "utext": "透明なまま",
+      "dur": 2.4,
+      "index": 3
+    },
+    {
+      "hold": "still",
+      "inDur": 0.4,
+      "outDur": 0.4,
+      "stagger": 0.04,
+      "decor": [
+        {
+          "id": "grid",
+          "seed": 599674728,
+          "n": 1,
+          "right": false,
+          "low": true,
+          "accent": true,
+          "corner": false,
+          "big": false,
+          "mode": "count",
+          "from": 2,
+          "to": 983,
+          "v": 4,
+          "r": 0.3721141160931438
+        },
+        {
+          "id": "tapePieces",
+          "seed": 146248023,
+          "n": 1,
+          "right": true,
+          "low": false,
+          "accent": false,
+          "corner": true,
+          "big": false,
+          "mode": "index",
+          "from": 2,
+          "to": 643,
+          "v": 3,
+          "r": 0.5362971557769924
+        }
+      ],
+      "params": {
+        "variant": "quiet",
+        "showTitle": false,
+        "titleText": ""
+      },
+      "scheme": 0,
+      "emph": false,
+      "words": [],
+      "note": null,
+      "treat": "none",
+      "treatP": {},
+      "bg": "scanBars",
+      "bgP": {
+        "seed": 198839397,
+        "n": 2,
+        "spd": 0.07804609491024166,
+        "k": 0.07810879496624694
+      },
+      "cam": "push",
+      "camP": {},
+      "text": "",
+      "lineText": "",
+      "line": 2,
+      "start": 4.8,
+      "end": 7,
+      "layout": "interlude",
+      "enter": "blur",
+      "exit": "blur",
+      "seed": 879540950,
+      "dur": 2.2,
+      "index": 4
+    },
+    {
+      "hold": "knCounterRock",
+      "inDur": 0.2542244640605298,
+      "outDur": 0.21185372005044148,
+      "stagger": 0.05491009052144363,
+      "decor": [
+        {
+          "id": "verticalStrip",
+          "seed": 873760423,
+          "n": 1,
+          "right": true,
+          "low": true,
+          "accent": false,
+          "corner": false,
+          "big": false,
+          "mode": "index",
+          "from": 5,
+          "to": 583,
+          "v": 5,
+          "r": 0.2693776795640588
+        }
+      ],
+      "params": {
+        "font": "dela",
+        "off": -0.09308546202024445,
+        "cutY": 0.02,
+        "cap": true
+      },
+      "scheme": 0,
+      "emph": false,
+      "words": [
+        "Good"
+      ],
+      "note": "またね",
+      "treat": "none",
+      "treatP": {},
+      "bg": "checker",
+      "bgP": {
+        "seed": 370362126,
+        "n": 7,
+        "k": 0.0471156255027745,
+        "spd": 0.2231234942213632,
+        "rot": 0
+      },
+      "cam": "knCardFlip",
+      "camP": {
+        "vert": true,
+        "dir": 1
+      },
+      "text": "Good",
+      "lineText": "Good night",
+      "line": 3,
+      "start": 7,
+      "end": 7.706179066834805,
+      "layout": "tySplitType",
+      "enter": "blurStagger",
+      "exit": "dissolve",
+      "seed": 1937833473,
+      "recap": false,
+      "trans": null,
+      "transP": {},
+      "transDur": 0,
+      "zone": null,
+      "utext": "Good",
+      "dur": 0.7061790668348049,
+      "index": 5
+    },
+    {
+      "hold": "stretchPulse",
+      "inDur": 0.37452711223203006,
+      "outDur": 0.3,
+      "stagger": 0.029766354897292333,
+      "decor": [
+        {
+          "id": "brushStroke",
+          "seed": 448442857,
+          "n": 3,
+          "right": true,
+          "low": false,
+          "accent": false,
+          "corner": true,
+          "big": false,
+          "mode": "count",
+          "from": 14,
+          "to": 282,
+          "v": 5,
+          "r": 0.9914964917115867
+        }
+      ],
+      "params": {
+        "font": "dela",
+        "sx": 0.78,
+        "track": 0.05198091339319945,
+        "sub": false,
+        "under": false,
+        "accent": false,
+        "ox": 0.022978005767799917,
+        "oy": 0.02567372675053775
+      },
+      "scheme": 0,
+      "emph": false,
+      "words": [
+        "night"
+      ],
+      "note": "またね",
+      "treat": "hatch",
+      "treatP": {
+        "v": "tone"
+      },
+      "bg": "checker",
+      "bgP": {
+        "seed": 370362126,
+        "n": 7,
+        "k": 0.0471156255027745,
+        "spd": 0.2231234942213632,
+        "rot": 0
+      },
+      "cam": "panL",
+      "camP": {
+        "a": 0.02680309963831678
+      },
+      "text": "night",
+      "lineText": "Good night",
+      "line": 3,
+      "start": 7.706179066834805,
+      "end": 8.538461538461538,
+      "layout": "center",
+      "enter": "knTypeToSlam",
+      "exit": "knWordKick",
+      "seed": 2305583813,
+      "recap": false,
+      "trans": null,
+      "transP": {},
+      "transDur": 0,
+      "zone": null,
+      "utext": "night",
+      "dur": 0.8322824716267334,
+      "index": 6
+    },
+    {
+      "hold": "stretchPulse",
+      "inDur": 0.3461538461538462,
+      "outDur": 0.2884615384615385,
+      "stagger": 0.03518053551320918,
+      "decor": [
+        {
+          "id": "plusGrid",
+          "seed": 537555345,
+          "n": 1,
+          "right": true,
+          "low": false,
+          "accent": true,
+          "corner": false,
+          "big": true,
+          "mode": "index",
+          "from": 9,
+          "to": 912,
+          "v": 5,
+          "r": 0.7973254648968577
+        }
+      ],
+      "params": {
+        "font": "dela",
+        "style": "blocks",
+        "thin": 2,
+        "col": "fg",
+        "tempo": 0.4428603290161118
+      },
+      "scheme": 1,
+      "emph": false,
+      "words": [
+        "Good",
+        "night"
+      ],
+      "note": "またね",
+      "treat": "echoOutline",
+      "treatP": {
+        "v": "diag",
+        "n": 3,
+        "d": 0.06502584583824501
+      },
+      "bg": "checker",
+      "bgP": {
+        "seed": 370362126,
+        "n": 7,
+        "k": 0.0471156255027745,
+        "spd": 0.2231234942213632,
+        "rot": 0
+      },
+      "cam": "knRushIn",
+      "camP": {
+        "z": 0.662924531348981,
+        "r": 2.044598061591387
+      },
+      "text": "Good night",
+      "lineText": "Good night",
+      "line": 3,
+      "start": 8.538461538461538,
+      "end": 9.5,
+      "layout": "equalizer",
+      "enter": "iris",
+      "exit": "whipOut",
+      "seed": 2187684126,
+      "recap": true,
+      "trans": null,
+      "transP": {},
+      "transDur": 0,
+      "zone": null,
+      "utext": "Good night",
+      "dur": 0.9615384615384617,
+      "index": 7
+    }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "type": "chroma",
+      "amp": 2.4560401362366973,
+      "dur": 0.25
+    },
+    {
+      "t": 0.8503496503496503,
+      "type": "chroma",
+      "amp": 1.6597114147618413,
+      "dur": 0.25
+    },
+    {
+      "t": 1.31025641025641,
+      "type": "doors",
+      "amp": 0.975,
+      "dur": 0.3333333333333333
+    },
+    {
+      "t": 1.4769230769230768,
+      "type": "chroma",
+      "amp": 2.5633581594098356,
+      "dur": 0.25
+    },
+    {
+      "t": 2.0559905209148734,
+      "type": "slice",
+      "amp": 0.6200000000000001,
+      "dur": 0.08333333333333333
+    },
+    {
+      "t": 2.4,
+      "type": "chroma",
+      "amp": 4.799014322878793,
+      "dur": 0.25
+    },
+    {
+      "t": 2.4,
+      "type": "shake",
+      "amp": 0.7,
+      "dur": 0.3
+    },
+    {
+      "t": 2.4,
+      "type": "flash",
+      "amp": 1,
+      "dur": 0.125
+    },
+    {
+      "t": 2.4,
+      "type": "tileShift",
+      "amp": 1.275,
+      "dur": 0.125
+    },
+    {
+      "t": 4.8,
+      "type": "chroma",
+      "amp": 1.7,
+      "dur": 0.25
+    },
+    {
+      "t": 7,
+      "type": "chroma",
+      "amp": 1.628523897519335,
+      "dur": 0.25
+    },
+    {
+      "t": 7,
+      "type": "shake",
+      "amp": 0.35,
+      "dur": 0.3
+    },
+    {
+      "t": 7.706179066834805,
+      "type": "chroma",
+      "amp": 1.7879475464578718,
+      "dur": 0.25
+    },
+    {
+      "t": 7.706179066834805,
+      "type": "slice",
+      "amp": 0.9248676852602512,
+      "dur": 0.08333333333333333
+    },
+    {
+      "t": 7.753346254880373,
+      "type": "block",
+      "amp": 1.05,
+      "dur": 0.16666666666666666
+    },
+    {
+      "t": 8.538461538461538,
+      "type": "chroma",
+      "amp": 1.4562500866129993,
+      "dur": 0.25
+    },
+    {
+      "t": 8.538461538461538,
+      "type": "slice",
+      "amp": 0.8958981369715184,
+      "dur": 0.08333333333333333
+    }
+  ],
+  "beats": [],
+  "hud": false,
+  "keyBg": null,
+  "centerFree": false,
+  "zones": null,
+  "typeset": false,
+  "unify": false,
+  "lang": "ja",
+  "energyRate": 0,
+  "width": 1920,
+  "height": 1080,
+  "extra": false,
+  "wa": true,
+  "horror": false,
+  "typo": true,
+  "kinetic": true,
+  "fonts": {
+    "display": [
+      "Noto Sans JP Black",
+      "Dela Gothic One",
+      "Zen Kaku Gothic New Black"
+    ],
+    "serif": [
+      "Noto Serif JP Light",
+      "Noto Serif JP Medium"
+    ],
+    "body": [
+      "Noto Sans JP Medium"
+    ],
+    "mono": [
+      "IBM Plex Mono"
+    ]
+  },
+  "fontTable": {
+    "gothic_black": {
+      "label": "Noto Sans JP Black",
+      "family": "Noto Sans JP",
+      "weight": 900,
+      "kind": "gothic"
+    },
+    "gothic_bold": {
+      "label": "Noto Sans JP Bold",
+      "family": "Noto Sans JP",
+      "weight": 700,
+      "kind": "gothic"
+    },
+    "gothic_med": {
+      "label": "Noto Sans JP Medium",
+      "family": "Noto Sans JP",
+      "weight": 500,
+      "kind": "gothic"
+    },
+    "gothic_light": {
+      "label": "Noto Sans JP Light",
+      "family": "Noto Sans JP",
+      "weight": 300,
+      "kind": "gothic"
+    },
+    "dela": {
+      "label": "Dela Gothic One",
+      "family": "Dela Gothic One",
+      "weight": 400,
+      "kind": "display"
+    },
+    "zenkaku": {
+      "label": "Zen Kaku Gothic New Black",
+      "family": "Zen Kaku Gothic New",
+      "weight": 900,
+      "kind": "gothic"
+    },
+    "mincho_black": {
+      "label": "Zen Old Mincho Black",
+      "family": "Zen Old Mincho",
+      "weight": 900,
+      "kind": "mincho"
+    },
+    "mincho_bold": {
+      "label": "Noto Serif JP Bold",
+      "family": "Noto Serif JP",
+      "weight": 700,
+      "kind": "mincho"
+    },
+    "mincho": {
+      "label": "Noto Serif JP Medium",
+      "family": "Noto Serif JP",
+      "weight": 500,
+      "kind": "mincho"
+    },
+    "mincho_light": {
+      "label": "Noto Serif JP Light",
+      "family": "Noto Serif JP",
+      "weight": 300,
+      "kind": "mincho"
+    },
+    "tokumin": {
+      "label": "Kaisei Tokumin",
+      "family": "Kaisei Tokumin",
+      "weight": 800,
+      "kind": "mincho"
+    },
+    "round": {
+      "label": "M PLUS Rounded 1c",
+      "family": "M PLUS Rounded 1c",
+      "weight": 800,
+      "kind": "round"
+    },
+    "pop": {
+      "label": "Mochiy Pop One",
+      "family": "Mochiy Pop One",
+      "weight": 400,
+      "kind": "display"
+    },
+    "dot": {
+      "label": "DotGothic16",
+      "family": "DotGothic16",
+      "weight": 400,
+      "kind": "pixel"
+    },
+    "brush": {
+      "label": "Yuji Syuku",
+      "family": "Yuji Syuku",
+      "weight": 400,
+      "kind": "brush"
+    },
+    "mono": {
+      "label": "IBM Plex Mono",
+      "family": "IBM Plex Mono",
+      "weight": 500,
+      "kind": "mono"
+    },
+    "reggae": {
+      "label": "Reggae One",
+      "family": "Reggae One",
+      "weight": 400,
+      "kind": "display"
+    },
+    "rampart": {
+      "label": "Rampart One",
+      "family": "Rampart One",
+      "weight": 400,
+      "kind": "display"
+    },
+    "potta": {
+      "label": "Potta One",
+      "family": "Potta One",
+      "weight": 400,
+      "kind": "brush"
+    },
+    "kiwi": {
+      "label": "Kiwi Maru",
+      "family": "Kiwi Maru",
+      "weight": 500,
+      "kind": "round"
+    },
+    "klee": {
+      "label": "Klee One",
+      "family": "Klee One",
+      "weight": 600,
+      "kind": "hand"
+    },
+    "shippori": {
+      "label": "Shippori Mincho B1",
+      "family": "Shippori Mincho B1",
+      "weight": 800,
+      "kind": "mincho"
+    },
+    "sansui": {
+      "label": "IBM Plex Sans JP",
+      "family": "IBM Plex Sans JP",
+      "weight": 500,
+      "kind": "gothic"
+    }
+  }
+}

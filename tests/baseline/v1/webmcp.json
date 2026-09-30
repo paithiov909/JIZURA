@@ -1,0 +1,936 @@
+[
+  {
+    "name": "jizura_get_state",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "detail": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_list_options",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "style",
+            "font",
+            "settings",
+            "layout",
+            "enter",
+            "hold",
+            "exit",
+            "decor",
+            "treat",
+            "bg",
+            "cam",
+            "fx",
+            "trans"
+          ]
+        },
+        "query": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "pageSize": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "category"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_set_lyrics",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 200000
+        },
+        "clear": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_update_settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "artist": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "lang": {
+              "type": "string",
+              "enum": [
+                "auto",
+                "ja",
+                "en",
+                "zh-Hant",
+                "zh-Hans",
+                "ko"
+              ]
+            },
+            "style": {
+              "type": "string",
+              "enum": [
+                "noir",
+                "crimson",
+                "caution",
+                "magenta",
+                "paper",
+                "hud",
+                "mint",
+                "specimen",
+                "transit",
+                "blueprint",
+                "rouge",
+                "mono",
+                "hrRuin",
+                "hrNightRec",
+                "hrCurse",
+                "sakura",
+                "ocean",
+                "sunset",
+                "forest",
+                "vapor",
+                "newsprint",
+                "synth80",
+                "kraft",
+                "candy",
+                "acid",
+                "sumi",
+                "gold"
+              ]
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "fx": {
+              "type": "object",
+              "properties": {
+                "motion": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "glitch": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "chroma": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "decor": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "density": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "texture": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "bgSwitch": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "flash": {
+                  "type": "boolean"
+                },
+                "koma": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    8,
+                    12
+                  ]
+                },
+                "hud": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "on",
+                    "off"
+                  ]
+                },
+                "hideNo": {
+                  "type": "boolean"
+                },
+                "hideTime": {
+                  "type": "boolean"
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            "colors": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "accentOn": {
+                  "type": "boolean"
+                },
+                "bg": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "fg": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "sub": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "accent": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "ghostA": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                },
+                "ghostB": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-fA-F]{6}$"
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            "fonts": {
+              "type": "object",
+              "properties": {
+                "display": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "serif": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "body": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            "localFont": {
+              "type": "string",
+              "maxLength": 80,
+              "minLength": 1,
+              "pattern": "^[\\w \\u0080-\\uFFFF-]+$"
+            },
+            "extra": {
+              "type": "boolean"
+            },
+            "wa": {
+              "type": "boolean"
+            },
+            "horror": {
+              "type": "boolean"
+            },
+            "typo": {
+              "type": "boolean"
+            },
+            "kinetic": {
+              "type": "boolean"
+            },
+            "unify": {
+              "type": "boolean"
+            },
+            "typeset": {
+              "type": "boolean"
+            },
+            "centerFree": {
+              "type": "boolean"
+            },
+            "includeAudio": {
+              "type": "boolean"
+            },
+            "centerDir": {
+              "type": "string",
+              "enum": [
+                "tb",
+                "lr"
+              ]
+            },
+            "keyBg": {
+              "type": "string",
+              "enum": [
+                "off",
+                "green",
+                "black"
+              ]
+            },
+            "aspect": {
+              "type": "string",
+              "enum": [
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "1:1",
+                "4:5",
+                "21:9"
+              ]
+            },
+            "res": {
+              "type": "integer",
+              "enum": [
+                720,
+                1080,
+                1440,
+                2160
+              ]
+            },
+            "fps": {
+              "type": "integer",
+              "enum": [
+                24,
+                30,
+                60
+              ]
+            },
+            "quality": {
+              "type": "string",
+              "enum": [
+                "standard",
+                "high",
+                "max"
+              ]
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "easy",
+                "pro",
+                "mobile"
+              ]
+            },
+            "exportRange": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "from": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "to": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "settings"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_set_timing",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "type": "object",
+          "properties": {
+            "bpm": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 300
+            },
+            "offset": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 86400
+            },
+            "lineScale": {
+              "type": "number",
+              "minimum": 0.3,
+              "maximum": 4
+            },
+            "snap": {
+              "type": "boolean"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "times": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "line": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100000
+              },
+              "time": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 86400
+              }
+            },
+            "required": [
+              "line",
+              "time"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 2000
+        },
+        "clear": {
+          "type": "boolean"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_edit_line",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 10000,
+          "minLength": 1,
+          "pattern": "^[^\\r\\n]+$"
+        },
+        "layout": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "cuts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "lock": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "revision",
+        "line"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_edit_cut",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "cut": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "group": {
+          "type": "string",
+          "enum": [
+            "layout",
+            "enter",
+            "hold",
+            "exit",
+            "decor",
+            "treat",
+            "bg",
+            "cam",
+            "trans"
+          ]
+        },
+        "key": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "quiet": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "revision",
+        "line",
+        "cut",
+        "group"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_set_techniques",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "type": "string",
+          "enum": [
+            "layout",
+            "enter",
+            "hold",
+            "exit",
+            "decor",
+            "treat",
+            "bg",
+            "cam",
+            "fx",
+            "trans"
+          ]
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 2000
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "group",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_set_locks",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "tech",
+            "params"
+          ]
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "maxItems": 2000
+        },
+        "locked": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "keys",
+        "locked"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_randomize",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "enum": [
+            "all",
+            "style",
+            "mood",
+            "palette",
+            "composition",
+            "line",
+            "cut"
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "cut": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "omakase",
+            "shuffle"
+          ]
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_history",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "edit",
+            "look"
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "back",
+            "forward"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "direction"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_preview",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "play",
+            "pause"
+          ]
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 86400
+        },
+        "loop": {
+          "type": "string",
+          "enum": [
+            "all",
+            "line",
+            "cut",
+            "off"
+          ]
+        },
+        "volume": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "muted": {
+          "type": "boolean"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "easy",
+            "pro",
+            "mobile"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_tap_sync",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "start",
+            "record",
+            "back",
+            "stop"
+          ]
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_project",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "get",
+            "import",
+            "save",
+            "get_ae",
+            "save_ae"
+          ]
+        },
+        "json": {
+          "type": "string",
+          "maxLength": 8000000
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_start_export",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "mp4",
+            "png",
+            "pnga",
+            "pngl",
+            "mp4file"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_get_export_status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_cancel_export",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  },
+  {
+    "name": "jizura_reset_project",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "untrustedContentHint": true
+    }
+  }
+]
