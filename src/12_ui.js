@@ -1,4 +1,6 @@
+import { createI18n } from '../i18n/index.ts';
 export default function install(J) {
+const { t: translate } = J.i18n || createI18n(document.documentElement.lang);
 /* ============================================================
    JIZURA — editor UI
    ============================================================ */
@@ -7,7 +9,7 @@ export default function install(J) {
 if (!document.getElementById('app')) return;          // engine-only pages (tests)
 const $ = id => document.getElementById(id);
 const LS_KEY = 'jizura.project.v1';
-const HUD_CHARS = '0123456789:./-_()【】・No.LYRICRECUNTITLEDXYlinebpminterlude—─／ ';
+const HUD_CHARS = translate("ui.0123456789_no_lyricrecuntitledxylinebpminterlude");
 const ICON = {
   dice: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="12" height="12" rx="2"/><circle cx="5.5" cy="5.5" r="1" fill="currentColor"/><circle cx="10.5" cy="10.5" r="1" fill="currentColor"/><circle cx="10.5" cy="5.5" r="1" fill="currentColor"/><circle cx="5.5" cy="10.5" r="1" fill="currentColor"/></svg>',
   lock: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 0 1 6 0v2"/></svg>',
@@ -21,12 +23,11 @@ S.revision = 0; S.loading = { boot: true, audio: false, fonts: false }; S.export
 const copyData = value => JSON.parse(JSON.stringify(value, (_key, item) => ArrayBuffer.isView(item) ? Array.from(item) : item));
 const LOOP_CYCLE = ['all', 'line', 'cut', false];
 const LOOP_COPY = {
-  all:  { ja: 'ループ', en: 'Loop', titleJa: '全体を繰り返し', titleEn: 'Loop the whole piece' },
-  line: { ja: '行ループ', en: 'Line loop', titleJa: 'この行を繰り返し', titleEn: 'Loop this line' },
-  cut:  { ja: 'カットループ', en: 'Cut loop', titleJa: 'このカットを繰り返し', titleEn: 'Loop this cut' },
-  off:  { ja: 'ループ', en: 'Loop', titleJa: '繰り返しなし', titleEn: 'No loop' },
+  all:  { name: translate("ui.loop"), title: translate("ui.loop_the_whole_piece") },
+  line: { name: translate("ui.line_loop"), title: translate("ui.loop_this_line") },
+  cut:  { name: translate("ui.cut_loop"), title: translate("ui.loop_this_cut") },
+  off:  { name: translate("ui.loop"), title: translate("ui.no_loop") },
 };
-const isEn = () => document.documentElement.lang === 'en';
 function cutAround(t) {
   const c = J.cutAt(S.plan, t);
   if (c) return c;
@@ -62,9 +63,8 @@ function syncLoopBtn() {
   const b = $('btnLoop'); if (!b) return;
   const key = S.loop || 'off';
   const copy = LOOP_COPY[key] || LOOP_COPY.off;
-  const en = isEn();
-  b.textContent = en ? copy.en : copy.ja;
-  b.title = en ? copy.titleEn : copy.titleJa;
+  b.textContent = copy.name;
+  b.title = copy.title;
   b.setAttribute('aria-pressed', String(!!S.loop));
   b.dataset.mode = key;
   refreshLoopHold();
@@ -95,7 +95,7 @@ function initVolume() {
   let v = 0.8, m = false;
   try { const o = JSON.parse(localStorage.getItem('jizura.previewVolume') || 'null'); if (o) { v = +o.v; m = !!o.m; } } catch (e) {}
   if (!(v >= 0 && v <= 1)) v = 0.8;
-  const show = () => { el.value = Math.round(AP.vol * 100); mb.textContent = AP.muted || AP.vol === 0 ? '消音' : '音量'; mb.setAttribute('aria-pressed', String(AP.muted)); el.title = '音量 ' + Math.round(AP.vol * 100) + '%'; };
+  const show = () => { el.value = Math.round(AP.vol * 100); mb.textContent = AP.muted || AP.vol === 0 ? translate("ui.muted") : translate("ui.vol"); mb.setAttribute('aria-pressed', String(AP.muted)); el.title = translate("ui.volume") + Math.round(AP.vol * 100) + '%'; };
   const save = () => { try { localStorage.setItem('jizura.previewVolume', JSON.stringify({ v: AP.vol, m: AP.muted })); } catch (e) {} };
   AP.showVolume = () => { show(); save(); };
   AP.setVol(v, m); show();
@@ -105,9 +105,9 @@ function initVolume() {
 
 /* ---------------- project persistence ---------------- */
 const mergeProject = p => J.mergeProject(p);
-const SET_UI = { horror: { name: 'ホラー', badge: 'ホ' }, typo: { name: '文字PV系', badge: '文' }, kinetic: { name: 'キネティック', badge: 'キ' } };
+const SET_UI = { horror: { name: translate("ui.horror"), badge: translate("ui.h") }, typo: { name: translate("ui.typographic"), badge: translate("ui.t") }, kinetic: { name: translate("ui.kinetic"), badge: translate("ui.k") } };
 function setBadges(d) {
-  return (d && d.extra ? '<span class="set-badge ex" title="最初の公開版のあとに追加">追加</span>' : '') + (d && d.wa ? '<span class="set-badge" title="和風の演出">和</span>' : '')
+  return (d && d.extra ? translate("ui.new") : '') + (d && d.wa ? translate("ui.jp") : '')
     + (d && d.set && SET_UI[d.set] ? `<span class="set-badge set-${d.set}" title="${SET_UI[d.set].name}">${SET_UI[d.set].badge}</span>` : '');
 }
 function loadLocal() { try { const s = localStorage.getItem(LS_KEY); if (s) return mergeProject(JSON.parse(s)); } catch (e) {} return mergeProject(null); }
@@ -182,14 +182,14 @@ async function ensureFonts() {
   const key = txt + '|' + keys.join(',') + '|' + Object.keys(J.FONTS).length + '|' + J.lang;   // the lyric language changes the faces
   if (key === fontKey) return;
   fontKey = key;
-  showMsg('フォントを読み込み中…');
+  showMsg(translate("ui.loading_fonts"));
   try { await J.ensureFonts(txt, keys); } catch (e) {}
   showMsg(null); S.need = true; drawStyleGrid(); loadThumbFonts();
 }
 // style thumbnails need two glyphs of every style's display face — fetched only once the style grid is actually shown
 function loadThumbFonts() {
   if (thumbFonts || !$('styleGrid').offsetParent) return;
-  thumbFonts = J.ensureFonts('字面', [...new Set(J.STYLE_ORDER.map(k => J.STYLES[k].fonts.display[0]))]).then(() => drawStyleGrid()).catch(() => {});
+  thumbFonts = J.ensureFonts(translate("ui.jizura"), [...new Set(J.STYLE_ORDER.map(k => J.STYLES[k].fonts.display[0]))]).then(() => drawStyleGrid()).catch(() => {});
 }
 function showMsg(m) { const el = $('viewMsg'); if (!m) { el.hidden = true; return; } el.textContent = m; el.hidden = false; }
 
@@ -256,11 +256,11 @@ function play() {
   refreshLoopHold();
   if (S.audio) AP.play(S.audio.buffer, S.t, playRate());
   else S.t0 = performance.now() - S.t * 1000 / playRate();
-  S.playing = true; $('btnPlay').textContent = '❚❚'; $('btnPlay').setAttribute('aria-label', '一時停止');
+  S.playing = true; $('btnPlay').textContent = '❚❚'; $('btnPlay').setAttribute('aria-label', translate("ui.pause"));
 }
 function pause() {
   S.playing = false; AP.stop();
-  $('btnPlay').textContent = '▶'; $('btnPlay').setAttribute('aria-label', '再生'); S.need = true;
+  $('btnPlay').textContent = '▶'; $('btnPlay').setAttribute('aria-label', translate("ui.play")); S.need = true;
 }
 function seek(t) {
   S.t = J.clamp(t, 0, Math.max(0, S.plan.duration - 1e-3));
@@ -332,7 +332,7 @@ function drawTimeline() {
     x.fillStyle = on ? '#f5a50c' : man ? '#6fb7c8' : '#5d5a63'; x.fillRect(lx - (on ? dpr : 0), 0, on ? 2 * dpr : 1, top);
     // handle
     x.beginPath(); x.moveTo(lx - 5 * dpr, 0); x.lineTo(lx + 5 * dpr, 0); x.lineTo(lx, 7 * dpr); x.closePath(); x.fill();
-    x.fillStyle = on ? '#f5a50c' : '#8e8a94'; x.fillText(String(ln.index + 1).padStart(2, '0') + (ln.interlude ? ' 間奏' : ''), lx + 4 * dpr, 17 * dpr);
+    x.fillStyle = on ? '#f5a50c' : '#8e8a94'; x.fillText(String(ln.index + 1).padStart(2, '0') + (ln.interlude ? translate("ui.inst") : ''), lx + 4 * dpr, 17 * dpr);
   }
   if (TL.z > 1) {                                          // where the view sits in the whole song
     x.fillStyle = 'rgba(255,255,255,0.18)'; x.fillRect(0, h - 2 * dpr, w, 2 * dpr);
@@ -394,8 +394,8 @@ function bindFollow() {
 
 /* ---------------- cut info ---------------- */
 const CHIP_GROUPS = [
-  ['layout', 'l', 'レイアウト'], ['enter', 'e', '登場'], ['hold', 'h', '保持'], ['exit', 'x', '退場'],
-  ['decor', '', '装飾'], ['treat', 't', '加工'], ['bg', 'b', '背景'], ['cam', 'c', 'カメラ'], ['trans', 'c', 'つなぎ'],
+  ['layout', 'l', translate("ui.layout")], ['enter', 'e', translate("ui.entrance")], ['hold', 'h', translate("ui.hold")], ['exit', 'x', translate("ui.exit")],
+  ['decor', '', translate("ui.decoration")], ['treat', 't', translate("ui.treatment")], ['bg', 'b', translate("ui.background")], ['cam', 'c', translate("ui.camera")], ['trans', 'c', translate("ui.transition")],
 ];
 const cutPick = { g: null, line: -1, k: -1 };
 let lastCutIdx = -2;
@@ -445,7 +445,7 @@ function cutGroupVal(cut, g) {
   return '';
 }
 function groupName(g, k) {
-  if (!k) return 'なし';
+  if (!k) return translate("ui.none");
   const tbl = J.registry(g);
   return (tbl && tbl[k] && tbl[k].name) || k;
 }
@@ -473,7 +473,7 @@ function rerollCurrentCut(kind) {
   if (S.exporting || S.tap) return;
   const cut = J.cutAt(S.plan, S.t);
   const k = lyricCutK(cut);
-  if (!cut || k < 0) { toast('この位置のカットは抽選できません'); return; }
+  if (!cut || k < 0) { toast(translate("ui.no_cut_at_this_position_to_re")); return; }
   remember();
   const n = [...String(cut.text || '').replace(/\s+/g, '')].length;
   const groups = kind === 'omakase'
@@ -490,7 +490,7 @@ function rerollCurrentCut(kind) {
   replan();
   commit();
   seek(t0);
-  toast(kind === 'omakase' ? 'このカットをおまかせ' : 'このカットをシャッフル');
+  toast(kind === 'omakase' ? translate("ui.randomize_this_cut") : translate("ui.shuffle_this_cut"));
 }
 function updateCutInfo() {
   const cut = J.cutAt(S.plan, S.t);
@@ -503,19 +503,19 @@ function updateCutInfo() {
   document.querySelectorAll('.cut-lay.playing').forEach(x => x.classList.remove('playing'));
   if (cut && S.lineEls[li]) { const kk = lyricCutK(cut), cs = kk >= 0 && S.lineEls[li].querySelector(`.cut-lay[data-k="${kk}"]`); if (cs) cs.classList.add('playing'); }
   const el = $('cutInfo');
-  if (!cut) { el.innerHTML = '<span class="hint">この位置にカットはありません</span>'; closeCutPick(); return; }
+  if (!cut) { el.innerHTML = translate("ui.no_cut_at_this_position"); closeCutPick(); return; }
   if (S.mode !== 'pro') {          // かんたん／スマホは本家と同じ静的なチップ表示
     closeCutPick();
     const chip = (cls, k, v) => `<span class="chip ${cls}"><b>${k}</b>${v}</span>`;
     const n = (tbl, k) => (tbl[k] ? tbl[k].name : k);
     el.innerHTML = [
       `<span class="chip mono">#${String(cut.index + 1).padStart(2, '0')}</span>`,
-      chip('l', 'レイアウト', n(J.LAYOUTS, cut.layout)), chip('e', '登場', n(J.ENTER, cut.enter)), chip('h', '保持', n(J.HOLD, cut.hold)), chip('x', '退場', n(J.EXIT, cut.exit)),
-      cut.decor && cut.decor.length ? chip('', '装飾', cut.decor.map(d => n(J.DECOR, d.id)).join('・')) : '',
-      cut.treat && cut.treat !== 'none' ? chip('t', '加工', n(J.TREAT, cut.treat)) : '',
-      cut.bg && cut.bg !== 'none' ? chip('b', '背景', n(J.BG, cut.bg)) : '',
-      cut.cam && cut.cam !== 'push' ? chip('c', 'カメラ', n(J.CAMERA, cut.cam)) : '',
-      cut.trans ? chip('c', 'つなぎ', n(J.TRANS, cut.trans)) : '',
+      chip('l', translate("ui.layout"), n(J.LAYOUTS, cut.layout)), chip('e', translate("ui.entrance"), n(J.ENTER, cut.enter)), chip('h', translate("ui.hold"), n(J.HOLD, cut.hold)), chip('x', translate("ui.exit"), n(J.EXIT, cut.exit)),
+      cut.decor && cut.decor.length ? chip('', translate("ui.decoration"), cut.decor.map(d => n(J.DECOR, d.id)).join(translate("ui.copy"))) : '',
+      cut.treat && cut.treat !== 'none' ? chip('t', translate("ui.treatment"), n(J.TREAT, cut.treat)) : '',
+      cut.bg && cut.bg !== 'none' ? chip('b', translate("ui.background"), n(J.BG, cut.bg)) : '',
+      cut.cam && cut.cam !== 'push' ? chip('c', translate("ui.camera"), n(J.CAMERA, cut.cam)) : '',
+      cut.trans ? chip('c', translate("ui.transition"), n(J.TRANS, cut.trans)) : '',
     ].join('');
     return;
   }
@@ -527,8 +527,8 @@ function updateCutInfo() {
     const forced = slot[g] != null && slot[g] !== '' && !quiet[g];
     bits.push(`<button type="button" class="chip ${cls}${forced ? ' is-forced' : ''}" data-g="${g}" aria-pressed="${cutPick.g === g ? 'true' : 'false'}" ${k < 0 ? 'disabled' : ''}><b>${label}</b>${escapeHtml(groupName(g, cutGroupVal(cut, g)))}</button>`);
   });
-  bits.push(`<button type="button" class="ghost small cut-roll" data-roll="shuffle" ${k < 0 ? 'disabled' : ''} title="このカットだけ構成を再抽選">シャッフル</button>`);
-  bits.push(`<button type="button" class="ghost small cut-roll accent" data-roll="omakase" ${k < 0 ? 'disabled' : ''} title="このカットだけ手法をランダムに">おまかせ</button>`);
+  bits.push(translate("ui.shuffle", [k < 0 ? 'disabled' : '']));
+  bits.push(translate("ui.randomize", [k < 0 ? 'disabled' : '']));
   el.innerHTML = bits.join('');
   if (k >= 0) {
     el.querySelectorAll('button.chip[data-g]').forEach(b => b.addEventListener('click', () => toggleCutPick(b.dataset.g, cut, k)));
@@ -576,7 +576,7 @@ function fillCutPick() {
     const none = document.createElement('button');
     none.type = 'button';
     none.className = 'tcard' + (forced === 'none' ? ' is-on' : '');
-    none.innerHTML = '<span class="tcard-name" style="padding:16px 6px"><span>なし</span></span>';
+    none.innerHTML = translate("ui.none_2");
     none.addEventListener('click', () => { setCutTech(cutPick.line, cutPick.k, g, 'none'); replan(); });
     grid.appendChild(none);
   }
@@ -603,26 +603,14 @@ function fillCutPick() {
 function renderLines() {
   const ol = $('lineList'); ol.innerHTML = ''; S.lineEls = []; S.curLine = -2;
   const ov = S.project.overrides, R = exportRangeLines();
-  const layoutOpts = '<option value="">自動</option>' + J.LAYOUT_ORDER.map(k => `<option value="${k}">${J.LAYOUTS[k].name}</option>`).join('');
-  const cutOpts = '<option value="">カット 自動</option>' + [1, 2, 3, 4, 5, 6].map(n => `<option value="${n}">カット ${n}</option>`).join('');
+  const layoutOpts = translate("ui.auto") + J.LAYOUT_ORDER.map(k => `<option value="${k}">${J.LAYOUTS[k].name}</option>`).join('');
+  const cutOpts = translate("ui.cuts_auto") + [1, 2, 3, 4, 5, 6].map(n => translate("ui.cuts", [n, n])).join('');
   S.plan.lines.forEach((ln, i) => {
     const o = ov[i] || {};
     const li = document.createElement('li'); li.className = 'ln' + (ln.interlude ? ' is-inter' : '') + (R && i >= R.from && i <= R.to ? ' in-range' : '');
     const manual = S.project.timing.lineTimes && S.project.timing.lineTimes[i] != null;
-    const label = ln.interlude ? `〔間奏${ln.secs ? ' ' + ln.secs + '秒' : ''}〕` : ln.text;
-    li.innerHTML = `<span class="no">${String(i + 1).padStart(2, '0')}</span>
-      <input class="time mono" type="number" step="0.01" min="0" value="${ln.start.toFixed(2)}" title="開始（秒）${manual ? '・手動' : '・自動'}" aria-label="${i + 1}行目の開始秒" style="${manual ? 'border-color:var(--cyan)' : ''}">
-      <span class="txt" title="${escapeHtml(label)}">${escapeHtml(label)}</span>
-      <div class="meta"><span class="cuts"></span>
-      <span class="tools">
-        <button class="icon ghost edit" title="この行の歌詞を直す" aria-label="${i + 1}行目の歌詞を直す">${ICON.pen}</button>
-        ${ln.interlude ? '' : `<select class="ncut" aria-label="${i + 1}行目のカット数">${cutOpts}</select>`}
-        ${ln.interlude ? '' : `<select class="lay pro-only" aria-label="レイアウト指定">${layoutOpts}</select>`}
-        <button class="icon ghost tapfrom" title="この行からタップで同期し直す" aria-label="${i + 1}行目からタップ">${ICON.tap}</button>
-        <button class="icon ghost rng" title="書き出す範囲にする（Shift+クリックで範囲を広げる）" aria-pressed="${R && i >= R.from && i <= R.to ? 'true' : 'false'}" aria-label="${i + 1}行目を書き出す範囲に">${ICON.range}</button>
-        ${ln.interlude ? '' : `<button class="icon ghost dice" title="この行を再抽選">${ICON.dice}</button>`}
-        ${ln.interlude ? '' : `<button class="icon ghost lock" title="この行の構成をロック" aria-pressed="${o.lock ? 'true' : 'false'}">${ICON.lock}</button>`}
-      </span></div>`;
+    const label = ln.interlude ? translate("ui.interlude", [ln.secs ? ' ' + ln.secs + translate("ui.s") : '']) : ln.text;
+    li.innerHTML = translate("ui.copy_2", [String(i + 1).padStart(2, '0'), ln.start.toFixed(2), manual ? translate("ui.manual") : translate("ui.automatic"), i + 1, manual ? 'border-color:var(--cyan)' : '', escapeHtml(label), escapeHtml(label), i + 1, ICON.pen, ln.interlude ? '' : translate("ui.copy_3", [i + 1, cutOpts]), ln.interlude ? '' : translate("ui.copy_4", [layoutOpts]), i + 1, ICON.tap, R && i >= R.from && i <= R.to ? 'true' : 'false', i + 1, ICON.range, ln.interlude ? '' : translate("ui.copy_5", [ICON.dice]), ln.interlude ? '' : translate("ui.copy_6", [o.lock ? 'true' : 'false', ICON.lock])]);
     const q = sel => li.querySelector(sel);
     if (q('.lay')) q('.lay').value = o.layout || '';
     if (q('.ncut')) q('.ncut').value = o.cuts ? String(o.cuts) : '';
@@ -638,7 +626,7 @@ function renderLines() {
         for (let j = i - 1; j >= 0; j--) { const f = fix(j); if (f != null) { lo = f + 0.05; break; } }
         for (let j = i + 1; j < L.length; j++) { const f = fix(j); if (f != null) { hi = f - 0.05; break; } }
         let w = Math.max(0, v);
-        if (hi >= lo && (w < lo || w > hi)) { w = J.clamp(w, lo, hi); toast(`前後の行と順番が入れ替わらないよう ${w.toFixed(2)} 秒にしました`); }
+        if (hi >= lo && (w < lo || w > hi)) { w = J.clamp(w, lo, hi); toast(translate("ui.set_to_s_so_the_lines_stay", [w.toFixed(2)])); }
         lt[i] = +w.toFixed(3);
       } else delete S.project.timing.lineTimes[i];
       replan();
@@ -665,7 +653,7 @@ function renderLines() {
       sel.innerHTML = layoutOpts;
       sel.value = forced || c.layout;
       sel.title = `${c.text}｜${J.ENTER[c.enter].name} → ${J.EXIT[c.exit].name}`;
-      sel.setAttribute('aria-label', `${i + 1}行目 カット${k + 1}のレイアウト`);
+      sel.setAttribute('aria-label', translate("ui.layout_of_cut_on_line", [i + 1, k + 1]));
       sel.style.borderColor = `hsla(${layoutHue(c.layout)},70%,58%,0.7)`;
       sel.addEventListener('pointerdown', () => seek(c.start + Math.min(c.dur * 0.5, c.inDur + 0.05)));
       sel.addEventListener('change', e => { setCutLayout(i, k, e.target.value); replan(); seek(c.start + Math.min(c.dur * 0.5, c.inDur + 0.05)); });
@@ -675,8 +663,8 @@ function renderLines() {
         const tIn = document.createElement('input');
         const own = o.cutTime && o.cutTime[k] != null;
         tIn.type = 'number'; tIn.step = '0.01'; tIn.min = '0'; tIn.className = 'cut-time pro-only mono' + (own ? ' is-forced' : '');
-        tIn.value = c.start.toFixed(2); tIn.title = own ? 'このカットの開始時刻（手動）。空にすると自動に戻ります' : 'このカットの開始時刻（自動）。数値を入れると固定します';
-        tIn.setAttribute('aria-label', `${i + 1}行目 カット${k + 1}の開始時刻`);
+        tIn.value = c.start.toFixed(2); tIn.title = own ? translate("ui.start_of_this_cut_set_by_hand") : translate("ui.start_of_this_cut_automatic_type_a");
+        tIn.setAttribute('aria-label', translate("ui.line_start_of_cut", [i + 1, k + 1]));
         tIn.addEventListener('change', e => {
           const v = parseFloat(e.target.value);
           pushEdit();
@@ -698,7 +686,7 @@ function renderLines() {
     });
     ol.appendChild(li); S.lineEls.push(li);
   });
-  $('linesInfo').textContent = `${S.plan.lines.length}行 / ${S.plan.cuts.length}カット`;
+  $('linesInfo').textContent = translate("ui.lines_cuts", [S.plan.lines.length, S.plan.cuts.length]);
   syncRangeUI();
 }
 
@@ -710,8 +698,8 @@ function editLine(li, ln) {
   const rows = S.project.lyrics.replace(/\r/g, '').split('\n'), row = rows[ln.src] || '';
   const pre = (row.match(LRC_PREFIX) || [''])[0], body = row.slice(pre.length).trim();
   const txt = li.querySelector('.txt'), inp = document.createElement('input');
-  inp.type = 'text'; inp.className = 'txt-edit'; inp.value = body; inp.setAttribute('aria-label', `${ln.index + 1}行目の歌詞`);
-  inp.title = '記法（/ 区切り・*強調*・行末の ! ・| 注釈・[間奏 8]）もそのまま使えます。Enter で確定、Esc で取り消し';
+  inp.type = 'text'; inp.className = 'txt-edit'; inp.value = body; inp.setAttribute('aria-label', translate("ui.lyrics_of_line", [ln.index + 1]));
+  inp.title = translate("ui.lyric_syntax_works_here_too_cut_emphasis");
   txt.replaceWith(inp); inp.focus(); inp.select();
   let done = false;
   const finish = ok => {
@@ -719,7 +707,7 @@ function editLine(li, ln) {
     const v = inp.value.trim();
     if (ok && v && v !== body) {
       replaceLineText(ln, v);
-      toast(`${ln.index + 1}行目の歌詞を直しました`);
+      toast(translate("ui.line_updated", [ln.index + 1]));
     } else renderLines();
   };
   inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); finish(true); } else if (e.key === 'Escape') { e.preventDefault(); finish(false); } });
@@ -740,7 +728,7 @@ function edGo(d) {
   S.project.lyrics = o.lyrics; S.project.timing.lineTimes = o.lineTimes; $('lyrics').value = o.lyrics;
   if ('ov' in o) { S.project.overrides = o.ov || {}; S.project.exportRange = o.range || null; }
   replan(); flushSave(); updateEditBtns();
-  toast(d < 0 ? '元に戻しました' : 'やり直しました');
+  toast(d < 0 ? translate("ui.undone") : translate("ui.redone"));
 }
 // LRC を読み込む: replaces the lyrics (and everything tied to line numbers, like 歌詞を消す); undoable
 function loadLrc(text) {
@@ -753,7 +741,7 @@ function loadLrc(text) {
   $('lyrics').value = P.lyrics;
   replan(); flushSave(); updateEditBtns(); seek(0);
   const n = J.parseLyrics(P.lyrics).lines.filter(l => l.lrc != null).length;
-  toast(`LRC を読み込みました（時刻付き ${n} 行・「元に戻す」で戻せます）`);
+  toast(translate("ui.lrc_loaded_timed_lines_undo_brings_the", [n]));
 }
 function saveLrc() {
   const R = exportRangeLines(), r = exportRange();
@@ -770,7 +758,7 @@ function clearLyrics() {
   pause();
   P.lyrics = ''; P.timing.lineTimes = {}; P.overrides = {}; P.exportRange = null; $('lyrics').value = '';
   replan(); flushSave(); updateEditBtns(); seek(0);
-  toast('歌詞を消しました（「元に戻す」か Ctrl+Z で戻せます）');
+  toast(translate("ui.lyrics_cleared_undo_or_ctrl_z_brings"));
 }
 // 初期化: back to a blank project — song (also the copy kept in this browser), settings and both histories go
 let audioNameDefault = '';
@@ -787,7 +775,7 @@ async function resetAll() {
   TL.z = 1; TL.off = 0;
   $('lyrics').value = ''; fontKey = '';
   syncUI(); replan(); commit(); updateEditBtns(); flushSave(); seek(0);
-  toast('初期化しました');
+  toast(translate("ui.reset_done"));
 }
 function updateEditBtns() { const u = $('btnUndoEdit'); if (u) u.disabled = !ED.undo.length; }
 
@@ -813,15 +801,15 @@ function setExportRange(i, extend) {
   else S.project.exportRange = { from: i, to: i };
   flushSave(); renderLines();
   const R2 = exportRangeLines();
-  toast(R2 ? `書き出す範囲：${R2.from + 1}${R2.to > R2.from ? '〜' + (R2.to + 1) : ''}行目` : '書き出す範囲：全体');
+  toast(R2 ? translate("ui.export_range_line", [R2.from + 1, R2.to > R2.from ? translate("ui.copy_7") + (R2.to + 1) : '']) : translate("ui.export_range_whole_song"));
 }
 function syncRangeUI() {
   const R = exportRangeLines(), n = S.plan.lines.length;
-  const opts = (sel, first) => `<option value="-1">${first}</option>` + S.plan.lines.map((ln, i) => `<option value="${i}">${String(i + 1).padStart(2, '0')} ${escapeHtml((ln.interlude ? '〔間奏〕' : ln.text).slice(0, 14))}</option>`).join('');
-  document.querySelectorAll('.rngFrom').forEach(el => { el.innerHTML = opts(el, '全体'); el.value = R ? String(R.from) : '-1'; });
+  const opts = (sel, first) => `<option value="-1">${first}</option>` + S.plan.lines.map((ln, i) => `<option value="${i}">${String(i + 1).padStart(2, '0')} ${escapeHtml((ln.interlude ? translate("ui.interlude_2") : ln.text).slice(0, 14))}</option>`).join('');
+  document.querySelectorAll('.rngFrom').forEach(el => { el.innerHTML = opts(el, translate("ui.whole_song")); el.value = R ? String(R.from) : '-1'; });
   document.querySelectorAll('.rngTo').forEach(el => { el.innerHTML = opts(el, '—'); el.value = R ? String(R.to) : '-1'; el.disabled = !R; });
   const r = exportRange();
-  document.querySelectorAll('.rngInfo').forEach(el => { el.textContent = r ? `${J.fmtTime(r.t0)} 〜 ${J.fmtTime(r.t1)}（${(r.t1 - r.t0).toFixed(1)}秒）` : `全体（${S.plan.duration.toFixed(1)}秒）`; });
+  document.querySelectorAll('.rngInfo').forEach(el => { el.textContent = r ? translate("ui.s_2", [J.fmtTime(r.t0), J.fmtTime(r.t1), (r.t1 - r.t0).toFixed(1)]) : translate("ui.whole_song_s", [S.plan.duration.toFixed(1)]); });
 }
 function bindRangeUI() {
   document.querySelectorAll('.rngFrom').forEach(el => el.addEventListener('change', () => {
@@ -884,20 +872,20 @@ function drawStyleGrid() {
     b.setAttribute('aria-pressed', S.project.style === k ? 'true' : 'false');
     const off = !J.randomOk(S.project, 'style', k);
     b.classList.toggle('set-off', off);
-    b.title = st.desc + (off ? (st.extra && S.project.extra !== true ? '（追加分がオフのため、おまかせでは選ばれません）' : st.set && !J.setOn(S.project, st.set) ? '（このセットがオフのため、おまかせでは選ばれません）' : '（和風の演出がオフのため、おまかせでは選ばれません）') : '');
+    b.title = st.desc + (off ? (st.extra && S.project.extra !== true ? translate("ui.new_effects_disabled_for_automatic_picks") : st.set && !J.setOn(S.project, st.set) ? translate("ui.this_set_is_off_for_automatic_picks") : translate("ui.japanese_motifs_disabled_for_automatic_picks")) : '');
     x.fillStyle = sc.bg; x.fillRect(0, 0, 192, 108);
     st.schemes.slice(1, 4).forEach((s2, i) => { x.fillStyle = s2.bg; x.fillRect(192 - 14 * (i + 1), 0, 14, 10); });
     const f = st.fonts.display[0];
     x.font = J.fontCSS(f, 46); x.textAlign = 'center'; x.textBaseline = 'middle';
-    x.fillStyle = sc.ghostB; x.fillText('字面', 96 - 3, 54 - 1);
-    x.fillStyle = sc.ghostA; x.fillText('字面', 96 + 3, 54 + 2);
-    x.fillStyle = sc.fg; x.fillText('字面', 96, 54);
+    x.fillStyle = sc.ghostB; x.fillText(translate("ui.jizura"), 96 - 3, 54 - 1);
+    x.fillStyle = sc.ghostA; x.fillText(translate("ui.jizura"), 96 + 3, 54 + 2);
+    x.fillStyle = sc.fg; x.fillText(translate("ui.jizura"), 96, 54);
     x.fillStyle = sc.accent; x.fillRect(12, 90, 30, 4);
     x.font = J.fontCSS('mono', 9); x.textAlign = 'left'; x.fillStyle = sc.sub; x.fillText(k.toUpperCase(), 48, 93);
   });
 }
 function fontSelectOptions(sel) {
-  return '<option value="">スタイルの既定</option>' + Object.entries(J.FONTS).map(([k, f]) => {
+  return translate("ui.style_default") + Object.entries(J.FONTS).map(([k, f]) => {
     const g = J.faceOf ? J.faceOf(k) : f, alt = g.label && g.label !== f.label ? ' → ' + g.label : '';   // the face actually used for the lyric language
     return `<option value="${escapeHtml(k)}" ${sel === k ? 'selected' : ''}>${escapeHtml(f.label + alt)}</option>`;
   }).join('');
@@ -906,21 +894,21 @@ function addLocalFont(name) {
   name = name.trim();
   const key = 'local_' + name.replace(/\s+/g, '_');
   const weight = /bold|太|black|heavy|w[6-9]|[6-9]00/i.test(name) ? 700 : 400;
-  J.addUserFont(key, name + '（PC）', name, weight);
-  S.project.userFonts = (S.project.userFonts || []).filter(u => u.key !== key).concat([{ key, label: name + '（PC）', family: name, weight }]);
+  J.addUserFont(key, name + translate("ui.installed"), name, weight);
+  S.project.userFonts = (S.project.userFonts || []).filter(u => u.key !== key).concat([{ key, label: name + translate("ui.installed"), family: name, weight }]);
   S.project.fonts.display = key;
 }
 function renderFontRoles() {
   const box = $('fontRoles'); box.innerHTML = '';
-  [['display', '見出し'], ['serif', '明朝枠'], ['body', '小さな文字']].forEach(([role, label]) => {
+  [['display', translate("ui.display")], ['serif', translate("ui.serif_frame")], ['body', translate("ui.small_text")]].forEach(([role, label]) => {
     const row = document.createElement('div'); row.className = 'font-row';
-    row.innerHTML = `<span class="muted">${label}</span><select aria-label="${label}のフォント">${fontSelectOptions(S.project.fonts[role])}</select>`;
+    row.innerHTML = translate("ui.copy_8", [label, label, fontSelectOptions(S.project.fonts[role])]);
     row.querySelector('select').addEventListener('change', e => { if (e.target.value) S.project.fonts[role] = e.target.value; else delete S.project.fonts[role]; fontKey = ''; replan(); });
     box.appendChild(row);
   });
 }
-const BASE_KEYS = [['bg', '背景'], ['fg', '文字'], ['sub', '補助']];
-const ACCENT_KEYS = [['accent', 'アクセント'], ['ghostA', 'ズレ色A'], ['ghostB', 'ズレ色B']];
+const BASE_KEYS = [['bg', translate("ui.background")], ['fg', translate("ui.text")], ['sub', translate("ui.secondary")]];
+const ACCENT_KEYS = [['accent', translate("ui.accent")], ['ghostA', translate("ui.offset_a")], ['ghostB', translate("ui.offset_b")]];
 function renderColors() {
   const st = J.STYLES[S.project.style] || J.STYLES.noir, sc = st.schemes[0];
   const c = S.project.colors;
@@ -959,7 +947,7 @@ function randomPalette() {
   do { p = J.randomPalette(bg); } while (guard++ < 6 && p.ghostA === c.ghostA && p.ghostB === c.ghostB);
   Object.assign(c, { accent: p.accent, ghostA: p.ghostA, ghostB: p.ghostB, accentOn: true });
   renderColors(); replan(); commit();
-  toast('配色：アクセント・ズレ色A/Bを変更', [p.accent, p.ghostA, p.ghostB]);
+  toast(translate("ui.palette_changed_accent_and_offset_colors"), [p.accent, p.ghostA, p.ghostB]);
 }
 
 /* ---------------- history of looks (◀ ▶) ---------------- */
@@ -985,7 +973,7 @@ function histGo(d) {
   H.i = j;
   Object.assign(S.project, JSON.parse(H.list[j]));
   fontKey = ''; syncUI(); replan(); updateHist();
-  toast(`${j + 1} / ${H.list.length} 案目`);
+  toast(translate("ui.variation", [j + 1, H.list.length]));
   restartPreview();
 }
 function updateHist() {
@@ -1002,9 +990,9 @@ function updateHist() {
            this does not pin one technique in place.
    params: freezes the current value of the effects sliders, on-twos and flash.
    Neither goes into J.plan: they only bracket the places that rewrite the look (Randomize, mood reroll). */
-const LOCK_TITLE_ON = 'おまかせ／シャッフルで変えないようにロック';
-const TECH_LOCK_ON = 'おまかせでON／OFFを変えないようにロック';
-const LOCK_TITLE_OFF = 'ロック中。クリックで解除';
+const LOCK_TITLE_ON = translate("ui.lock_so_randomize_shuffle_leave_this_alone");
+const TECH_LOCK_ON = translate("ui.lock_so_randomize_keeps_this_group_s");
+const LOCK_TITLE_OFF = translate("ui.locked_click_to_unlock");
 function locksOf() {
   const P = S.project;
   if (!P.locks) P.locks = { tech: {}, params: {} };
@@ -1021,15 +1009,15 @@ function groupLabel(g) { const m = GROUPS.find(x => x[0] === g); return m ? m[1]
 function toggleTechLock(g) {
   const L = locksOf();
   remember();
-  if (L.tech[g]) { delete L.tech[g]; toast('ロック解除：' + groupLabel(g)); }
-  else { L.tech[g] = true; toast('ロック：' + groupLabel(g)); }
+  if (L.tech[g]) { delete L.tech[g]; toast(translate("ui.unlocked") + groupLabel(g)); }
+  else { L.tech[g] = true; toast(translate("ui.locked") + groupLabel(g)); }
   commit(); autosave(); renderTech();
 }
 function toggleParamLock(k) {
   const L = locksOf();
   remember();
-  if (L.params[k]) { delete L.params[k]; toast('ロック解除：' + lockName(k)); }
-  else { L.params[k] = true; toast('ロック：' + lockName(k)); }
+  if (L.params[k]) { delete L.params[k]; toast(translate("ui.unlocked") + lockName(k)); }
+  else { L.params[k] = true; toast(translate("ui.locked") + lockName(k)); }
   commit(); autosave(); renderFx();
 }
 function lockedEnabled() {                        // ON/OFF selection of every locked group, as it is now
@@ -1083,7 +1071,7 @@ function omakase() {
   Object.assign(S.project, r);
   restoreEnabled(keepE); restoreParams(keepP);
   fontKey = ''; syncUI(); replan(); commit();
-  toast((th ? `おまかせ（${themeName(th)}）：` : 'おまかせ：') + `${J.STYLES[r.style].name} × ${J.MOODS[r.mood].name}`, r.colors.accentOn ? [r.colors.accent, r.colors.ghostA, r.colors.ghostB] : null);
+  toast((th ? translate("ui.randomized", [themeName(th)]) : translate("ui.randomized_2")) + `${J.STYLES[r.style].name} × ${J.MOODS[r.mood].name}`, r.colors.accentOn ? [r.colors.accent, r.colors.ghostA, r.colors.ghostB] : null);
   restartPreview();
 }
 // change just one aspect of the current look
@@ -1097,7 +1085,7 @@ function rerollPart(part) {
     if (!pool.length) pool = J.STYLE_ORDER.filter(k => k !== P.style);
     P.style = pool[Math.floor(Math.random() * pool.length)];
     P.colors.enabled = false;
-    msg = `スタイル：${J.STYLES[P.style].name}`;
+    msg = translate("ui.style", [J.STYLES[P.style].name]);
   } else if (part === 'mood') {
     const keepE = lockedEnabled(), keepP = lockedParams();
     const th = J.THEMES[P.themeId] ? P.themeId : null;
@@ -1105,10 +1093,10 @@ function rerollPart(part) {
     Object.assign(P, { mood: r.mood, fx: r.fx, enabled: r.enabled });
     for (const k of ['wa', 'extra', ...J.SET_ORDER]) if (r[k] === true) P[k] = true;     // switches the theme needs
     restoreEnabled(keepE); restoreParams(keepP);
-    msg = `雰囲気：${J.MOODS[r.mood].name}`;
+    msg = translate("ui.mood", [J.MOODS[r.mood].name]);
   } else if (part === 'cut') {
     P.seed = (Math.random() * 1e9) | 0;
-    msg = '構成：レイアウトと動きを再抽選';
+    msg = translate("ui.arrangement_rerolled_layout_and_motion");
   }
   fontKey = ''; syncUI(); replan(); commit();
   toast(msg);
@@ -1117,18 +1105,18 @@ function rerollPart(part) {
 function showNow() {
   const el = $('easyNow'); if (!el || !S.plan || el.closest('[hidden]')) return;
   const P = S.project, sc = S.plan.style.schemes[0];
-  const moodName = P.mood && J.MOODS[P.mood] ? J.MOODS[P.mood].name : 'カスタム';
+  const moodName = P.mood && J.MOODS[P.mood] ? J.MOODS[P.mood].name : translate("ui.custom");
   const fk = S.plan.style.fonts.display[0];
   const fontName = J.FONTS[fk] ? (J.faceOf ? J.faceOf(fk) : J.FONTS[fk]).label : fk;   // the face actually drawn for the lyric language
   const cuts = S.plan.cuts.filter(c => c.line >= 0 && c.layout !== 'interlude');
   const kinds = new Set(cuts.map(c => c.layout)).size;
   const row = (k, v) => `<div class="now-row"><span class="k">${k}</span><span class="v">${v}</span></div>`;
-  el.innerHTML = row('スタイル', `<b>${escapeHtml(J.STYLES[P.style].name)}</b>`)
-    + row('雰囲気', escapeHtml(moodName))
-    + row('配色', `<span class="swatches">${swatchHTML([sc.bg, sc.fg, sc.accent, sc.ghostA, sc.ghostB])}</span>${P.colors.accentOn ? '<span class="tagl">ランダム</span>' : ''}`)
-    + row('見出し書体', escapeHtml(fontName))
-    + row('構成', `${cuts.length} カット・レイアウト ${kinds} 種`)
-    + row('演出', `加工 ${cuts.filter(c => c.treat && c.treat !== 'none').length}・背景 ${new Set(cuts.map(c => c.bg).filter(b => b && b !== 'none')).size}種・カメラ ${cuts.filter(c => c.cam && c.cam !== 'push').length}`);
+  el.innerHTML = row(translate("ui.style_2"), `<b>${escapeHtml(J.STYLES[P.style].name)}</b>`)
+    + row(translate("ui.mood_2"), escapeHtml(moodName))
+    + row(translate("ui.palette"), `<span class="swatches">${swatchHTML([sc.bg, sc.fg, sc.accent, sc.ghostA, sc.ghostB])}</span>${P.colors.accentOn ? translate("ui.random") : ''}`)
+    + row(translate("ui.display_font"), escapeHtml(fontName))
+    + row(translate("ui.arrangement"), translate("ui.cuts_layout_types", [cuts.length, kinds]))
+    + row(translate("ui.effects"), translate("ui.treatment_background_types_camera", [cuts.filter(c => c.treat && c.treat !== 'none').length, new Set(cuts.map(c => c.bg).filter(b => b && b !== 'none')).size, cuts.filter(c => c.cam && c.cam !== 'push').length]));
 }
 let toastTimer = 0;
 function toast(m, cols) {
@@ -1171,7 +1159,7 @@ function mobileInit() {
 }
 
 /* ---------------- fx tab ---------------- */
-const FX = [['motion', '動きの強さ'], ['glitch', 'グリッチ'], ['chroma', '色ズレ'], ['decor', '装飾の量'], ['density', 'カットの細かさ'], ['texture', '質感'], ['bgSwitch', '背景の切替']];
+const FX = [['motion', translate("ui.motion_strength")], ['glitch', translate("ui.glitch")], ['chroma', translate("ui.color_offset")], ['decor', translate("ui.decoration_amount")], ['density', translate("ui.cut_density")], ['texture', translate("ui.texture")], ['bgSwitch', translate("ui.background_changes")]];
 function renderFx() {
   const box = $('fxSliders'); box.innerHTML = '';
   FX.forEach(([k, label]) => {
@@ -1195,7 +1183,7 @@ function renderFx() {
 }
 
 /* ---------------- technique tab ---------------- */
-const GROUPS = [['layout', 'レイアウト'], ['enter', '登場'], ['hold', '保持'], ['exit', '退場'], ['decor', '装飾'], ['treat', '文字の加工'], ['bg', '背景'], ['cam', 'カメラ'], ['fx', '画面効果'], ['trans', 'カット間のつなぎ']];
+const GROUPS = [['layout', translate("ui.layout")], ['enter', translate("ui.entrance")], ['hold', translate("ui.hold")], ['exit', translate("ui.exit")], ['decor', translate("ui.decoration")], ['treat', translate("ui.text_treatments")], ['bg', translate("ui.background")], ['cam', translate("ui.camera")], ['fx', translate("ui.screen_effects")], ['trans', translate("ui.transitions")]];
 const openGroups = new Set();
 function techItems(g) { return J.order(g).filter(k => J.registry(g)[k] && !J.registry(g)[k].special); }
 
@@ -1310,7 +1298,7 @@ function renderTech() {
     d.addEventListener('toggle', () => { if (d.open) { openGroups.add(g); queueThumbs(list); } else openGroups.delete(g); });
     const lked = !!locksOf().tech[g];
     d.innerHTML = `<summary><span class="tg-name">${label}</span><span class="tg-cnt mono">${onN}/${items.length}</span>`
-      + `<button type="button" class="icon ghost lk pro-only" data-lk="${g}" aria-pressed="${lked}" title="${lked ? LOCK_TITLE_OFF : TECH_LOCK_ON}">${ICON.lock}</button></summary><div class="tg-tools"><button class="ghost small" data-a="on">すべてON</button><button class="ghost small" data-a="off">すべてOFF</button><button class="ghost small" data-a="flip">反転</button></div>`;
+      + translate("ui.all_on_all_off_invert", [g, lked, lked ? LOCK_TITLE_OFF : TECH_LOCK_ON, ICON.lock]);
     const [tw, th] = (() => {
       const [W, H] = J.designSize(S.project.aspect || '16:9');
       const h = 90; return [Math.max(80, Math.round(h * W / H)), h];
@@ -1318,8 +1306,8 @@ function renderTech() {
     shown.forEach(k => {
       const l = document.createElement('label');
       l.className = 'tcard';
-      l.title = k + (tbl[k].tags && tbl[k].tags.length ? '（' + tbl[k].tags.map(t => (J.MOODS[t] ? J.MOODS[t].name : t)).join('・') + '）' : '');
-      if (!J.randomOk(S.project, g, k)) { l.classList.add('set-off'); l.title += tbl[k].extra && S.project.extra !== true ? '（追加分がオフのため、自動では選ばれません）' : tbl[k].set && !J.setOn(S.project, tbl[k].set) ? '（このセットがオフのため、自動では選ばれません）' : '（和風の演出がオフのため、自動では選ばれません）'; }
+      l.title = k + (tbl[k].tags && tbl[k].tags.length ? translate("ui.copy_9") + tbl[k].tags.map(t => (J.MOODS[t] ? J.MOODS[t].name : t)).join(translate("ui.copy_10")) + translate("ui.copy_11") : '');
+      if (!J.randomOk(S.project, g, k)) { l.classList.add('set-off'); l.title += tbl[k].extra && S.project.extra !== true ? translate("ui.new_effects_disabled_for_automatic_picks_2") : tbl[k].set && !J.setOn(S.project, tbl[k].set) ? translate("ui.this_set_is_off_for_automatic_picks_2") : translate("ui.japanese_motifs_disabled_for_automatic_picks_2"); }
       l.innerHTML = `<canvas width="${tw}" height="${th}" data-g="${g}" data-k="${k}"></canvas><span class="tcard-name"><input type="checkbox" ${en[k] !== false ? 'checked' : ''}> <span>${escapeHtml(tbl[k].name)}</span>${setBadges(tbl[k])}</span>`;
       const cv = l.querySelector('canvas');
       l.querySelector('input').addEventListener('change', e => { en[k] = e.target.checked; S.project.mood = null; d.querySelector('.tg-cnt').textContent = `${items.filter(x => en[x] !== false).length}/${items.length}`; replanSoon(60); });
@@ -1351,17 +1339,17 @@ function syncOut() {
   document.querySelectorAll('.centerDirSel').forEach(el => { el.value = S.project.centerDir === 'lr' ? 'lr' : 'tb'; });
   const kb = $('keyBadge');
   kb.hidden = k === 'off';
-  if (k !== 'off') kb.innerHTML = `<i style="background:${J.KEY_BG[k]}"></i>${k === 'green' ? 'グリーンバック' : 'ブラックバック'}`;
+  if (k !== 'off') kb.innerHTML = `<i style="background:${J.KEY_BG[k]}"></i>${k === 'green' ? translate("ui.green_screen") : translate("ui.black_background")}`;
 }
 // the codec check is slow in some browsers: at start-up, let the first preview frames paint before asking
 function codecNoteSoon() { (window.requestIdleCallback || (f => setTimeout(f, 400)))(() => codecNote(), { timeout: 1500 }); }
 async function codecNote() {
   const [w, h] = J.outputSize(S.project);
   const vc = await J.pickVideoCodec(w, h, S.project.fps, 12e6);
-  $('codecNote').textContent = vc ? `このブラウザでは ${vc.label} で書き出します（${w}×${h} / ${S.project.fps}fps）。書き出し中はタブを開いたままにしてください。` : 'このブラウザは動画エンコード（WebCodecs）に対応していません。Chrome / Edge の最新版で開くか、連番PNGを使ってください。';
+  $('codecNote').textContent = vc ? translate("ui.this_browser_exports_with_at_fps_keep", [vc.label, w, h, S.project.fps]) : translate("ui.video_encoding_webcodecs_is_unavailable_here_try");
   $('btnMP4').disabled = !vc; $('eMP4').disabled = !vc;
   ['btnMP4File', 'eMP4File'].forEach(id => { $(id).hidden = !vc || !canPickFile(); });
-  if (!vc) $('eMP4').title = 'このブラウザは MP4 書き出しに対応していません（Chrome / Edge 推奨）';
+  if (!vc) $('eMP4').title = translate("ui.mp4_export_is_unavailable_here_chrome_or");
 }
 const EXP_BTNS = ['btnMP4', 'btnPNG', 'btnPNGA', 'btnPNGL', 'eMP4', 'btnMP4File', 'eMP4File', 'ePNG', 'ePNGA', 'ePNGL'];
 function baseName() {
@@ -1389,14 +1377,14 @@ async function runExport(kind) {
     try {
       const hnd = await window.showSaveFilePicker({ suggestedName: nameBase + suffix + '.mp4', types: [{ description: 'MP4', accept: { 'video/mp4': ['.mp4'] } }] });
       file = await hnd.createWritable(); fileName = hnd.name;
-    } catch (e) { job.status = e && e.name === 'AbortError' ? 'cancelled' : 'failed'; job.error = String(e.message || e); S.exporting = null; if (job.status === 'failed') toast('保存先を開けませんでした: ' + job.error); return; }
+    } catch (e) { job.status = e && e.name === 'AbortError' ? 'cancelled' : 'failed'; job.error = String(e.message || e); S.exporting = null; if (job.status === 'failed') toast(translate("ui.could_not_open_the_file") + job.error); return; }
   }
   pause();
   const boxes = [...document.querySelectorAll('.exp-box')];
   const setText = m => boxes.forEach(b => { b.querySelector('.exp-text').textContent = m; });
   const txt = { set textContent(m) { setText(m); }, get textContent() { return boxes[0].querySelector('.exp-text').textContent; } };
   boxes.forEach(b => { b.hidden = false; b.querySelector('.exp-bar').style.width = '0%'; });
-  setText('準備中…');
+  setText(translate("ui.preparing"));
   EXP_BTNS.forEach(id => { $(id).disabled = true; });
   const onProgress = (p, m) => { job.progress = p; job.message = m; boxes.forEach(b => { b.querySelector('.exp-bar').style.width = (p * 100).toFixed(1) + '%'; }); setText(m); };
   const t0 = performance.now();
@@ -1405,40 +1393,40 @@ async function runExport(kind) {
   let wake = null; try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) { wake = null; }
   // スマホ: at most 1080p (phones run out of memory / encoder time at 1440p and 4K)
   const proj = mobile && (snapshot.res || 1080) > 1080 ? Object.assign({}, snapshot, { res: 1080 }) : snapshot;
-  if (proj !== snapshot) toast('スマホの画面では 1080p で書き出します');
+  if (proj !== snapshot) toast(translate("ui.in_the_phone_layout_the_export_is"));
   try {
     if (ac.signal.aborted) throw new Error('Export cancelled');
     await J.ensureFonts(snapshot.lyrics + (snapshot.title || '') + (snapshot.artist || '') + HUD_CHARS, J.fontsOfPlan(plan));
     const lost = J.missingUserFonts(J.fontsOfPlan(plan).concat(Object.values(snapshot.fonts || {})));
-    if (lost.length) throw new Error(`読み込んだ書体（${[...new Set(lost)].join('・')}）がこのブラウザにないため、書き出しを止めました。「フォント」から同じファイルを読み込み直すか、別の書体を選んでください`);
+    if (lost.length) throw new Error(translate("ui.the_uploaded_font_is_not_in_this", [[...new Set(lost)].join(translate("ui.copy_12"))]));
     if (kind === 'mp4' || kind === 'mp4file') {
       const span = J.exportSpan(plan, range);
       const r = await J.exportMP4({ plan, project: proj, audio: snapshot.includeAudio !== false ? audio : null, quality: snapshot.quality || 'high', onProgress, signal: ac.signal, range, file });
       if (file) job.files.push({ name: fileName, status: 'saved' });
       file = null;
-      txt.textContent = `完成 ${r.blob ? (r.blob.size / 1048576).toFixed(1) + 'MB・' : ''}${r.codec}${r.audio ? ' + ' + r.audio.toUpperCase() : ''}・${((performance.now() - t0) / 1000).toFixed(0)}秒`;
+      txt.textContent = translate("ui.done_s", [r.blob ? (r.blob.size / 1048576).toFixed(1) + translate("ui.mb") : '', r.codec, r.audio ? ' + ' + r.audio.toUpperCase() : '', ((performance.now() - t0) / 1000).toFixed(0)]);
       if (r.blob) {
         const name = nameBase + suffix + '.mp4';
         const res = await save(name, r.blob);
-        if (res === 'declined') txt.textContent += '（保存はキャンセルされました）';
+        if (res === 'declined') txt.textContent += translate("ui.save_canceled");
         offerShare(boxes, r.blob, name);
-      } else txt.textContent += `・「${fileName}」に保存しました`;
-      if (r.tried && r.tried.length) txt.textContent += '（最初の方法では失敗したため、別のエンコーダーで書き出しました）';
+      } else txt.textContent += translate("ui.saved_to", [fileName]);
+      if (r.tried && r.tried.length) txt.textContent += translate("ui.the_first_method_failed_so_another_encoder");
       // audio that some players cannot play (Opus), or none at all: save the soundtrack as WAV next to it
       if (r.audioWanted && r.audio !== 'aac') {
         await save(nameBase + suffix + '_audio.wav', J.audioWav(audio.buffer, span.dur, span.t0));
-        txt.textContent += r.audio ? '。このブラウザでは音声が Opus になり、iPhone・QuickTime などでは音が出ないことがあるため、音声を WAV でも保存しました' : '。このブラウザは音声を書き出せないため、音声を WAV で別に保存しました（動画編集ソフトで重ねてください）';
-      } else if (snapshot.includeAudio !== false && !audio && snapshot.audioName) txt.textContent += '。曲が読み込まれていないため音声なしです（「曲を読み込む」から読み込み直してください）';
+        txt.textContent += r.audio ? translate("ui.this_browser_encodes_audio_as_opus_which") : translate("ui.this_browser_cannot_encode_audio_so_the");
+      } else if (snapshot.includeAudio !== false && !audio && snapshot.audioName) txt.textContent += translate("ui.no_song_is_loaded_so_the_video");
     } else {
       const blob = await J.exportPNGZip({ plan, project: proj, transparent: kind === 'pnga', layers: kind === 'pngl', onProgress, signal: ac.signal, range });
-      txt.textContent = `完成 ${(blob.size / 1048576).toFixed(1)}MB`;
+      txt.textContent = translate("ui.done_mb", [(blob.size / 1048576).toFixed(1)]);
       await save(nameBase + suffix + (kind === 'pnga' ? '_alpha' : kind === 'pngl' ? '_layers' : '') + '_png.zip', blob);
     }
     job.status = ac.signal.aborted ? 'cancelled' : job.files.some(f => f.status === 'declined') ? 'save_declined' : 'completed';
     job.progress = 1;
   } catch (e) {
     job.status = ac.signal.aborted ? 'cancelled' : 'failed'; job.error = String(e.message || e);
-    txt.textContent = 'エラー: ' + (e && e.message ? e.message : e);
+    txt.textContent = translate("ui.error") + (e && e.message ? e.message : e);
     console.error(e);
     if (file) { try { await file.abort(); } catch (e2) {} }
   } finally {
@@ -1476,7 +1464,7 @@ function startTap(from = 0) {
   const t0 = from === 0 ? 0 : Math.max(0, prev.start + 0.01, cur.start - 2.5);      // a little before the line, never before the previous one
   pause(); seek(t0); updateTap();
   $('tapBtn').focus();
-  if (from > 0) toast(`${from + 1}行目からタップで同期します（${J.fmtTime(t0)} から再生）`);
+  if (from > 0) toast(translate("ui.tap_sync_from_line_playing_from", [from + 1, J.fmtTime(t0)]));
   // カウントダウン: 3, 2, 1 — then the song starts
   const tap = S.tap;
   if (opt.count) {
@@ -1514,7 +1502,7 @@ function tapCut() {
   if (!S.tap || S.tap.counting || S.tap.cl == null) return;
   const li = S.tap.cl, k = S.tap.ck | 0, ln = S.plan.lines[li];
   const n = S.plan.cuts.filter(c => c.line === li && J.LAYOUTS[c.layout] && !J.LAYOUTS[c.layout].special).length;
-  if (!ln || k < 1 || k >= n) { toast('この行にはこれ以上カットがありません'); return; }
+  if (!ln || k < 1 || k >= n) { toast(translate("ui.this_line_has_no_more_cuts")); return; }
   const cur = S.project.overrides[li] || {}, ct = Object.assign({}, cur.cutTime || {});
   S.tap.done.push({ cut: true, li, k, had: ct[k] });
   ct[k] = +Math.max(0, S.t - ln.start).toFixed(3);
@@ -1546,7 +1534,7 @@ function stopTap() {
   $('tapPanel').hidden = true; $('btnTap').setAttribute('aria-pressed', 'false'); replan(); flushSave(); }
 function updateTap() {
   const ln = S.plan.lines[S.tap.i];
-  $('tapLine').textContent = ln ? `${S.tap.i + 1}. ${ln.interlude ? '〔間奏〕' : ln.text}` : '—';
+  $('tapLine').textContent = ln ? `${S.tap.i + 1}. ${ln.interlude ? translate("ui.interlude_2") : ln.text}` : '—';
   const bb = $('tapBack'); if (bb) bb.disabled = !S.tap.done.length;
   $('tapPanel').classList.toggle('compact', S.tap.done.length >= 3);  // 最初の数回が終わったら説明を畳んで、固定しても邪魔にならないように
 }
@@ -1556,7 +1544,7 @@ function syncUI() {
   $('songTitle').value = S.project.title || ''; $('songArtist').value = S.project.artist || '';
   $('lyrics').value = S.project.lyrics;
   $('bpm').value = S.project.timing.bpm > 0 ? S.project.timing.bpm : '';
-  $('bpm').placeholder = S.audio ? `自動 ${S.audio.bpm}` : 'なし';
+  $('bpm').placeholder = S.audio ? translate("ui.auto_2", [S.audio.bpm]) : translate("ui.none");
   $('offset').value = S.project.timing.offset ?? 0.4;
   $('lineScale').value = S.project.timing.lineScale ?? 1;
   $('snap').checked = !!S.project.timing.snap;
@@ -1577,7 +1565,7 @@ function bind() {
     remember();
     S.project.lang = e.target.value; replan(); renderFontRoles(); commit(); flushSave();
     const l = J.resolveLang(S.project);
-    toast((S.project.lang === 'auto' ? '歌詞の言語：自動判定 → ' : '歌詞の言語：') + J.LANG_LABEL[l]);
+    toast((S.project.lang === 'auto' ? translate("ui.lyrics_language_auto_detect") : translate("ui.lyrics_language")) + J.LANG_LABEL[l]);
   });
   $('songTitle').addEventListener('input', e => { S.project.title = e.target.value; replanSoon(300); });
   $('songArtist').addEventListener('input', e => { S.project.artist = e.target.value; replanSoon(300); });
@@ -1660,13 +1648,13 @@ function bind() {
     renderTech(); drawStyleGrid(); replan(); commit(); flushSave();
     toast(e.target.checked ? msgOn : msgOff);
   }));
-  setSwitch('extra-toggle', 'extra', true, '追加分の演出：使う', '追加分の演出：使わない（最初の公開版の演出だけ）');
-  setSwitch('wa-toggle', 'wa', true, '和風の演出：使う', '和風の演出：使わない（おまかせ・シャッフルで選ばれません）');
-  setSwitch('typo-toggle', 'typo', true, '文字PV系の部品：使う', '文字PV系の部品：使わない（おまかせ・シャッフルで選ばれません）');
-  setSwitch('kinetic-toggle', 'kinetic', true, 'キネティックの部品：使う', 'キネティックの部品：使わない（おまかせ・シャッフルで選ばれません）');
-  setSwitch('horror-toggle', 'horror', true, 'ホラーの演出：使う（おまかせの雰囲気に「ホラー」が加わります）', 'ホラーの演出：使わない');
-  setSwitch('unify-toggle', 'unify', true, '統一感：オン（パートごとにそろえ、キメ・モーフ・太さも使います）', '統一感：オフ');
-  setSwitch('typeset-toggle', 'typeset', true, '文字整列：オン（字間・助詞・英字・0.2秒先・効果控えめ）', '文字整列：オフ');
+  setSwitch('extra-toggle', 'extra', true, translate("ui.new_effects_on"), translate("ui.new_effects_off_original_set_only"));
+  setSwitch('wa-toggle', 'wa', true, translate("ui.japanese_motifs_on"), translate("ui.japanese_motifs_off_for_random_picks"));
+  setSwitch('typo-toggle', 'typo', true, translate("ui.typographic_parts_on"), translate("ui.typographic_parts_off_not_picked_by_randomize"));
+  setSwitch('kinetic-toggle', 'kinetic', true, translate("ui.kinetic_parts_on"), translate("ui.kinetic_parts_off_not_picked_by_randomize"));
+  setSwitch('horror-toggle', 'horror', true, translate("ui.horror_effects_on_randomize_adds_a_horror"), translate("ui.horror_effects_off"));
+  setSwitch('unify-toggle', 'unify', true, translate("ui.unified_look_on_parts_match_hits_morphs"), translate("ui.unified_look_off"));
+  setSwitch('typeset-toggle', 'typeset', true, translate("ui.typesetting_on_spacing_particles_latin_0_2"), translate("ui.typesetting_off"));
   $('fxKoma').addEventListener('change', e => { const k = +e.target.value; S.project.fx.koma = k; S.project.fx.onTwos = k > 0; S.project.mood = null; replan(); });
   $('fxHud').addEventListener('change', e => { S.project.fx.hud = e.target.value; replan(); });
   $('fxHideNo').addEventListener('change', e => { remember(); S.project.fx.hideNo = e.target.checked; replan(); commit(); });
@@ -1695,7 +1683,7 @@ function bind() {
       S.project.userFonts = (S.project.userFonts || []).filter(x => x.key !== uf.key).concat([uf]);
       S.project.fonts.display = uf.key; fontKey = ''; renderFontRoles(); replan(); flushSave();
     }
-    catch (err) { showMsg('フォントを読み込めませんでした'); setTimeout(() => showMsg(null), 2500); }
+    catch (err) { showMsg(translate("ui.could_not_load_the_font")); setTimeout(() => showMsg(null), 2500); }
     finally { S.loading.fonts = false; }
   });
   ['outAspect', 'eAspect'].forEach(id => $(id).addEventListener('change', e => { S.project.aspect = e.target.value; syncOut(); replan(); codecNote(); }));
@@ -1705,17 +1693,17 @@ function bind() {
   ['outKey', 'eKey'].forEach(id => $(id).addEventListener('change', e => {
     S.project.keyBg = e.target.value; syncOut(); replan(); flushSave();
     const k = J.keyMode(S.project);
-    toast(k ? `背景：${k === 'green' ? 'グリーンバック' : 'ブラックバック'}（白い文字と演出だけ）` : '背景：通常（スタイルの配色）');
+    toast(k ? translate("ui.background_white_text_and_effects_only", [k === 'green' ? translate("ui.green_screen") : translate("ui.black_background")]) : translate("ui.background_style_colors"));
   }));
   $('outAudio').addEventListener('change', e => { S.project.includeAudio = e.target.checked; autosave(); });
   document.querySelectorAll('.centerDirSel').forEach(el => el.addEventListener('change', e => {
     S.project.centerDir = e.target.value; syncOut(); replan(); flushSave();
-    toast(e.target.value === 'lr' ? '縦長の画面：左右に分けます' : '縦長の画面：上下に分けます');
+    toast(e.target.value === 'lr' ? translate("ui.tall_frames_split_left_right") : translate("ui.tall_frames_split_top_bottom"));
   }));
   ['outCenter', 'eCenter'].forEach(id => $(id).addEventListener('change', e => {
     S.project.centerFree = e.target.checked; syncOut(); replan(); flushSave();
     const tall = S.plan.H > S.plan.W * 1.1 && S.project.centerDir !== 'lr';
-    toast(e.target.checked ? `中央を空けました：文字と演出を${tall ? '上下' : '左右'}に置きます` : '中央を空けるのをやめました');
+    toast(e.target.checked ? translate("ui.centre_kept_free_lyrics_and_effects_go", [tall ? translate("ui.top_bottom") : translate("ui.left_right")]) : translate("ui.centre_no_longer_kept_free"));
   }));
   $('btnMP4').addEventListener('click', () => runExport('mp4'));
   ['btnMP4File', 'eMP4File'].forEach(id => $(id).addEventListener('click', () => runExport('mp4file')));
@@ -1759,11 +1747,11 @@ function bind() {
   }));
   $('fileLrc').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
-    if (f.size > 2e6) { toast('LRC ファイルが大きすぎます'); return; }
+    if (f.size > 2e6) { toast(translate("ui.the_lrc_file_is_too_large")); return; }
     let text = '';
     try { const buf = await f.arrayBuffer(); try { text = new TextDecoder('utf-8', { fatal: true }).decode(buf); } catch (e2) { text = new TextDecoder('shift_jis').decode(buf); } }
-    catch (err) { toast('LRC を読み込めませんでした'); return; }
-    if (S.project.lyrics.trim() && !window.confirm('今の歌詞を LRC の内容に置き換えます（行ごとの時刻・指定・書き出す範囲も消えます。「元に戻す」で戻せます）。よろしいですか？')) return;
+    catch (err) { toast(translate("ui.could_not_read_the_lrc_file")); return; }
+    if (S.project.lyrics.trim() && !window.confirm(translate("ui.replace_the_current_lyrics_with_the_lrc"))) return;
     loadLrc(text);
   });
   ['btnLRC', 'eLRC'].forEach(id => $(id).addEventListener('click', saveLrc));
@@ -1772,7 +1760,7 @@ function bind() {
   $('fileProject').addEventListener('change', async e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
     try { await importProject(JSON.parse(await f.text())); }
-    catch (err) { showMsg('プロジェクトを読み込めませんでした'); setTimeout(() => showMsg(null), 2500); }
+    catch (err) { showMsg(translate("ui.could_not_open_the_project")); setTimeout(() => showMsg(null), 2500); }
     e.target.value = '';
   });
   document.addEventListener('keydown', e => {
@@ -1800,30 +1788,30 @@ let audioSeq = 0;
 async function loadAudioFile(f, restored) {
   S.loading.audio = true;
   const my = ++audioSeq;                      // only the latest choice may win (an earlier, slower analysis is dropped)
-  $('audioName').textContent = '解析中…';
+  $('audioName').textContent = translate("ui.analyzing_audio");
   try {
     pause();
     const a = await J.analyzeAudio(f);
     if (my !== audioSeq) return false;
     S.audio = a;
-    $('audioName').textContent = `${f.name}（${J.fmtTime(S.audio.duration)}・約${S.audio.bpm}BPM）` + (restored ? '・前回の曲' : '');
+    $('audioName').textContent = translate("ui.about_bpm", [f.name, J.fmtTime(S.audio.duration), S.audio.bpm]) + (restored ? translate("ui.last_song") : '');
     S.project.audioName = f.name;
     if (!restored && J.saveSong) J.saveSong(f);             // kept in this browser: a reload does not drop the song from exports
     S.project.timing.snap = true;
     syncUI(); replan();
     return true;
-  } catch (err) { if (my !== audioSeq) return false; $('audioName').textContent = '読み込めませんでした: ' + err.message; S.audio = null; return false; }
+  } catch (err) { if (my !== audioSeq) return false; $('audioName').textContent = translate("ui.could_not_load") + err.message; S.audio = null; return false; }
   finally { if (my === audioSeq) S.loading.audio = false; }
 }
 
 /* ---------------- かんたんモードの案内ツアー ---------------- */
 const TOUR = [
-  { t: () => $('lyrics'), title: '1. 歌詞を入れる', text: '1行が1フレーズになります。空行で少し間が空き、[間奏 8] と書くと8秒の間奏（背景と装飾だけ）になります。' },
-  { t: () => $('audioFile').closest('label') || $('audioFile'), title: '2. 曲を読み込む', text: 'mp3 などを読み込むと拍を検出して、カットの切り替わりを合わせます。曲がなくても作れます。「タップで同期」で行の頭を合わせることもできます。' },
-  { t: () => $('btnOmakaseBig'), title: '3. おまかせで作る', text: 'スタイル・雰囲気・動き・配色・構成をまるごと決めます。押すたびに別の案になり、「◀ 前の案」で戻れます。' },
-  { t: () => $('btnPlay'), title: '4. 再生して確認する', text: '再生して見てみましょう。下のタイムラインでは、行の区切りをドラッグして動かせます（＋−で拡大）。' },
-  { t: () => $('lineList'), title: '5. 気になる行だけ直す', text: '行ごとに、歌詞を直す（✎）、カット数を決める、この行からタップし直す（◎）、この行だけ作り直す（サイコロ）ができます。' },
-  { t: () => $('eMP4').closest('.easy-sec') || $('eMP4'), title: '6. 書き出す', text: '画面比（縦長 9:16 など）と解像度を選んで MP4 を書き出します。「書き出す範囲」で選んだ行だけを書き出すこともできます。' },
+  { t: () => $('lyrics'), title: translate("ui.1_enter_lyrics"), text: translate("ui.one_line_is_one_phrase_a_blank") },
+  { t: () => $('audioFile').closest('label') || $('audioFile'), title: translate("ui.2_load_the_song"), text: translate("ui.load_an_mp3_or_similar_file_jizura") },
+  { t: () => $('btnOmakaseBig'), title: translate("ui.3_create_a_variation"), text: translate("ui.style_mood_motion_palette_and_arrangement_are") },
+  { t: () => $('btnPlay'), title: translate("ui.4_play_it"), text: translate("ui.play_it_back_on_the_timeline_below") },
+  { t: () => $('lineList'), title: translate("ui.5_fix_single_lines"), text: translate("ui.for_each_line_you_can_edit_the") },
+  { t: () => $('eMP4').closest('.easy-sec') || $('eMP4'), title: translate("ui.6_export"), text: translate("ui.choose_the_aspect_ratio_such_as_vertical") },
 ];
 const TR = { i: -1 };
 function tourShow(i) {
@@ -1836,7 +1824,7 @@ function tourShow(i) {
   el.querySelector('.tour-title').textContent = st.title;
   el.querySelector('.tour-text').textContent = st.text;
   el.querySelector('.tour-prev').disabled = i === 0;
-  el.querySelector('.tour-next').textContent = i === n - 1 ? 'はじめる' : '次へ';
+  el.querySelector('.tour-next').textContent = i === n - 1 ? translate("ui.start") : translate("ui.next");
   if (tg && tg.scrollIntoView) tg.scrollIntoView({ block: 'center', behavior: 'auto' });
   requestAnimationFrame(() => tourPlace(tg));
   el.querySelector('.tour-next').focus();
@@ -1884,7 +1872,7 @@ async function restoreFonts() {
   if (!list.length) return;
   const missing = await J.restoreUserFonts(list);
   fontKey = ''; renderFontRoles(); replan();
-  if (missing.length) toast(`読み込んだ書体（${missing.join('・')}）がこのブラウザにありません。「フォント」から同じファイルを読み込み直してください（それまでは近い書体で表示します）`);
+  if (missing.length) toast(translate("ui.the_uploaded_font_is_not_in_this_2", [missing.join(translate("ui.copy_12"))]));
 }
 
 /* Small editor operations shared by the UI and the WebMCP adapter. */
@@ -1898,7 +1886,7 @@ function replaceLineText(ln, text) {
 function requestReset() {
   const dlg = $('resetDlg');
   if (!dlg || typeof dlg.showModal !== 'function') {
-    if (window.confirm('歌詞・曲・設定・履歴をすべて消して、最初の状態に戻します。元に戻すことはできません。')) return resetAll();
+    if (window.confirm(translate("ui.clear_lyrics_song_settings_and_history_and"))) return resetAll();
     return;
   }
   if (!dlg.open) { dlg.returnValue = ''; dlg.showModal(); }
@@ -1917,7 +1905,7 @@ async function importProject(project) {
   } finally { S.loading.fonts = false; }
 }
 function projectData(ae) {
-  return ae ? J.planForAE(S.plan, S.project, exportRange()) : Object.assign(copyData(S.project), { appVersion: '@VERSION@' });
+  return ae ? J.planForAE(S.plan, S.project, exportRange()) : Object.assign(copyData(S.project), { appVersion: J.APP_VERSION });
 }
 async function saveProject(ae) {
   const name = baseName() + (ae ? rangeSuffix() + '_ae.json' : '.jizura.json');

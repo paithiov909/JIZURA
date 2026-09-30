@@ -4,6 +4,7 @@ import path from 'node:path';
 import { build } from 'vite';
 import { repo, webConfig, classicConfig, routes } from '../vite.config.mts';
 import { packageClassic, copyNotices } from './packaging.mts';
+import { prepareBrowser } from './prepare-browser.mts';
 
 const dist = path.join(repo, 'dist');
 const python = process.env.PYTHON || 'python3';
@@ -11,6 +12,7 @@ const run = (command: string, args: string[]): void => { execFileSync(command, a
 const version = (await readFile(path.join(repo, 'VERSION'), 'utf8')).trim();
 if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('VERSION must be a CEP-compatible x.y.z version');
 run(process.execPath, ['build/check-effects.mts']);
+run(process.execPath, ['build/check-i18n.mts']);
 const selected = process.argv[2] || 'all';
 if (!['all', 'web', 'offline', 'ae', 'cep'].includes(selected)) throw new Error(`Unknown target: ${selected}`);
 
@@ -22,7 +24,7 @@ async function reset(directory: string): Promise<void> {
 async function prepare(target: 'web' | 'offline' | 'cep', language?: 'ja' | 'en'): Promise<string> {
   const root = path.join(dist, '.inputs', target, language || '');
   await reset(root);
-  run(python, ['build.py', '--out', root, '--vite-input', ...(language ? ['--lang', language] : []), ...(target === 'cep' ? ['--cep'] : [])]);
+  await prepareBrowser(root, version, language, target === 'cep');
   return root;
 }
 

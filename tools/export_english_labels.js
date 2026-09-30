@@ -1,6 +1,6 @@
 /* Print the browser edition's localized metadata for the AE build. */
 'use strict';
-const fs = require('fs'), vm = require('vm'), path = require('path');
+const fs = require('fs'), path = require('path');
 const root = path.resolve(__dirname, '..');
 // Use the same explicit, UI-free engine graph as the browser and Node tests.
 global.window = global;
@@ -8,7 +8,8 @@ global.document = { createElement: () => ({ getContext: () => ({ measureText: ()
 async function main() {
 const { createEngine } = await import('../engine/index.ts');
 const J = createEngine(fs.readFileSync(path.join(root, 'VERSION'), 'utf8').trim());
-vm.runInNewContext(fs.readFileSync(path.join(root, 'app/english.js'), 'utf8'), { J }, { filename: 'english.js' });
+const { createI18n } = await import('../i18n/index.ts');
+createI18n('en').applyLabels(J);
 const labels = { styles: {}, moods: {}, groups: {} };
 for (const key of J.STYLE_ORDER) labels.styles[key] = { name: J.STYLES[key].name, desc: J.STYLES[key].desc };
 for (const key of Object.keys(J.MOODS)) labels.moods[key] = J.MOODS[key].name;

@@ -64,6 +64,8 @@ Task 04 result (2026-09-30): the [explicit TypeScript engine](04-engine-modules.
 
 Task 05 result (2026-09-30): the [typed effect modules and source contribution contract](05-effect-modules.md#result--2026-09-30) preserve all 860 selectable IDs and two special layouts, ordering, selection flags and exported AE metadata. Six effect tests, nine engine tests, all builds, twenty production browser cases, twelve controlled frame comparisons and both 87-build AE model suites passed. Both built ES3 registries match the declared ports. The retained sample is test-only; algorithm-local dynamic bags and actual Adobe verification remain documented limitations. Next: task 09; task 07 follows task 06.
 
+Task 06 result (2026-09-30): the [typed runtime browser i18n service](06-browser-i18n.md#result--2026-09-30) preserves seven locale routes, translated/static/dynamic copy and contributor labels without browser-source rewriting. Six locale tests, nine engine tests, six effect tests, all builds, 21 focused locale/navigation cases, 20 production browser/CEP cases, 1,025 source-function comparisons, 12 controlled frames and both AE model suites passed. Hosted language switching preserves pending edits and saved state. Adobe/runtime and portable offline-menu boundaries remain explicit. Next browser task: 07; task 09 can proceed independently.
+
 ## Distribution design
 
 - CI runs focused checks on task PRs and on `codex/v1x-integration`. It creates no release or Pages deployment there.

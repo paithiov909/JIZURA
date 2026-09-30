@@ -12,7 +12,7 @@
     "build:offline": "node build/build.mts offline",
     "build:ae": "node build/build.mts ae",
     "build:cep": "node build/build.mts cep",
-    "check": "npm run typecheck && npm run test:engine && npm run test:effects && npm run build && npm run check:outputs && npm run check:effects && npm run test:ae",
+    "check": "npm run typecheck && npm run check:i18n && npm run test:i18n && npm run test:engine && npm run test:effects && npm run build && npm run check:outputs && npm run check:effects && npm run test:ae",
     "check:outputs": "node build/check-outputs.mts",
     "test:ae": "node dev/ae_test.js --jsx dist/ae/JIZURA_AE.jsx tests/baseline/v1/lrc-ja-ae-plan.json && node dev/ae_test.js --jsx dist/ae/JIZURA_AE_en.jsx tests/baseline/v1/lrc-ja-ae-plan.json",
     "test:browser": "python3 dev/build_foundation_test.py",
@@ -22,7 +22,11 @@
     "test:engine": "node --test --test-isolation=none tests/engine/contract.mts",
     "test:engine:browser": "python3 dev/engine_modules_test.py",
     "test:effects": "node --test --test-isolation=none tests/effects/contract.mts",
-    "check:effects": "node build/check-effects.mts --ae dist/ae/JIZURA_AE.jsx && node build/check-effects.mts --ae dist/ae/JIZURA_AE_en.jsx"
+    "check:effects": "node build/check-effects.mts --ae dist/ae/JIZURA_AE.jsx && node build/check-effects.mts --ae dist/ae/JIZURA_AE_en.jsx",
+    "check:i18n": "node build/check-i18n.mts",
+    "test:i18n": "node --test --test-isolation=none tests/i18n/contract.mts",
+    "test:i18n:browser": "python3 dev/i18n_test.py",
+    "test:i18n:source": "node dev/i18n_source_test.mjs"
   },
   "devDependencies": {
     "@types/node": "26.6.3",
