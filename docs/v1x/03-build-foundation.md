@@ -2,6 +2,8 @@
 
 **Depends on:** task 02's output decision.
 
+Task 02 selected [normal Vite HTML for hosted web, a Chrome 88 library IIFE with local CSS/vendor for CEP, and inline single-HTML packaging for offline](CEP-OFFLINE-DECISION.md). Set explicit JS/CSS targets; do not use Vite's default ES module HTML for local CEP/offline loading. Use the small tested HTML packaging step rather than adding another bundler. The isolated `dev/cep-offline-spike/` package is evidence to consolidate into this workspace, not a second permanent dependency tree. Actual AE/CEP verification remains deferred and must be distinguished from the passing mocks.
+
 ## Work
 
 Add a root package manifest, committed lockfile, TypeScript configuration, Vite configuration and documented commands for web, offline, AE and CEP targets. Integrate the current `dev/` Acorn dependency into a clear workspace strategy. Put generated outputs under ignored `dist/` paths and keep source assets, licenses and third-party notices explicit. Establish clean checkout, typecheck and build commands before migrating the engine.
