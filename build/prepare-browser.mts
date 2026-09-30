@@ -21,9 +21,9 @@ async function copyModules(root: string, entries: string[]): Promise<void> {
 }
 const escape = (value: string): string => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
-export async function prepareBrowser(root: string, version: string, language?: LocaleCode, cep = false): Promise<void> {
-  const body = (await readFile(path.join(repo, 'app/body.html'), 'utf8')).replace('@VERSION@', version);
-  const css = await readFile(path.join(repo, 'app/style.css'), 'utf8');
+export async function prepareBrowser(root: string, version: string, language?: LocaleCode, cep = false, offline = false): Promise<void> {
+  const body = (await readFile(path.join(repo, 'ui/body.html'), 'utf8')).replace('@VERSION@', version);
+  const css = await readFile(path.join(repo, 'ui/style.css'), 'utf8');
   const muxer = '/*! mp4-muxer v5.2.2 | MIT License | (c) 2023 Vanilagy | see THIRD_PARTY_NOTICES.md */\n' + await readFile(path.join(repo, 'vendor/mp4-muxer.min.js'), 'utf8');
   for (const locale of EDITIONS) {
     if (language && locale.code !== language) continue;
@@ -55,19 +55,16 @@ ${body}
 </body>
 </html>
 `;
-    await copyModules(directory, ['engine/index.ts', 'i18n/index.ts', 'src/12_ui.js', cep ? 'cep/cep.js' : 'src/13_webmcp.js']);
+    await copyModules(directory, ['engine/index.ts', 'ui/application.ts', cep ? 'cep/cep.js' : 'src/13_webmcp.js']);
     // Entry imports are authored as modules, never translated or assembled JS.
     await writeFile(path.join(directory, 'entry.ts'), `import './style.css';
 import { createEngine } from './engine/index.ts';
-import { createI18n } from './i18n/index.ts';
-import installUI from './src/12_ui.js';
+import { createEditorApplication } from './ui/application.ts';
 ${cep ? "import installCEP from './cep/cep.js';" : "import installAdapter from './src/13_webmcp.js';"}
 const engine = createEngine(${JSON.stringify(version)});
 Object.assign(window, { J: engine });
-const i18n = createI18n(${JSON.stringify(locale.code)});
-i18n.applyLabels(engine);
-i18n.applyDocument(document);
-installUI(engine);
+const application = createEditorApplication(engine, ${JSON.stringify(locale.code)}, { offline: ${offline} });
+Object.assign(window, { jizuraApp: application });
 ${cep ? 'installCEP(engine);' : 'installAdapter(engine);'}
 `);
     await writeFile(path.join(directory, 'style.css'), css + (cep && locale.code === 'en' ? '\nhtml.cep .lang-switch{display:none}\n' : ''));

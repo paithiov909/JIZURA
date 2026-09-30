@@ -1,15 +1,15 @@
 import { CORE_EFFECT_STAGES, PACK_STAGES, SET_STAGES } from '../effects/index.ts';
 import type { EffectRuntime } from '../effects/types.ts';
 import install01Util from './util.ts';
-import install02Fonts from '../src/02_fonts.js';
+import install02Fonts from '../ui/services/fonts.js';
 import install02bLang from '../src/02b_lang.js';
 import install03Text from './text.ts';
 import install04Styles from './styles.ts';
 import install08Planner from './planner.ts';
 import install08bOmakase from '../src/08b_omakase.js';
 import install09Render from './renderer.ts';
-import install10Audio from '../src/10_audio.js';
-import install11Export from '../src/11_export.js';
+import install10Audio from '../ui/services/audio.js';
+import install11Export from '../ui/services/export.js';
 import installAEPlan from './ae-plan.ts';
 import installProject from './project.ts';
 import type { Engine } from './types.ts';

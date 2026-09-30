@@ -26,7 +26,8 @@
     "check:i18n": "node build/check-i18n.mts",
     "test:i18n": "node --test --test-isolation=none tests/i18n/contract.mts",
     "test:i18n:browser": "python3 dev/i18n_test.py",
-    "test:i18n:source": "node dev/i18n_source_test.mjs"
+    "test:i18n:source": "node dev/i18n_source_test.mjs",
+    "test:editor:browser": "python3 dev/editor_test.py"
   },
   "devDependencies": {
     "@types/node": "26.6.3",

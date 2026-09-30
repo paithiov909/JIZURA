@@ -1,5 +1,5 @@
-import { createI18n } from '../i18n/index.ts';
-/* Temporary installer adapter; algorithm conversion belongs to later tasks. */
+import { createI18n } from '../../i18n/index.ts';
+/* Browser service installer; the engine owns per-instance state. */
 export default function install(J) {
 const japanese = createI18n('ja');
 const translate = (key, values) => (J.i18n || japanese).t(key, values);

@@ -71,7 +71,7 @@ JIZURA のページを開いたエージェントが、既存UIと同じ編集�
 
 ## 開発とテスト
 
-- `src/12_ui.js`: `J.uiApi.editor` に既存状態を操作する窓口、読込状態、構成リビジョン、出力ジョブを保持。
+- `ui/application.ts` と `ui/types.ts`: 型付きエディター API を公開。`ui/editor.js` が状態操作、読込状態、構成リビジョン、出力ジョブを保持し、`window.jizuraApp.editor` と互換窓口 `J.uiApi.editor` は同じ操作オブジェクトを参照。
 - `src/13_webmcp.js`: スキーマ、検証、登録、結果のシリアライズ。`J.webMCP.status` で登録状況を確認可能。
 - `build.py`: 既存のソース収集・7言語生成を利用。新しいビルド手順は不要。
 

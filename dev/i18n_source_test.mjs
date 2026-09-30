@@ -74,7 +74,7 @@ for (const [code, data] of Object.entries(legacy)) {
     if (file === 'cep/cep.js' && !['ja', 'en'].includes(code)) continue;
     const options = { ecmaVersion: 2021, sourceType: 'module' };
     const original = functions(parse(data.sources[file], options));
-    const current = functions(parse(fs.readFileSync(file, 'utf8'), options));
+    const current = functions(parse(fs.readFileSync(({ 'src/12_ui.js': 'ui/editor.js', 'src/11_export.js': 'ui/services/export.js' })[file] || file, 'utf8'), options));
     // These three changes have separate startup/UI/project-export evidence.
     for (const node of original) {
       if (['install', 'syncLoopBtn', 'projectData'].includes(node.id.name)) continue;

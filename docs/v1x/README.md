@@ -66,6 +66,8 @@ Task 05 result (2026-09-30): the [typed effect modules and source contribution c
 
 Task 06 result (2026-09-30): the [typed runtime browser i18n service](06-browser-i18n.md#result--2026-09-30) preserves seven locale routes, translated/static/dynamic copy and contributor labels without browser-source rewriting. Six locale tests, nine engine tests, six effect tests, all builds, 21 focused locale/navigation cases, 20 production browser/CEP cases, 1,025 source-function comparisons, 12 controlled frames and both AE model suites passed. Hosted language switching preserves pending edits and saved state. Adobe/runtime and portable offline-menu boundaries remain explicit. Next browser task: 07; task 09 can proceed independently.
 
+Task 07 result (2026-09-30): the [shared typed browser-editor API and export verification](07-browser-editor.md#result--2026-09-30) preserve hosted/offline/CEP editor initialization and move authored UI/services into `ui/`. All builds/contracts, 20 production cases, 21 locale cases, 12 controlled frames and actual hosted/offline JSON/LRC/MP4/PNG/audio/font workflows passed. Offline sibling-language navigation is fixed. Hosted direct writing passed with a mocked picker; native dialogs, file-origin OPFS restrictions, retained JavaScript internals and actual Adobe verification are explicit boundaries. Next: task 08; task 10 follows task 09.
+
 ## Distribution design
 
 - CI runs focused checks on task PRs and on `codex/v1x-integration`. It creates no release or Pages deployment there.

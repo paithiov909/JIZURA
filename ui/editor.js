@@ -4,7 +4,7 @@ const { t: translate } = J.i18n || createI18n(document.documentElement.lang);
 /* ============================================================
    JIZURA — editor UI
    ============================================================ */
-(() => {
+return (() => {
 'use strict';
 if (!document.getElementById('app')) return;          // engine-only pages (tests)
 const $ = id => document.getElementById(id);
@@ -2052,6 +2052,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 J.ui = S;
 // hooks for hosts that embed the app (the After Effects CEP panel)
 J.uiApi = { editor: editorActions, toast, replan, syncUI, pause, seek, flushSave, loadAudioFile, restartPreview, exportRange, exportRangeLines };
+return J.uiApi;
 })();
 
 }

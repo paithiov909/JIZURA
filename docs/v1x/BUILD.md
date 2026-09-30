@@ -45,11 +45,11 @@ python3 -m venv /tmp/jizura-browser-python
 /tmp/jizura-browser-python/bin/python dev/cep-offline-spike/browser_test.py --browser /usr/bin/google-chrome
 ```
 
-Run `npm run build` before the first browser test and `npm run spike:build` before the second. The production test uses 20 cases: seven hosted routes at `/JIZURA/`, seven offline files and Japanese/English CEP with dual, mixed and absent Node APIs. It compares task 01's locale/registry/project/plan/WebMCP fixtures, checks classic startup and transfers the baseline AE plan through the production CEP bridge. Remote Google Fonts are blocked; installed fallback fonts remain usable. Rendering is exercised, but pixel comparisons and all export operations remain tasks 07/11. Reports live in `dist/task03-browser-results.json` and `dist/task02/`.
+Run `npm run build` before the first browser test and `npm run spike:build` before the second. The production test uses 20 cases: seven hosted routes at `/JIZURA/`, seven offline files and Japanese/English CEP with dual, mixed and absent Node APIs. It compares task 01's locale/registry/project/plan/WebMCP fixtures, checks classic startup and transfers the baseline AE plan through the production CEP bridge. Remote Google Fonts are blocked; installed fallback fonts remain usable. This suite exercises rendering; focused pixel comparisons and export-content checks are documented below. Reports live in `dist/task03-browser-results.json` and `dist/task02/`.
 
 ## Remaining distribution gates
 
-This establishes the build foundation. Browser/CEP entries still use legacy UI/export algorithms; their copy now uses runtime dictionaries. Full export regression, WebMCP tool execution/native discovery, accessibility/layout parity, and downloadable assets linked from the hosted UI remain later tasks. Release files are intentionally kept in their own outputs; this task does not stage all release downloads into `dist/web/`, deploy Pages, sign/install CEP or publish a release. The inherited tracked generated files stay untouched until task 13 removes them from the final source snapshot.
+This establishes the build foundation. Browser/CEP entries use the shared typed editor bootstrap and runtime dictionaries. The preserved UI/service algorithms remain JavaScript modules, with typed consumer contracts and the task-07 browser/export checks below. The task-08 adapter port, broader task-11 regressions, and downloadable release assets linked from the hosted UI remain later tasks. Release files are intentionally kept in their own outputs; this task does not stage all release downloads into `dist/web/`, deploy Pages, sign/install CEP or publish a release. The inherited tracked generated files stay untouched until task 13 removes them from the final source snapshot.
 
 No actual AE/CEP, Chromium 88 or embedded Node 15.9 runtime was exercised. Modern Chrome CEP API mocks and Node AE object-model mocks do not certify Adobe compatibility. CEP 11 WebCodecs/MP4 encoding, native dialogs and actual rendering remain deferred as recorded in task 02's decision. `dev/cep_test.py` still requires missing historical assets; use the focused checks above.
 
@@ -103,3 +103,42 @@ PYTHONPATH=/tmp/jizura-baseline-py python3 dev/i18n_test.py --browser /usr/bin/g
 The first two are included in `npm run check`; every root build also runs the missing-key/caller/catalog validator. The focused GitHub Actions workflow validates dictionaries and types on integration pushes/PRs, with no deployment. The optional source comparison needs the integration-base git object; it is excluded from clean-checkout gates. The browser check needs completed web/offline builds, verifies 14 locale pages against captured static DOM and seven hosted language-menu transitions, and writes `dist/task06-browser-results.json`. Its route transitions preserve pending lyric edits, full project data, volume and mode. Per-file offline startup/localization is verified separately; portable cross-file storage/menu navigation remains an offline packaging concern for tasks 07/11.
 
 See [the locale contribution instructions](../../i18n/README.md) and [task 06](06-browser-i18n.md) for provenance, checks and remaining boundaries.
+
+## Editor checks (task 07)
+
+```sh
+npm run typecheck
+npm run check
+PYTHONPATH=/tmp/jizura-baseline-py npm run test:editor:browser
+```
+
+The optional Python path above is this workspace's Playwright/Pillow installation;
+use your own virtual environment on a clean checkout. The focused browser suite
+also needs installed Chrome, ffmpeg/ffprobe and a local TTF. For other paths, run
+`python3 dev/editor_test.py --browser PATH --font PATH`. No downloaded browser or
+font is bundled with the source.
+
+`ui/application.ts` initializes `ui/editor.js` for all targets. Authored HTML/CSS
+live in `ui/`; font/audio/export implementations live in `ui/services/`.
+`ui/types.ts` and `ui/services/types.ts` are strict public consumer boundaries;
+the preserved JavaScript internals and renderer/item dynamic slots are not claimed
+to be fully TypeScript-checked. The compile-only task-08 consumer in `tests/ui/`
+rejects invalid modes, export families, cut groups, times and project versions.
+See [the editor API](../../ui/README.md).
+
+The browser suite runs representative hosted Japanese and local-file English
+projects through actual file input, editor/preview/history/lock/timing operations,
+font and audio upload, localStorage/IndexedDB reload, JSON and AE v2 outputs, LRC,
+MP4, opaque/transparent/layered PNG ZIP, cancellation, visible missing-font and
+codec errors, and reset confirmation. ffprobe and ffmpeg verify MP4 frames, size,
+fps, duration, audio and full decoding; Pillow/zipfile verify PNG names, count,
+CRC and alpha. Opus's companion PCM WAV and user-facing fallback copy are checked.
+The seven offline sibling-file language-menu transitions also pass. Results,
+actual downloads and UI screenshots live in ignored `dist/task07/`.
+
+Direct-to-file MP4 uses an actual hosted OPFS writable stream behind a mocked
+picker. Chrome 154 disallows that OPFS test backend at `file:`; its visible error
+is recorded without claiming anything about the native offline save dialog.
+Native OS picker interaction, real Adobe/CEP, embedded Chromium 88/Node 15.9,
+and cross-file persistence guarantees in other browsers remain unverified.
+See [task 07's handoff](07-browser-editor.md#result--2026-09-30).
