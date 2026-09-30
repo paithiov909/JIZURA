@@ -56,6 +56,8 @@ The directory names are an architectural guide, not a required rename in one com
 
 After task 04, tasks 05 and 06 can proceed in parallel on separate task branches. Task 09 can begin after task 05 while browser task 07 proceeds. Coordinate shared files through integration commits rather than editing one worktree concurrently.
 
+Task 02 result (2026-09-30): [CEP/offline output decision](CEP-OFFLINE-DECISION.md) and repeatable `dev/cep-offline-spike/` checks are available. Normal Vite HTML failed the tested local-file startup; library IIFE/local CEP and single-HTML offline startup passed focused checks. Per the user's instruction, actual AE tests are deferred while no AE subscription/installation is available. Implementation can continue using separately identified mocks; an actual Adobe runtime pass has not been established.
+
 ## Distribution design
 
 - CI runs focused checks on task PRs and on `codex/v1x-integration`. It creates no release or Pages deployment there.

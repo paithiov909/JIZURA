@@ -15,3 +15,9 @@ Compare Vite's normal output, an explicit Chromium 88 target, and a classic sing
 - If Vite cannot directly emit the required CEP format, specify the smallest compatible packaging step; do not weaken the compatibility gate.
 
 **Handoff to:** task 03.
+
+## Result — 2026-09-30
+
+The bounded spike and eight browser cases passed; the two normal Vite `file:` cases deliberately assert the observed CORS failure. Adopt normal Vite HTML/ES modules for hosted web, Chrome 88 Vite library IIFE plus local files for CEP, and a single HTML with inline IIFE/CSS/assets for offline. See [CEP-OFFLINE-DECISION.md](CEP-OFFLINE-DECISION.md) for exact results, commands and remaining gaps, and `dev/cep-offline-spike/` for repeatable source/tests.
+
+Actual AE/CEP runs are deferred per the user's instruction because no AE subscription/installation is available. Browser CEP API mocks, Node filesystem/muxer checks and production ES3 host/core object-model mocks are recorded separately. They satisfy this task's mock allowance and permit task 03 to proceed; they do not certify a supported Adobe runtime.
