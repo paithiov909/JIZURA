@@ -45,6 +45,19 @@ Sceneのローカルframeから有効Cutと進行を計算し、Canvas描画をR
 API.mdの入退場進行・hold強度・1frame・D2・Sequence境界のケースを確認する。
 Scene範囲外は背景もclearする。plan・item・bboxを前frameから変形蓄積しない。
 
+## 段階04からの実装入口（2026-10-03）
+
+[CanvasMeasurementService](../../remotion-jizura/src/canvas/service.ts)と `finalizeScene` が
+font準備後に `ScenePlan<CutGeometry>` を確定する。geometryはitemとglyph配列、静止boxを持つ。
+[JizuraScene](../../remotion-jizura/src/react/JizuraScene.tsx)は資源の待機・破棄と描画前のhandle解放を接続済み。
+[drawStaticFrame](../../remotion-jizura/src/canvas/static-frame.ts)はScene範囲内で **先頭の計画Cutだけ** を描く。
+05はこの暫定選択を整数active判定に置き換え、phase/量子化の評価とframe用描画entryを追加する。
+planを変更せず、Scene間でmetrics/Canvasを共有しない。centerの完全なgeometryは06で更新する。
+
+`npm run check:remotion` と `node remotion-jizura/tests/canvas-browser.mjs` が既存の検証入口。
+固定フォントの配置・取得方法と実CLI/Studio証拠は[04の結果](04-static-canvas.md)を参照。
+04のpixel差0は水平静止描画の証拠であり、Cut切り替え・Sequence・effectの証拠ではない。
+
 ## 結果・引き継ぎ
 
 未実施。日付・状態、時間・描画完了・cacheの判断、変更ファイル、実行コマンド、

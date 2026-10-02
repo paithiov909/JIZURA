@@ -9,6 +9,8 @@ Remotion内のcanvasへJIZURAのリリックモーションを直接描画する
 同日に初期開発の共通計画と7段階の引き継ぎメモを作成した。
 同日の段階01で[API契約](API.md)を確定した。段階02で[パッケージ雛形](../../remotion-jizura/README.md)と
 Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを確認した。
+段階03でparser・時間配分・seed・宣言/parameter検証・計測前計画と計測サービス境界を実装した。
+段階04で実フォント・文字計測と静止Canvas描画を接続し、Studio・PNG・参照pixel比較を確認した。
 
 ## 各スレッドの作業入口
 
@@ -19,9 +21,9 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 | --- | --- | --- | --- |
 | 01 | [API仕様の確定](01-api-contract.md) | 共通計画・移植元の整理 | 完了（API文書・結果記録） |
 | 02 | [パッケージ雛形とRemotion例](02-package-scaffold.md) | 01完了 | 完了（空Scene・実書き出し） |
-| 03 | [parser・時間配分・ScenePlan](03-scene-plan.md) | 02完了 | 未着手（開始可能） |
-| 04 | [フォント準備と静止Canvas描画](04-static-canvas.md) | 03完了 | 未着手 |
-| 05 | [Remotionのframeと描画の接続](05-remotion-frames.md) | 04完了 | 未着手 |
+| 03 | [parser・時間配分・ScenePlan](03-scene-plan.md) | 02完了 | 完了（Node契約・計測stub） |
+| 04 | [フォント準備と静止Canvas描画](04-static-canvas.md) | 03完了 | 完了（実フォント・静止PNG・pixel比較） |
+| 05 | [Remotionのframeと描画の接続](05-remotion-frames.md) | 04完了 | 未着手（開始可能） |
 | 06 | [少数effectの移植](06-effect-port.md) | 05完了 | 未着手 |
 | 07 | [利用例・書き出し・外部利用検証](07-scene-validation.md) | 06完了 | 未着手 |
 
@@ -62,9 +64,10 @@ docs/remotion/01-api-contract.mdを読み、指定された範囲だけを進め
 
 ## 次の作業
 
-[段階02の結果](02-package-scaffold.md)、[確定API](API.md)、[パッケージREADME](../../remotion-jizura/README.md)を読んで、
-[段階03](03-scene-plan.md)のparser・時間配分・ScenePlanへ進む。
-空Sceneの描画証拠はあるが、歌詞・フォント・effect・外部consumerは未実装/未検証。
+[段階04の結果](04-static-canvas.md)、[確定API](API.md)、[パッケージREADME](../../remotion-jizura/README.md)を読んで、
+[段階05](05-remotion-frames.md)のCut選択・frame評価へ進む。
+parser/factory/計画のNode契約と固定フォントの静止歌詞描画は検証済み。
+現在の描画は先頭の計画Cutの静止表示。実effect・Cut境界/Sequence・動画更新・外部consumerは未検証。
 各段階の終了時は実際に行った検証を結果欄へ記録する。過去の整理の検証結果とは区別する。
 
 [整理記録](CLEANUP.md)・[ルートREADME](../../README.md)

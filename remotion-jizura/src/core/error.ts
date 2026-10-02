@@ -9,7 +9,3 @@ export class JizuraError extends Error {
     this.path = path;
   }
 }
-
-export function unimplemented(path: string): never {
-  throw new JizuraError('E_INPUT', path, `${path} is not implemented in the stage 02 scaffold.`);
-}

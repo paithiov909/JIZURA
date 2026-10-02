@@ -1,6 +1,6 @@
 import {JizuraScene, JizuraCut, center, parseLines, type JizuraCutProps} from '../src/index.js';
 
-// Compile-only API shape; parser/factories/Cut behavior is pending stage 03.
+// Compile-only public API contracts; rendering is implemented in later stages.
 export const declaration = <JizuraScene durationInFrames={60}>
   <JizuraCut text="朝" layout={center({params: {sx: 1, under: false}})} decor={[]} />
 </JizuraScene>;

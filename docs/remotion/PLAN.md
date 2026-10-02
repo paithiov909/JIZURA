@@ -6,7 +6,7 @@
 ユーザーが採用した初期計画を、別スレッドで実施できる単位に分けた資料。
 作成時点ではパッケージは存在せず、各段階は未実施だった。
 同日の[段階01](01-api-contract.md)で[API契約](API.md)を確定した。
-現在は01・02完了、03以降は未実施。APIの詳細はAPI.mdを優先する。
+現在は01〜04完了、05以降は未実施。APIの詳細はAPI.mdを優先する。
 
 ## 到達点
 
@@ -23,7 +23,8 @@ Cut間transition、配布サイト、npm公開は初期段階の対象外。
 
 ユーザーのスケッチを段階01のAPI契約として採用。parseLinesの返却値は構造化chunkで、
 この例は3Cutを20frameずつ配置する。Noto Sans JP 700のfaceを利用側で登録してから使う。
-未実装のAPIであり、このコードだけでは現時点で実行できない。
+段階04で静止歌詞描画は接続済みだが、Cut切り替え・effect描画は未実装のため、
+この例全体の時間・モーション動作はまだ検証できない。
 
 ```jsx
 const PartA = ({durationInFrames}) => {
@@ -217,3 +218,16 @@ decorのparameter生成は [engine/planner.ts](../../engine/planner.ts) の `dec
   `0.1.0-alpha.0`、React/React DOM 19.3.0、Remotion関連4.0.532を固定した。
   [パッケージREADME](../../remotion-jizura/README.md)にコマンド・実装範囲を記録。
   空SceneのStudio/PNG/MP4を検証した。API契約の変更はなく、歌詞描画はまだ未実装。
+
+- 2026-10-02（段階03）：parser・整数配置・group/slot seed・宣言/parameter検証・
+  font/Style解決・不変のPreparedSceneを実装し、Sceneの宣言収集へ接続。
+  計測後planは内部 `MeasurementService<T>` で準備/計測をawaitして確定する。
+  25件のNode契約と型検査/buildを確認。実フォント/実effect/歌詞描画は未接続で、
+  非空Sceneは描画境界の未実装を明示する。API契約の変更なし。詳細は[03の結果](03-scene-plan.md)。
+
+- 2026-10-03（段階04）：Scene所有のfont/metricsサービスとglyph/item/boxの静止geometryを接続。
+  固定Noto Sans JPの通常/上書き/小サイズ/透明4条件で参照text/metricsのpixel差0、
+  Studio表示とRemotion PNG、準備失敗・StrictMode/再mount/cleanupを検証した。
+  04の静止経路は先頭の計画Cutを中央表示し、自動trackは0.06、sx/syは1。
+  centerのreflow/params/装飾を含む静止boxへの更新は06、Cut選択/phase評価は05。
+  公開契約は変更なし。詳細は[04の結果](04-static-canvas.md)。
