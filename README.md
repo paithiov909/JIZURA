@@ -2,8 +2,10 @@
 
 この `remotion` ブランチでは、既存JIZURAのエフェクトを移植し、
 [Remotion](https://www.remotion.dev/) 内のcanvasへリリックモーションを直接描画する
-独立したパッケージを開発します。現在は移植元の整理段階です。
-パッケージ名、公開API、ディレクトリ設計、実装順序はまだ決めていません。
+独立したパッケージを開発します。移植元の整理は完了し、初期開発の7段階を計画しました。
+実装先は `remotion-jizura/`、パッケージ名は仮に `remotion-jizura` とします。
+公開APIの詳細は段階01で確定し、少数のエフェクトを使ってRemotionでの描画・書き出しを検証します。
+現時点では計画・引き継ぎ資料のみで、パッケージはまだ作成していません。
 
 ## 移植元の入口
 
@@ -23,6 +25,7 @@
 ## 作業資料
 
 - [現在の目的と参照マップ](docs/remotion/README.md)
+- [初期開発の共通計画](docs/remotion/PLAN.md)・[段階01：API仕様](docs/remotion/01-api-contract.md)
 - [今回の整理と検証記録](docs/remotion/CLEANUP.md)
 - [このブランチの作業指示](AGENTS.md)
 - [以前のv1.x移行計画・タスク結果](docs/v1x/README.md)
