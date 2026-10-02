@@ -7,3 +7,18 @@ node_modules/
 
 # Diagnostic browser bundles emitted by build.py/dev/build_test.py.
 /dev/www/
+
+# Retired in-tree distribution outputs (legacy commands now default to dist/).
+/index.html
+/en/index.html
+/zh-hant/index.html
+/zh-hans/index.html
+/ko/index.html
+/id/index.html
+/vi/index.html
+/JIZURA_AE.jsx
+/JIZURA_AE_en.jsx
+/JIZURA_CEP.zip
+/JIZURA_CEP_en.zip
+/ae/data.json
+/sitemap.xml

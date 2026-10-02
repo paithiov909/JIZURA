@@ -31,7 +31,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 async def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--root', type=Path, default=ROOT, help='fresh generated page root')
+    ap.add_argument('--root', type=Path, default=ROOT / 'dist/legacy', help='fresh generated page root')
     ap.add_argument('--browser', default='/usr/bin/google-chrome')
     args = ap.parse_args()
     subprocess.run(['node', 'build/build-engine-test.mts'], cwd=ROOT, check=True)

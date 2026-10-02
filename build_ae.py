@@ -1,18 +1,20 @@
-"""Build the After Effects panel (single ScriptUI .jsx) from ae/*.jsx + ae/data.json.
-usage: python3 build_ae.py                         -> JIZURA_AE.jsx (core + every ae/p_*.jsx pack)
+"""Build the After Effects panel from ae/*.jsx + generated metadata.
+usage: node tools/export_ae_data.js && python3 build_ae.py -> dist/ae/JIZURA_AE.jsx
        python3 build_ae.py --packs p_a,p_b --out dev/www/ae_x.jsx   (core + only the listed packs; for testing one pack)
-Regenerate ae/data.json from the web engine first whenever src/ changes:  node tools/export_ae_data.js"""
+Regenerate metadata from the web engine first: node tools/export_ae_data.js
+Prefer npm run build:ae for a complete source-to-output build.
+"""
 import json, os, glob, argparse, subprocess
 from app.english import localize_ae
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ap = argparse.ArgumentParser()
 ap.add_argument('--packs', default=None, help='comma separated pack names (p_xxx) or "none"; default: all ae/p_*.jsx')
 ap.add_argument('--out', default=None)
-ap.add_argument('--data', default='ae/data.json', help='metadata input; root workspace generates this under dist/')
+ap.add_argument('--data', default='dist/.inputs/ae/data.json', help='generated metadata input')
 ap.add_argument('--core', action='store_true', help='engine only (no ScriptUI), exposed as $.global.JZ_CORE — used by the CEP panel')
 ap.add_argument('--lang', choices=['ja', 'en'], default='ja', help='interface language (default: Japanese)')
 a = ap.parse_args()
-if a.out is None: a.out = 'dist/JIZURA_CEP/jsx/jizura_core.jsx' if a.core else ('JIZURA_AE_en.jsx' if a.lang == 'en' else 'JIZURA_AE.jsx')
+if a.out is None: a.out = f'dist/ae/{a.lang}/jizura_core.jsx' if a.core else ('dist/ae/JIZURA_AE_en.jsx' if a.lang == 'en' else 'dist/ae/JIZURA_AE.jsx')
 allpacks = sorted(os.path.basename(f)[:-4] for f in glob.glob('ae/p_*.jsx'))
 packs = allpacks if a.packs is None else ([] if a.packs == 'none' else [p.strip().replace('.jsx', '').replace('ae/', '') for p in a.packs.split(',') if p.strip()])
 parts = ['00_core', '05_reg', '10_helpers', '15_plan', '16_omakase', '20_motion', '30_layouts', '40_decor', '45_core'] + packs + ['50_build', '55_diag'] + ([] if a.core else ['90_ui'])

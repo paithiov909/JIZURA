@@ -1,28 +1,47 @@
-# JIZURA v1.x work instructions
+# JIZURA Remotion package work instructions
 
-Read [docs/v1x/README.md](docs/v1x/README.md) and the assigned task memo before changing code. This repository is being migrated from `codex/webmcp` at `d217fb0a06d0f81bc31f8b31b9646c30dc540f82`. The task memos define scope and acceptance criteria; they are plans, not evidence that a check has passed.
+## Current objective
 
-## Branches and handoff
+This branch (`remotion`) develops an independent package that draws JIZURA lyric
+motion directly onto a canvas within Remotion, porting the existing effects.
+Read [README.md](README.md) and [docs/remotion/README.md](docs/remotion/README.md)
+before changing code. The package API, name, layout and implementation sequence
+are still undecided; the initial task is source-tree cleanup, not a package scaffold.
+Work on the current branch unless the user requests another branch.
 
-- Use `codex/v1x-integration` as the integration base. Create a separate `codex/` task branch or worktree for each implementation task and merge reviewed work back into the integration branch. Keep unrelated changes out of a task.
-- Only the final cutover task creates the orphan branch `v1.x`. Do not merge `main` or `codex/webmcp` into `v1.x`; its root commit must have no parent. Keep `main` available for historical reference.
-- Report changed files, checks actually run, remaining compatibility gaps, and the next dependent task in each task handoff. If a check needs an actual After Effects installation, say so explicitly; a mock test is not equivalent.
+## Reference material
 
-## Compatibility contract
+- `engine/` and `effects/` contain the primary browser canvas implementation,
+  planner and explicitly registered effect packs. Preserve effect IDs, ordering,
+  seed behavior and algorithms in the reference sources until a port is validated.
+- `tests/baseline/v1/`, `tests/engine/` and `tests/effects/` contain comparison
+  fixtures and contracts. Small reference PNG/JSON files are intentional source.
+- `ae/`, `ui/`, `i18n/`, `src/`, `cep/`, `app/`, `build/`, `dev/`, `tools/` and
+  `vendor/` remain supporting reference/build sources. Check imports and callers
+  before moving or deleting them. `cep/packaging/` contains authored installer
+  templates, not generated extension files.
+- [docs/v1x/README.md](docs/v1x/README.md) records the previous migration and
+  completed task handoffs (01–07). The old instructions are archived in
+  [docs/legacy/V1X-WORK-INSTRUCTIONS.md](docs/legacy/V1X-WORK-INSTRUCTIONS.md).
+  Those integration/cutover tasks and browser/AE/CEP distribution requirements
+  are historical context, not the roadmap for this branch.
+- Legacy application guides and changelog live in `docs/legacy/`. `LICENSE` and
+  `THIRD_PARTY_NOTICES.md` remain authoritative notices.
 
-- Preserve the behavior and UI of `codex/webmcp`, including the seven browser languages and existing locale URLs, project JSON and AE plan formats, deterministic seeds, effect IDs and ordering, browser export options, and the browser-only WebMCP interface. Use [task 01](docs/v1x/01-baseline-contract.md) to establish precise fixtures before implementation.
-- Keep the After Effects ScriptUI and CEP distributions in Japanese and English. The AE host code must remain valid ExtendScript ES3. The CEP panel must work with its supported AE/CEP runtime and its local extension files; verify browser and CEP bundles separately.
-- Keep effect definitions modular and explicitly registered. An effect's stable ID, group, metadata, and AE implementation or fallback must be testable. Do not silently rename IDs or change the saved-plan schema.
-- Prefer TypeScript and Vite for browser and CEP source/build orchestration. Keep an alternative CEP output path only if the compatibility spike documents why it is necessary.
+## Outputs and verification
 
-## Build and distribution
+Keep generated HTML, JSX bundles, ZIPs, temporary metadata, reports and caches in
+ignored directories such as `dist/`. Never commit dependencies or release assets.
+Use the root lockfile and toolchain documented in [docs/v1x/BUILD.md](docs/v1x/BUILD.md)
+to verify retained source; do not treat the old application version in `VERSION`
+as an already-decided version for the new package.
 
-- Build outputs belong in ignored directories such as `dist/`. Do not add or update generated HTML, JSX bundles, ZIP files, sourcemaps, or downloaded dependencies in migration commits. The starting integration branch inherits tracked generated files; remove those from the final `v1.x` source snapshot. Small intentional test fixtures are source material, not release assets.
-- The final Pages workflow runs on pushes to `v1.x`, builds the site in Actions, and deploys it directly with GitHub Pages Actions. There is no `docs` publishing branch. Release assets are built in Actions from version tags on `v1.x` and uploaded to GitHub Releases.
-- Do not change the repository default branch or publish a release during an implementation task. Those operations belong to [task 13](docs/v1x/13-cutover.md) after the verification gates pass.
+Run focused checks for changed files. For cleanup that touches build paths, run
+`npm run check` and the preserved spike checks; distinguish syntax checks,
+contract tests, pixel/browser comparisons and mocks from actual Adobe runs.
+Report files changed, checks actually run, unresolved limits and the next useful
+step. Do not regenerate or overwrite baseline fixtures merely to make tests pass.
 
-## Verification
-
-- Run the focused checks relevant to the files changed, then the integration checks named in the assigned task. Preserve their output or a concise result in the handoff.
-- Treat source comparison, syntax checks, browser automation, AE mocks, CEP mocks, and actual AE runs as distinct evidence. Record unsupported or unavailable environments rather than assuming compatibility.
-- Update the appropriate task memo if a validated design decision changes the dependency graph or acceptance criteria, and explain the reason in the handoff.
+Do not create an orphan `v1.x`, change the default branch, deploy Pages or publish
+a release as part of this work. Preserve the previous migration evidence and Git
+history; no prior handoff proves compatibility of a future Remotion package.

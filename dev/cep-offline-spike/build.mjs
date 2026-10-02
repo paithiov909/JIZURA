@@ -39,7 +39,9 @@ const manifest = (await readFile(path.join(repo, 'cep/manifest.xml'), 'utf8'))
   .replace('<Menu>JIZURA 字面</Menu>', '<Menu>JIZURA task 02 spike</Menu>');
 await writeFile(path.join(cepOut, 'CSXS/manifest.xml'), manifest);
 await copyFile(path.join(repo, 'cep/host.jsx'), path.join(cepOut, 'jsx/host.jsx'));
-execFileSync('python3', ['build_ae.py', '--core', '--lang', 'ja', '--out', path.join(cepOut, 'jsx/jizura_core.jsx')],
+const data = path.join(out, 'ae-data.json');
+execFileSync(process.execPath, ['tools/export_ae_data.js', '--out', data], { cwd: repo, stdio: 'inherit' });
+execFileSync('python3', ['build_ae.py', '--core', '--lang', 'ja', '--data', data, '--out', path.join(cepOut, 'jsx/jizura_core.jsx')],
   { cwd: repo, stdio: 'inherit' });
 console.log('built CEP: chrome88 IIFE, local CSS/vendor, production host + Japanese core');
 

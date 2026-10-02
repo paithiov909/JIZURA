@@ -1,6 +1,6 @@
 """Compatibility command for browser/dev builds. The TypeScript preparation and
 runtime dictionaries are shared with npm builds; no Python source localization.
-Use --out dist/... to keep generated files out of the source tree.
+Output defaults to dist/legacy/; use --out to select another output directory.
 """
 import os
 import subprocess

@@ -1,5 +1,7 @@
 # JIZURA v1.x migration plan
 
+> Historical plan on the `remotion` branch (2026-10-02). The user changed this branch to an independent Remotion canvas package. Tasks 01–07 and their recorded evidence remain references; tasks 08–13 are not the current roadmap. See [the current work entry](../remotion/README.md) and [cleanup record](../remotion/CLEANUP.md).
+
 Status: plan and task handoff notes. Creating this document does not execute the migration tasks.
 
 ## Starting point and objective

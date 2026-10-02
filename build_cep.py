@@ -8,7 +8,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 os.chdir(ROOT)
 VERSION = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION'), encoding='utf-8').read().strip()
 ap = argparse.ArgumentParser()
-ap.add_argument('--out', default='dist' if os.path.isdir('dist') else 'build')
+ap.add_argument('--out', default='dist/cep')
 ap.add_argument('--debug', action='store_true')
 ap.add_argument('--lang', choices=['ja', 'en'], default='ja')
 ap.add_argument('--panel-dir', required=True, help='prepackaged local Vite panel directory (no legacy HTML embedding)')
@@ -60,7 +60,7 @@ zp = os.path.join(a.out, package_name + '.zip')
 with zipfile.ZipFile(zp, 'w', zipfile.ZIP_DEFLATED) as z:
     for p in sorted(glob.glob(os.path.join(ext, '**'), recursive=True) + glob.glob(os.path.join(ext, '.debug'))):
         if os.path.isfile(p): z.write(p, os.path.join(package_name, os.path.relpath(p, a.out)))
-    for f in sorted(glob.glob('cep/dist/*')):
+    for f in sorted(glob.glob('cep/packaging/*')):
         name = os.path.basename(f)
         if english:
             if name == 'README_CEP.md':

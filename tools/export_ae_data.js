@@ -1,4 +1,4 @@
-// Export everything the After Effects panel needs from the web engine into ae/data.json:
+// Export AE planning metadata from the web engine into dist/.inputs/ae/data.json:
 // style packs, fonts, moods and — for every expression group — the web order and the planning metadata
 // (weights, mood tags, 追加分/和風 flags, fits tables, durations …). The AE panel re-implements the drawing;
 // the decisions about WHAT to use come from this file so both planners stay in step.
@@ -61,7 +61,7 @@ const data = {
 };
 const args = process.argv.slice(2);
 if (args.length && (args.length !== 2 || args[0] !== '--out')) throw new Error('usage: node tools/export_ae_data.js [--out FILE]');
-const output = args.length ? path.resolve(args[1]) : path.join(ROOT, 'ae', 'data.json');
+const output = args.length ? path.resolve(args[1]) : path.join(ROOT, 'dist', '.inputs', 'ae', 'data.json');
 fs.mkdirSync(path.dirname(output), { recursive: true });
 fs.writeFileSync(output, JSON.stringify(data));
 console.log('ok', data.styleOrder.length, 'styles;', JJ.GROUP_KEYS.map(g => g + ' ' + orders[g].length).join(', '), '; bytes', JSON.stringify(data).length);

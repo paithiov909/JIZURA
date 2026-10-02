@@ -1,3 +1,5 @@
+> 旧JIZURAアプリの参照資料です。このブランチの現在の目的と手順は[ルートREADME](../../README.md)を参照してください。以下の公開・配布手順は過去のものです。
+
 # JIZURA — Pembuat Video Lirik Bergerak
 
 Buat video lirik bergerak langsung di browser. JIZURA menggabungkan layout, animasi masuk, gerakan saat teks bertahan, animasi keluar, dekorasi, efek teks, latar, gerakan kamera, efek, dan transisi. Ganti seed atau tekan **Buat variasi** untuk mencoba susunan lain.
@@ -22,7 +24,7 @@ Penggeser volume di sebelah tombol putar hanya mengatur volume pratinjau; video 
 
 **Sintaks lirik:** `[interlude 8]` menambahkan bagian instrumental 8 detik dengan latar dan dekorasi saja (4 detik jika angka dihilangkan); `I remember/the dawn` membuat cut manual; `*kata*` memberi penekanan; `!` di akhir menambahkan flash dan goyangan; `lirik|catatan` menambahkan teks anotasi kecil; `[01:23.45]lirik` memakai timestamp LRC; baris yang diawali `#` diabaikan sebagai komentar.
 
-Gunakan **Simpan** dan **Buka** untuk proyek `.jizura.json`. **Ekspor untuk AE** membuat data susunan yang bisa diimpor ke panel After Effects. Video dan gambar yang dibuat menjadi milik pembuatnya; hak atas musik dan lirik tetap berada pada pemegang hak masing-masing. File proyek, lirik, dan audio diproses di browser. Google Fonts dimuat sesuai kebutuhan. Aplikasi ini dirilis di bawah lisensi MIT; lihat [LICENSE](LICENSE) dan [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Gunakan **Simpan** dan **Buka** untuk proyek `.jizura.json`. **Ekspor untuk AE** membuat data susunan yang bisa diimpor ke panel After Effects. Video dan gambar yang dibuat menjadi milik pembuatnya; hak atas musik dan lirik tetap berada pada pemegang hak masing-masing. File proyek, lirik, dan audio diproses di browser. Google Fonts dimuat sesuai kebutuhan. Aplikasi ini dirilis di bawah lisensi MIT; lihat [LICENSE](../../LICENSE) dan [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 
 </details>
 

@@ -7,7 +7,7 @@ const AEOM = require('./aeom');
 const ROOT = path.join(__dirname, '..');
 const argv = process.argv.slice(2);
 const jsxIndex = argv.indexOf('--jsx');
-const JSX = jsxIndex < 0 ? path.join(ROOT, 'JIZURA_AE.jsx') : argv.splice(jsxIndex, 2)[1];
+const JSX = jsxIndex < 0 ? path.join(ROOT, 'dist', 'ae', 'JIZURA_AE.jsx') : argv.splice(jsxIndex, 2)[1];
 if (!JSX) throw new Error('--jsx requires an output path');
 const SRC = fs.readFileSync(JSX, 'utf8').replace(/^#target.*\n/, '')
   .replace(/jzUI\(thisObj\);\s*\}\)\(this\);\s*$/, 'thisObj.__jz = { jzMakePlan: jzMakePlan, jzBuild: jzBuild, log: function () { return JZLOG; }, JZ_DATA: JZ_DATA, JZ_REG: JZ_REG, jzOrder: jzOrder, jzChunk: jzChunk, jzMoodEnabled: jzMoodEnabled, fallbacks: function () { return JZ_FALLBACKS; } };\n})(this);');

@@ -2,7 +2,8 @@
 
 ## mp4-muxer 5.2.2 (bundled)
 
-`vendor/mp4-muxer.min.js` is embedded in `index.html` and is used to write MP4 files.
+`vendor/mp4-muxer.min.js` is used by the retained browser export source to write MP4 files.
+It is copied or embedded into generated outputs under `dist/`.
 Source: https://github.com/Vanilagy/mp4-muxer — licensed under the MIT License:
 
 ```

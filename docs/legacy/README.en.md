@@ -1,3 +1,5 @@
+> 旧JIZURAアプリの参照資料です。このブランチの現在の目的と手順は[ルートREADME](../../README.md)を参照してください。以下の公開・配布手順は過去のものです。
+
 # JIZURA — Lyric Motion Video Maker
 
 Turn lyrics into animated lyric videos in your browser. JIZURA combines layouts, entrances, holds, exits, decorations, text treatments, backgrounds, camera moves, effects and transitions. Change the seed or press **Create a variation** to explore another arrangement.
@@ -101,7 +103,7 @@ The After Effects panels build all three sets too (with the same switches and th
 
 Lyric syntax: `[interlude 8]` adds an 8-second instrumental part with background and decorations only (4 seconds without a number); `I remember/the dawn` makes a manual cut; `*word*` emphasizes a word; a final `!` adds a flash and shake; `lyric|note` adds small annotation text; `[01:23.45]lyric` imports an LRC timestamp; `# comment` is ignored.
 
-Use **Save** and **Open** for `.jizura.json` projects. **Export for AE** creates arrangement data to import into the After Effects panel. Generated videos and images belong to their creators; rights to music and lyrics remain with their respective rights holders. Project files, lyrics and audio are handled in the browser. Google Fonts are loaded as needed. The tool is MIT licensed; see [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Use **Save** and **Open** for `.jizura.json` projects. **Export for AE** creates arrangement data to import into the After Effects panel. Generated videos and images belong to their creators; rights to music and lyrics remain with their respective rights holders. Project files, lyrics and audio are handled in the browser. Google Fonts are loaded as needed. The tool is MIT licensed; see [LICENSE](../../LICENSE) and [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 
 </details>
 
@@ -112,7 +114,7 @@ Use **Save** and **Open** for `.jizura.json` projects. **Export for AE** creates
 
 The version lives in `VERSION` at the repository root; the builds insert it into the pages and panels. Record changes in `CHANGELOG.md`.
 
-For the v1.x migration, use Node 26.10.0 (`.node-version`) and Python 3. Run `npm ci` at the repository root, then `npm run check` for typechecking, all builds, output validation and Japanese/English AE mocks. Separate commands are `npm run build:web`, `build:offline`, `build:ae` and `build:cep`; they write only to ignored `dist/web/`, `dist/offline/`, `dist/ae/` and `dist/cep/`. Open `dist/offline/JIZURA_en.html` locally for the English offline edition. Keep generated files out of commits. See [build instructions](docs/v1x/BUILD.md) for browser tests and remaining migration gates; publishing is assigned to tasks 12/13.
+For the v1.x migration, use Node 26.10.0 (`.node-version`) and Python 3. Run `npm ci` at the repository root, then `npm run check` for typechecking, all builds, output validation and Japanese/English AE mocks. Separate commands are `npm run build:web`, `build:offline`, `build:ae` and `build:cep`; they write only to ignored `dist/web/`, `dist/offline/`, `dist/ae/` and `dist/cep/`. Open `dist/offline/JIZURA_en.html` locally for the English offline edition. Keep generated files out of commits. See [build instructions](../v1x/BUILD.md) for browser tests and remaining migration gates; publishing is assigned to tasks 12/13.
 
 Install `JIZURA_AE_en.jsx` in After Effects' `Scripts/ScriptUI Panels` folder, restart AE, then open it from the Window menu. The English CEP package has a distinct extension ID, so it can coexist with the Japanese CEP panel. Extract the ZIP and use its Windows or macOS installer. **Lightweight** leaves out the colour-shift copies, paper texture, bloom, grain and picture-duplicating effects (about 40% fewer layers) for faster playback in AE. Both panels build long songs in small steps, so After Effects stays responsive: the panel shows progress and **Stop** finishes the composition with the cuts built so far. With an **Export range** selected, the CEP panel (and **Export for AE**) builds only those lines, with the song layer shifted to match. These panels require After Effects to verify motion and export behavior; automated checks use a mock AE environment.
 

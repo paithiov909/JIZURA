@@ -1,3 +1,5 @@
+> 旧JIZURAアプリの参照資料です。このブランチの現在の目的と手順は[ルートREADME](../../README.md)を参照してください。以下の公開・配布手順は過去のものです。
+
 # JIZURA — Công cụ tạo video lời bài hát kèm hiệu ứng chuyển động
 
 Biến lời bài hát thành video lyric động ngay trong trình duyệt. JIZURA kết hợp bố cục, hiệu ứng xuất hiện, giữ hình, biến mất, trang trí, cách xử lý chữ, hình nền, chuyển động camera, hiệu ứng màn hình và chuyển cảnh. Có thể đổi seed hoặc nhấn **Tạo biến thể** (Tạo biến thể) để khám phá một cách sắp xếp khác.
@@ -30,7 +32,7 @@ Tính năng xuất MP4 giờ truyền file ngay trong lúc mã hóa (streaming) 
 
 **Cú pháp lời:** `[interlude 8]` thêm một đoạn nhạc không lời dài 8 giây, chỉ có nền và trang trí (4 giây nếu không ghi số); `I remember/the dawn` tạo một điểm cắt thủ công; `*word*` để nhấn mạnh một từ; dấu `!` ở cuối dòng thêm hiệu ứng chớp sáng và rung; `lyric|note` thêm chữ chú thích nhỏ; `[01:23.45]lyric` để nhập mốc thời gian theo định dạng LRC; dòng bắt đầu bằng `#` là comment và sẽ bị bỏ qua.
 
-Dùng **Save** và **Open** cho các dự án `.jizura.json`. **Export for AE** tạo dữ liệu bố cục để nhập vào panel After Effects. Video và hình ảnh được tạo ra thuộc về người tạo; bản quyền nhạc và lời bài hát vẫn thuộc về chủ sở hữu tương ứng. File dự án, lời bài hát và audio đều được xử lý ngay trong trình duyệt. Google Fonts được tải khi cần. Công cụ này phát hành theo giấy phép MIT; xem [LICENSE](LICENSE) và [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Dùng **Save** và **Open** cho các dự án `.jizura.json`. **Export for AE** tạo dữ liệu bố cục để nhập vào panel After Effects. Video và hình ảnh được tạo ra thuộc về người tạo; bản quyền nhạc và lời bài hát vẫn thuộc về chủ sở hữu tương ứng. File dự án, lời bài hát và audio đều được xử lý ngay trong trình duyệt. Google Fonts được tải khi cần. Công cụ này phát hành theo giấy phép MIT; xem [LICENSE](../../LICENSE) và [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 
 </details>
 

@@ -1,6 +1,6 @@
 """Capture the v1.x task-01 browser contract from freshly built legacy pages.
 
-Run ``python3 build.py`` first. Chrome renders the unchanged generated page with a
+Run ``python3 build.py`` first (outputs to dist/legacy/). Chrome renders the generated page with a
 small, temporary probe appended to it. Only fixtures under tests/baseline/v1 are
 written; generated HTML remains a build product.
 """
@@ -134,12 +134,14 @@ def main():
     global CHECK
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="compare against committed fixtures without writing")
-    CHECK = parser.parse_args().check
+    parser.add_argument('--root', type=Path, default=ROOT / 'dist/legacy', help='fresh generated page root')
+    args = parser.parse_args()
+    CHECK = args.check
     OUT.mkdir(parents=True, exist_ok=True)
     locales = {}
     base_tools = None
     for code, folder in ROUTES.items():
-        result = capture(ROOT / folder / "index.html")
+        result = capture(args.root.resolve() / folder / "index.html")
         print(code, result["locale"], len(result["webmcp"]), "tools")
         if len(result["webmcp"]) != 18:
             raise AssertionError(f"{code}: expected 18 tools")
@@ -164,6 +166,7 @@ def main():
     with tempfile.NamedTemporaryFile(suffix=".jsx", prefix="jizura-baseline-ae-", delete=False) as f:
         ae_file = Path(f.name)
     try:
+        subprocess.run(['node', str(ROOT / 'tools/export_ae_data.js')], cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
         subprocess.run(["python3", str(ROOT / "build_ae.py"), "--lang", "ja", "--out", str(ae_file)], cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
         ae_registry = json.loads(subprocess.check_output(["node", str(ROOT / "dev/baseline_ae_registry.js"), str(ae_file)], cwd=ROOT, text=True))
         write_json("ae-implementations.json", ae_registry)

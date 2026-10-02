@@ -9,7 +9,7 @@ import { prepareBrowser } from './prepare-browser.mts';
 import { packageClassic, classicOutput } from './packaging.mts';
 import { EDITIONS, type LocaleCode } from '../i18n/index.ts';
 
-const { values } = parseArgs({ options: { out: { type: 'string', default: '.' }, lang: { type: 'string' }, 'vite-input': { type: 'boolean' }, cep: { type: 'boolean' }, dev: { type: 'boolean' } } });
+const { values } = parseArgs({ options: { out: { type: 'string', default: 'dist/legacy' }, lang: { type: 'string' }, 'vite-input': { type: 'boolean' }, cep: { type: 'boolean' }, dev: { type: 'boolean' } } });
 if (values.lang && !EDITIONS.some(locale => locale.code === values.lang)) throw new Error('Unknown locale: ' + values.lang);
 if (values.cep && (!values['vite-input'] || !['ja', 'en'].includes(values.lang!))) throw new Error('--cep requires --vite-input and --lang ja/en');
 const version = (await readFile(path.join(repo, 'VERSION'), 'utf8')).trim();
