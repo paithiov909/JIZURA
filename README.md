@@ -12,7 +12,8 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 段階05で整数frameのCut切り替え・進行評価を接続し、境界・Sequence・非連続取得と
 短い書き出しを検証しました。段階06で7effectを移植し、参照283frameの画素差0と
 実RemotionのPNG・動画、非連続seek・cache再生成を確認しました。
-次は段階07の利用例・Player・外部利用検証です。
+段階07でPartA/PartBの120frame例、Player、tarballの外部利用まで検証し、初期7段階を完了しました。
+[利用手順](remotion-jizura/README.md)と[検証結果・制約](docs/remotion/VALIDATION.md)を参照してください。
 
 ## 移植元の入口
 

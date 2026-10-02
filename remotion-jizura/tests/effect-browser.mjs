@@ -49,7 +49,17 @@ try {
     const offsetProps = {...inputProps, offset: 12};
     const offsetComp = await selectComposition({serveUrl, id: 'EffectSamples', inputProps: offsetProps, browserExecutable});
     for (const local of [3, 30, 55, 60]) {const file = path.join(out, `offset12-local${local}.png`); await renderStill({...options, composition: offsetComp, inputProps: offsetProps, frame: 12 + local, output: file}); assert.deepEqual(rgba(file), stills.get(local));}
-    for (const mode of ['automatic', 'partial', 'disabled', 'seedDifferent', 'repeated']) await renderStill({...options, inputProps: {...inputProps, mode}, frame: 30, output: path.join(out, `${mode}-remotion.png`)});
+    const variantPNGs = [];
+    for (const mode of ['automatic', 'partial', 'disabled', 'seedDifferent', 'repeated']) {
+      // renderStill uses composition.props resolved by selectComposition. Reusing
+      // fixed metadata would silently export the fixed example for every mode.
+      const variantProps = {...inputProps, mode};
+      const variantComposition = await selectComposition({serveUrl, id: 'EffectSamples', inputProps: variantProps, browserExecutable});
+      const output = path.join(out, `${mode}-remotion.png`);
+      await renderStill({...options, composition: variantComposition, inputProps: variantProps, frame: 30, output});
+      assert.notDeepEqual(rgba(output), stills.get(30), `${mode} used stale fixed props`);
+      variantPNGs.push({mode, frame: 30, differsFromFixed: true});
+    }
     const framesDir = path.join(out, 'frames');
     await renderFrames({...options, outputDir: framesDir, frameRange: [0, 60], concurrency: 2});
     const pngs = (await readdir(framesDir)).filter(f => f.endsWith('.png')).sort(); assert.equal(pngs.length, 61);
@@ -76,7 +86,7 @@ try {
       movieMatches.push({frame, expectedMeanDifference: scores[frame].mean, closestFrame: best.frame});
     }
     assert.ok(maxMeanChannelDifference < 2, 'Encoded movie deviates materially from parallel PNG frames');
-    report.exports = {directCanvasIdentical: [3, 30, 55], repeatStillIdentical: 55, sequenceOffset12Identical: [3, 30, 55, 60], parallelPNGEveryFrameIdentical: true, parallelFrames: 61, movie: {width: probe.streams[0].width, height: probe.streams[0].height, fps: probe.streams[0].r_frame_rate, frames: probe.streams[0].nb_frames, maxChannelDifference, maxMeanChannelDifference, closestFrameMatches: movieMatches, lossless: false}};
+    report.exports = {directCanvasIdentical: [3, 30, 55], repeatStillIdentical: 55, sequenceOffset12Identical: [3, 30, 55, 60], variantPNGs, parallelPNGEveryFrameIdentical: true, parallelFrames: 61, movie: {width: probe.streams[0].width, height: probe.streams[0].height, fps: probe.streams[0].r_frame_rate, frames: probe.streams[0].nb_frames, maxChannelDifference, maxMeanChannelDifference, closestFrameMatches: movieMatches, lossless: false}};
     await writeFile(path.join(out, 'effect-result.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify({...report.exports, movie: {...report.exports.movie, closestFrameMatches: "61 verified"}}));
   }
 } finally {if (browser) await browser.close({silent: true}); await new Promise(resolve => server.close(resolve));}

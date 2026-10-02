@@ -6,6 +6,8 @@
 段階03までに公開型・空Scene・parser・7factoryの宣言検証・計画/seed/parameter補完を実装済み。
 段階04で実フォント準備・glyph/item/box計測と静止描画、段階05で整数Cut選択・進行/量子化評価を実装した。
 段階06でcenter/pop/wipe/drift/breathe/kasumi/checkerStripの実描画を接続した。
+段階07でPartA/PartB・Player・外部tarball利用を検証し、Playerのフォント準備中のbuffer待機を接続した。
+公開契約の変更はない。初期全体の実測は[検証記録](VALIDATION.md)を参照。
 検証結果は[段階03の結果](03-scene-plan.md)、[段階04の結果](04-static-canvas.md)、[段階05の結果](05-remotion-frames.md)、[段階06の結果](06-effect-port.md)を参照。
 初期実装の契約はこの文書を優先し、変更時は理由と影響するメモを更新する。
 

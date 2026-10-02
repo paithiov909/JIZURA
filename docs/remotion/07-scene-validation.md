@@ -1,6 +1,6 @@
 # 段階07：利用例・書き出し・外部利用検証
 
-状態：未着手。前提：[段階06](06-effect-port.md)のeffectと比較記録が作業ツリーにあること。
+状態：完了（2026-10-03、PartA/PartB・Player・実書き出し・外部consumer）。前提：[段階06](06-effect-port.md)のeffectと比較記録が作業ツリーにあること。
 次段階：初期開発の結果をもとに、拡張対象を別途決める。
 
 ## 開始時に読むもの
@@ -65,7 +65,59 @@ Canvas所有でcleanup/seed分離済み。Player・外部pack consumer・他環�
 
 ## 結果・引き継ぎ
 
-未実施。日付・状態、最終APIと対応effect、変更ファイル、正確な実行コマンドと結果、
-描画・動画・外部consumerの証拠、環境と資源条件、残る制約を記入する。
-`VALIDATION.md`へのリンクを作業一覧へ追加し、各段階の状態を実績に合わせて更新する。
-次の拡張候補は根拠付きで提案するにとどめ、別の依頼なしに実装しない。
+2026-10-03：完了。現在の `remotion` ブランチで実施。開始時は作業ツリーがクリーンで、
+01〜06のコード・結果が存在した。公開props・exports・候補7effect・seed/時間/parameter契約を変更していない。
+全体の固定条件・実測・制約は[VALIDATION.md](VALIDATION.md)にまとめた。
+
+### 追加・修正内容
+
+- `examples/lyrics.tsx` のPartA/PartBと120frameのLyricsDemoをStudio/Playerで共用。
+  PartAは手動分割＋強調付き3Cut/各20frame、PartBはbreathe・seed889/721の背面/前面decor。
+  Scene seed20260922、PartA cutSeed1234を既定とし、fontSrc/seed/cutSeedを入力で変更できる。
+- `examples/player/` と `player:remotion` を追加。Player4.0.532をdev依存として明示し、root lockfileを維持。
+  noEmitの例で `.tsx` importを許可し、公開buildは従来の `.js` importを維持。
+- 1秒遅延fontの実Playerで準備前に再生が進む不具合を再現し、
+  `src/react/JizuraScene.tsx` にPlayerのbuffer待機を接続した。
+  描画後、失敗、StrictMode cleanup、再mountで待機を一度だけ解放する。
+  export待機は既存経路を保持し、実PNG/動画回帰を確認した。
+- 少ない指定・全group/seed固定・部分parameter固定・無効化・明示時間配置、font準備、
+  対応effectと制約、再実行・pack/consumer手順をpackage READMEへ追加。
+- `tests/scene-entry.jsx` / `scene-browser.mjs`、`studio-validation.mjs`、
+  `consumer-validation.mjs` を追加。後者はtarball、root公開entry/型、11frameの実外部描画を検証する。
+- `tests/effect-browser.mjs` のmode別PNG取得を修正。inputProps変更時に
+  selectCompositionも再実行し、古いfixedの解決済みpropsを再利用しない。
+  automatic/partial/disabled/seedDifferent/repeatedの5PNGがfixedと異なることを追加検証した。
+  06当時の283参照frame・固定例の比較証拠は有効で、当時のmode名付きPNGはmode反映の証拠としない。
+- 文書：本メモ、VALIDATION、作業一覧、PLAN、API実装注記、ルート/パッケージREADME、
+  06への検証訂正注記。過去の段階結果とbaseline/参照実装は保持。
+
+### 実行コマンドと結果
+
+| コマンド | 結果 |
+| --- | --- |
+| `npm run check:remotion` | strict型検査、ESM/型build、41件Node契約成功。Node fontはmock |
+| `node remotion-jizura/tests/scene-browser.mjs` | 実Playerのseek/再mount/複数Scene/seed変更・復元/遅延font/再生/失敗cleanup成功。全120frame×concurrency1/2の240PNGと独立直描画が全画素一致 |
+| 同Remotion still/動画 | Cut/Scene境界・最終frame・110→3→110を比較。H.264/CRF1/yuv444p、640×360/24fps/120frame/5秒、全decode・frame識別成功。最大channel差127、frame平均差最大0.892535。PNG一致と圧縮差を区別 |
+| `npm run studio:remotion -- --port=3107 --no-open --public-dir=../dist/remotion/stage04/assets` / `node remotion-jizura/tests/studio-validation.mjs` | 実Studioの13frame・繰り返しseekが直描画/PNGと画素差0、ready=true・handle0。実画面を取得・目視 |
+| `npm run player:remotion -- --host=127.0.0.1 --port=3108 --strictPort` / `node /tmp/jizura-stage07-player-page.mjs` | 通常React Player例を実配信・ready・寸法・font・初回画面を確認。frame80のharness画面も目視 |
+| `npm exec --workspace remotion-jizura -- vite build --config examples/player/vite.config.mjs` | Player production bundle成功、生成物は無視対象 |
+| `node remotion-jizura/tests/consumer-validation.mjs` | 実tarball57ファイル・105import確認。repo外consumerの公開entry/strict型検査・境界11PNGが全画素一致。workspaceリンクなし |
+| `node remotion-jizura/tests/effect-browser.mjs` | 283参照frame画素差0、修正後の5mode PNG・固定例61並列PNG/短い動画・cache/seek回帰成功 |
+| `node remotion-jizura/tests/canvas-browser.mjs` / `node remotion-jizura/tests/frame-browser.mjs` | 04の4subset画素差0、font/cleanupと05の整数境界/Sequence/seek/50PNG/動画回帰成功 |
+| `npm run check` / `npm run spike:build` / `npm run spike:test` | 旧4種build・syntax/catalog・日英AE mockとspike成功。Adobe実機ではない |
+| `node --check`（scene-browser/consumer-validation/studio-validation/effect-browser） / `python3 /tmp/jizura-stage07-doc-check.py` / `git diff --check` | mjs構文成功、Markdown14ファイル183ローカルリンク欠落0、追跡/未追跡ファイルの空白エラー0 |
+
+専用checkはsandboxのspawnSync tsc EPERMを避け通常実行環境で成功した。
+比較font/Chrome/依存と生成証拠、外部consumer pathは[検証記録](VALIDATION.md)を参照。
+Studio/Playerサーバーは確認後停止した。生成資産とdependenciesはcommit対象外。
+
+### 制約と次の入口
+
+検証は同一Chrome154・固定Noto Sans JP・640×360/24fpsとexact peer版の範囲。
+他OS/browser/font/version、長時間/高解像度性能、手操作全UI、Adobe互換性は未検証。
+Playerは初回font/plan準備でpauseする。Studioは現在のexample登録形式ではdefault propsの
+ソース保存を利用できず、CLI/Player入力またはソース編集を使う。
+全effect・audio/BPM/LRC・overlap/transition・npm公開・Pages/Releaseは実施していない。
+
+次は[VALIDATION.md](VALIDATION.md)の制約を起点に、追加環境比較・callerのfont preload例・
+次のeffect群のどれを優先するか別途決める。追加実装は別依頼を待つ。

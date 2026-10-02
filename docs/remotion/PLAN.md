@@ -6,7 +6,7 @@
 ユーザーが採用した初期計画を、別スレッドで実施できる単位に分けた資料。
 作成時点ではパッケージは存在せず、各段階は未実施だった。
 同日の[段階01](01-api-contract.md)で[API契約](API.md)を確定した。
-現在は01〜06完了、07は未実施。APIの詳細はAPI.mdを優先する。
+現在は01〜07完了。初期到達点の実測は[VALIDATION.md](VALIDATION.md)、APIの詳細はAPI.mdを優先する。
 
 ## 到達点
 
@@ -23,7 +23,7 @@ Cut間transition、配布サイト、npm公開は初期段階の対象外。
 
 ユーザーのスケッチを段階01のAPI契約として採用。parseLinesの返却値は構造化chunkで、
 この例は3Cutを20frameずつ配置する。Noto Sans JP 700のfaceを利用側で登録してから使う。
-段階06でCut/frame評価と7effectを接続済み。このPartA/PartB統合例の検証は段階07で行う。
+段階06でCut/frame評価と7effectを接続し、段階07でPartA/PartB統合例を640×360/24fps・120frameで検証した。
 
 ```jsx
 const PartA = ({durationInFrames}) => {
@@ -243,3 +243,12 @@ decorのparameter生成は [engine/planner.ts](../../engine/planner.ts) の `dec
   glyph連結成分/polygon分解を安定キー・seed別cacheで移植し、現在frame bboxを使用。
   41件Node契約、参照283frame画素差0、全61並列PNG/短い動画・Studio・再mountを検証。
   PartA/PartB統合・Player・外部consumerは07へ残す。詳細は[06の結果](06-effect-port.md)。
+
+
+- 2026-10-03（段階07）：PartA/PartBの120frame例と通常ReactのPlayer例を追加。
+  Playerの遅いfont準備で再生が先行する問題を修正し、buffer待機を成功/失敗/cleanupで解放する。
+  公開API・effect・seed・時間の契約変更なし。直描画と逐次/並列240PNGが画素差0、
+  実5秒動画・Studio/Player・tarball外部consumerの型/11PNGを確認した。
+  export検証のinputProps変更ではselectCompositionを再実行して解決済みpropsを更新する。
+  06のmode別PNG採取手順も修正し、過去の記録へ訂正を追記した。
+  初期7段階は完了。固定環境と未検証項目、次の候補は[全体検証](VALIDATION.md)を参照。

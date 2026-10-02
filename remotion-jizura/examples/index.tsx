@@ -1,5 +1,6 @@
 import {Composition, registerRoot, Sequence, staticFile} from 'remotion';
 import {center, pop, wipe, drift, breathe, kasumi, checkerStrip, JizuraCut, JizuraScene} from 'remotion-jizura';
+import {LyricsDemo} from './lyrics.tsx';
 
 const EmptyScene = () => <JizuraScene durationInFrames={24} background="#16324F" />;
 const StaticText = ({fontSrc = staticFile('NotoSansJP.ttf')}: {fontSrc?: string}) => <JizuraScene durationInFrames={24}
@@ -43,6 +44,7 @@ export const EffectSamples = ({mode = 'fixed', seed = 1234, motionFps = null, of
     font={{family: 'Noto Sans JP', weight: 700, src: staticFile('NotoSansJP.ttf')}} style={{fontSize: 64}} background="#16324F"><JizuraCut {...cut} /></JizuraScene></Sequence>;
 };
 const Root = () => <>
+  <Composition id="LyricsDemo" component={LyricsDemo} defaultProps={{seed: 20260922, cutSeed: 1234}} width={640} height={360} fps={24} durationInFrames={120} />
   <Composition id="EffectSamples" component={EffectSamples} defaultProps={{mode: "fixed", seed: 1234, motionFps: null, offset: 0}} width={640} height={360} fps={24} durationInFrames={120} />
   <Composition id="EmptyScene" component={EmptyScene} width={640} height={360} fps={24} durationInFrames={24} />
   <Composition id="StaticText" component={StaticText} defaultProps={{}} width={960} height={540} fps={24} durationInFrames={24} />

@@ -1,5 +1,5 @@
 import {useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {useCurrentFrame, useDelayRender, useRemotionEnvironment, useVideoConfig} from 'remotion';
+import {useBufferState, useCurrentFrame, useDelayRender, useRemotionEnvironment, useVideoConfig} from 'remotion';
 import {drawEmptyFrame} from '../canvas/empty-frame.js';
 import {CanvasMeasurementService} from '../canvas/service.js';
 import {clearEffectCache} from '../canvas/effect-frame.js';
@@ -34,15 +34,19 @@ function SceneCanvas({scene, frame}: {scene: PreparedScene; frame: number}) {
   const [plan, setPlan] = useState<ScenePlan<CutGeometry> | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const {delayRender, continueRender, cancelRender} = useDelayRender();
-  const {isRendering} = useRemotionEnvironment();
+  const {isRendering, isPlayer} = useRemotionEnvironment();
+  const {delayPlayback} = useBufferState();
 
   useLayoutEffect(() => {
     if (!scene.cuts.length) return;
     const canvas = ref.current!;
     const service = new CanvasMeasurementService(canvas.ownerDocument);
     const handle = delayRender('JIZURA fonts, measurement and first frame');
+    // delayRender waits for exports. Player needs its own playback buffer so
+    // a slow face does not consume the Cut's animation before the first draw.
+    const playback = isPlayer ? delayPlayback() : null;
     let cancelled = false, released = false;
-    const release = () => { if (!released) { released = true; continueRender(handle); } };
+    const release = () => { if (!released) { released = true; continueRender(handle); playback?.unblock(); } };
     finalizeScene(scene, service).then(result => {
       if (cancelled) return;
       // Draw before releasing the render handle; preview readiness is also
@@ -62,7 +66,7 @@ function SceneCanvas({scene, frame}: {scene: PreparedScene; frame: number}) {
       }
     });
     return () => { cancelled = true; clearEffectCache(canvas); service.dispose(); release(); };
-  }, [scene, delayRender, continueRender, cancelRender, isRendering]);
+  }, [scene, delayRender, continueRender, cancelRender, isRendering, isPlayer, delayPlayback]);
 
   useLayoutEffect(() => {
     // Async preparation must read the latest committed frame, never a frame

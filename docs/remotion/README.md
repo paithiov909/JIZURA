@@ -4,8 +4,8 @@
 
 2026-10-02に、このブランチの目的を旧JIZURAのv1.x移行から、
 Remotion内のcanvasへJIZURAのリリックモーションを直接描画する独立パッケージの開発へ変更した。
-移植元の整理は完了した。次に `remotion-jizura/` に独立パッケージの叩き台を作り、
-少数のエフェクトでRemotionのプレビューと書き出しを検証する。
+移植元の整理は完了した。`remotion-jizura/` に独立パッケージの叩き台を作り、
+7effectでRemotionのプレビュー・書き出し・外部利用を検証した。
 同日に初期開発の共通計画と7段階の引き継ぎメモを作成した。
 同日の段階01で[API契約](API.md)を確定した。段階02で[パッケージ雛形](../../remotion-jizura/README.md)と
 Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを確認した。
@@ -13,6 +13,8 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 段階04で実フォント・文字計測と静止Canvas描画を接続し、Studio・PNG・参照pixel比較を確認した。
 段階05でCut選択・進行/量子化評価を接続し、境界PNG・Sequence・逆順取得・短い動画を確認した。
 段階06で7effectを接続し、参照283frameの画素差0と実PNG/動画・seek/cache再生成を確認した。
+段階07でPartA/PartB・Player・外部tarballを検証し、初期7段階を完了した。
+[全体の検証記録と制約](VALIDATION.md)・[利用手順](../../remotion-jizura/README.md)を参照。
 
 ## 各スレッドの作業入口
 
@@ -27,7 +29,7 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 | 04 | [フォント準備と静止Canvas描画](04-static-canvas.md) | 03完了 | 完了（実フォント・静止PNG・pixel比較） |
 | 05 | [Remotionのframeと描画の接続](05-remotion-frames.md) | 04完了 | 完了（frame評価・境界/Sequence・実書き出し） |
 | 06 | [少数effectの移植](06-effect-port.md) | 05完了 | 完了（7effect・参照画素差0・実書き出し） |
-| 07 | [利用例・書き出し・外部利用検証](07-scene-validation.md) | 06完了 | 未着手（開始可能） |
+| 07 | [利用例・書き出し・外部利用検証](07-scene-validation.md) | 06完了 | 完了（PartA/PartB・Player・120frame・外部tarball） |
 
 新しいスレッドには、段階番号と対応するメモを指定する。開始依頼の例：
 
@@ -66,10 +68,14 @@ docs/remotion/01-api-contract.mdを読み、指定された範囲だけを進め
 
 ## 次の作業
 
-[段階06の結果](06-effect-port.md)、[確定API](API.md)、[パッケージREADME](../../remotion-jizura/README.md)を読んで、
-[段階07](07-scene-validation.md)のPartA/PartB・Player・外部consumer検証へ進む。
-7effectとframe/cache再現性、固定フォントの同一ブラウザ比較、実Remotion書き出しは検証済み。
-`EffectSamples` と `node remotion-jizura/tests/effect-browser.mjs` が回帰入口。
-各段階の終了時は実際に行った検証を結果欄へ記録する。過去の整理の検証結果とは区別する。
+初期01〜07は完了。[段階07の結果](07-scene-validation.md)・[全体の検証記録](VALIDATION.md)・
+[確定API](API.md)・[パッケージREADME](../../remotion-jizura/README.md)が利用/回帰の入口。
+`npm run check:remotion`、`node remotion-jizura/tests/scene-browser.mjs`、
+`node remotion-jizura/tests/consumer-validation.mjs` を使う。Studio比較は稼働中のStudioで
+`node remotion-jizura/tests/studio-validation.mjs`。fontの取得と各前提はpackage READMEを参照。
+
+今後は追加browser/font/OS比較、callerのfont preload、次のeffect群を別途選ぶ。
+全effect・audio/BPM/LRC・overlap/transitionや公開/配布は今回の初期到達点に含めていない。
+過去の各段階の検証記録と制約はその時点の実績として保持する。
 
 [整理記録](CLEANUP.md)・[ルートREADME](../../README.md)

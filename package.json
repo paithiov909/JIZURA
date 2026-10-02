@@ -34,7 +34,8 @@
     "studio:remotion": "npm run studio --workspace remotion-jizura --",
     "still:remotion": "npm run still --workspace remotion-jizura --",
     "render:remotion": "npm run render --workspace remotion-jizura --",
-    "check:remotion": "npm run check --workspace remotion-jizura"
+    "check:remotion": "npm run check --workspace remotion-jizura",
+    "player:remotion": "npm run player --workspace remotion-jizura --"
   },
   "devDependencies": {
     "@types/node": "26.6.3",

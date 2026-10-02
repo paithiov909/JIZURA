@@ -189,3 +189,14 @@ Studioのdefault props source保存は05と同じ「Cannot find root file in pro
 回帰入口に、共通計画のPartA/PartB・120frame例、Player、並列書き出しの再現性、
 packしたパッケージの外部consumer検証と利用文書を完成させる。
 06ではPartA/PartB統合・外部install・npm公開は実施していない。
+
+
+### 段階07での検証手順訂正（2026-10-03）
+
+`effect-browser.mjs` のmode別renderStillは、06時点ではfixedのComposition.propsを
+再利用していた。inputPropsだけでは解決済みpropsを更新できないため、当時のmode名付きPNGは
+各modeの実Remotion描画の証拠としない。283frameの独立したsource比較と固定例の
+61PNG/動画・seek/cache証拠には影響しない。
+07で各modeのselectCompositionを再実行するように修正し、5modeのframe30がfixedと
+異なるPNGになることを実測した。過去の実行記録は保持し、訂正と再確認を
+[07の結果](07-scene-validation.md)・[全体検証](VALIDATION.md)へ記録した。

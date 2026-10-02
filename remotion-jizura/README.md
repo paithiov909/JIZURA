@@ -1,10 +1,142 @@
 # remotion-jizura
 
-Initial ESM package scaffold on the `remotion` branch, version `0.1.0-alpha.0`.
+Initial ESM package on the `remotion` branch, version `0.1.0-alpha.0`.
 Stages 03–06 implement parsing, planning, font preparation, integer frame evaluation
 and seven canvas effects: center, pop, wipe, drift, breathe, kasumi and checkerStrip.
 The current Scene renders the active Cut with deterministic motion and decor.
-The complete target contract is maintained in the repository at `docs/remotion/API.md`.
+Stage 07 adds the 120-frame PartA/PartB example, Player buffering and tarball
+consumer validation. The complete contract is maintained in the repository at
+`docs/remotion/API.md`; measured evidence is in `docs/remotion/VALIDATION.md`.
+
+## Quick start
+
+Install this local alpha tarball together with its exact peers. The Player is
+optional and belongs in the consuming app, not in the package's runtime imports.
+
+```sh
+npm install /absolute/path/to/remotion-jizura-0.1.0-alpha.0.tgz react@19.3.0 react-dom@19.3.0 remotion@4.0.532
+# Optional web preview:
+npm install @remotion/player@4.0.532
+```
+
+Place `NotoSansJP.ttf` in your Remotion public directory (see the font instructions
+below), then register this component in a 640×360, 24fps, 120-frame Composition:
+
+```tsx
+import {Sequence, staticFile} from 'remotion';
+import {JizuraScene, JizuraCut, parseLines, kasumi, checkerStrip} from 'remotion-jizura';
+
+const fontFor = (src: string) => ({family: 'Noto Sans JP', weight: 700, src});
+const PartA = ({fontSrc}: {fontSrc: string}) => (
+  <JizuraScene durationInFrames={60} font={fontFor(fontSrc)} style={{fontSize: 64}}>
+    {parseLines('新しい/朝が来た\n*希望*の朝だ').map((text, index) =>
+      <JizuraCut key={index} text={text} seed={1234 + index} />)}
+  </JizuraScene>
+);
+const PartB = ({fontSrc}: {fontSrc: string}) => (
+  <JizuraScene durationInFrames={60} font={fontFor(fontSrc)} style={{fontSize: 64}}>
+    <JizuraCut text="喜びに胸を開け" hold="breathe"
+      decor={[kasumi({seed: 889}), checkerStrip({seed: 721})]} />
+  </JizuraScene>
+);
+export const LyricsDemo = ({fontSrc = staticFile('NotoSansJP.ttf')}: {fontSrc?: string}) => <>
+  <Sequence durationInFrames={60}><PartA fontSrc={fontSrc} /></Sequence>
+  <Sequence from={60} durationInFrames={60}><PartB fontSrc={fontSrc} /></Sequence>
+</>;
+```
+
+PartA allocates three Cuts at `[0,20)`, `[20,40)`, `[40,60)`; emphasis on `希望`
+survives parsing. PartB starts at composition frame 60, using local frame 0 and
+independent decor seeds. The executable repository example is
+`examples/lyrics.tsx`, shared by Studio and Player. It also accepts `fontSrc`,
+`seed` (Scene seed, default 20260922) and `cutSeed` (PartA base seed, default 1234).
+
+## Choosing effects and timing
+
+These Cut declarations fit inside a Scene with a loaded font:
+
+```tsx
+// Automatic choices and parameters, reproducible from Scene/Cut seeds.
+<JizuraCut text="新しい*朝*" seed={1234} />
+// Fix every group and effect seed. Omitted parameters are generated from those seeds.
+<JizuraCut text="新しい*朝*" layout={center({seed: 1})}
+  enter={pop({seed: 2})} hold={breathe({seed: 3})} exit={drift({seed: 4})}
+  decor={[kasumi({seed: 889}), checkerStrip({seed: 721})]} />
+// Fix only the selected groups/parameters; the rest remain automatic.
+<JizuraCut text="喜びに胸を開け" hold="breathe"
+  layout={center({params: {under: false, ox: 0}})} decor={[kasumi({seed: 889})]} />
+// Immediate, static letters; also fix center geometry and ornaments.
+<JizuraCut text="希望の朝" enter={null} exit={null} hold={null} decor={[]}
+  layout={center({params: {sx: 1, track: 0.08, ox: 0, oy: 0, sub: false, under: false, accent: false}})} />
+```
+
+Import the factories used above from `remotion-jizura`. In the following example, `font` is your registered FontSpec. Explicit timing requires
+`from` and `durationInFrames` on every Cut; declarations can be out of order:
+
+```tsx
+<JizuraScene durationInFrames={60} font={font}>
+  <JizuraCut text="夜" from={40} durationInFrames={20} />
+  <JizuraCut text="朝" from={0} durationInFrames={20} />
+</JizuraScene>
+```
+
+Frames20–39 show the Scene background. Mixed timing modes, overlaps, fractional
+frames and insufficient duration throw an error. `EffectSamples` demonstrates
+automatic/fixed/partial/disabled settings; `TimedCuts` demonstrates explicit
+placement, a gap and a one-frame Cut.
+
+## Player and integration validation
+
+Pass the component directly to Player. Your web app supplies a reachable font URL:
+
+```tsx
+import {Player} from '@remotion/player';
+import {LyricsDemo} from './lyrics';
+
+<Player component={LyricsDemo} inputProps={{fontSrc: '/NotoSansJP.ttf'}}
+  durationInFrames={120} compositionWidth={640} compositionHeight={360} fps={24}
+  controls style={{width: '100%'}} />
+```
+
+The repository's parameterized LyricsDemo accepts `fontSrc` as above. JizuraScene
+buffers Player playback during font/plan preparation, draws the committed frame,
+then unblocks playback. Failures surface through the Player error boundary;
+cleanup releases both playback and export handles. Preload/register fonts if you
+want to avoid preparation pauses when a new Scene mounts. Scenes own their canvas;
+the caller supplies a positioned parent when deliberately layering multiple Scenes.
+
+From the repository root, after preparing the comparison font:
+
+```sh
+npm run check:remotion
+npm run player:remotion -- --port=3108
+npm run studio:remotion -- --port=3107 --public-dir=../dist/remotion/stage04/assets
+npm exec --workspace remotion-jizura -- remotion still examples/index.tsx LyricsDemo ../dist/remotion/stage07/example.png --frame=80 --public-dir=../dist/remotion/stage04/assets --browser-executable=/usr/bin/google-chrome
+npm exec --workspace remotion-jizura -- remotion render examples/index.tsx LyricsDemo ../dist/remotion/stage07/example.mp4 --public-dir=../dist/remotion/stage04/assets --browser-executable=/usr/bin/google-chrome
+# Run these in another terminal; Studio must be running for studio-validation.
+node remotion-jizura/tests/scene-browser.mjs
+node remotion-jizura/tests/studio-validation.mjs
+node remotion-jizura/tests/consumer-validation.mjs
+```
+
+The integration harness compares all 120 frames from independent canvas drawing
+with two Remotion PNG runs (concurrency 1/2), repeated stills and Player seeks.
+It decodes a 640×360, 24fps, 120-frame (5 second) H.264 movie and identifies each
+frame against the PNGs. Compression differences are measured separately.
+The consumer harness packs locally into ignored `dist/remotion/stage07/pack/`,
+creates `/tmp/jizura-stage07-consumer-*`, installs the tarball and peers, checks
+public types/exports and compares 11 actual exported frames. It requires npm
+registry access or a populated cache (`JIZURA_NPM_CACHE` overrides the cache).
+It does not publish. Reports and images are in `dist/remotion/stage07/`.
+`JIZURA_BROWSER` overrides the local Chrome path and `JIZURA_STUDIO_URL` the Studio
+URL. System ffmpeg/ffprobe are required for these optional validation harnesses.
+
+The initial API supports only the seven listed effects. Numeric `numCuts`,
+grapheme-aware typography, audio/BPM/LRC synchronization, Cut overlaps/transitions,
+custom effect registration and the remaining legacy groups are outside this alpha.
+Chrome154 with the fixed Noto Sans JP file and the pinned dependency versions is
+the validated environment. Other browsers, fonts and version combinations can
+change metrics/rasterization and have not been certified by these comparisons.
 
 ```tsx
 import {JizuraScene} from 'remotion-jizura';
@@ -41,7 +173,7 @@ throw `E_CHILD`. Unknown IDs, mismatched groups and invalid parameters throw
 `E_EFFECT`; invalid numbers, text and Style have their contracted error codes.
 Use `enter={null} exit={null} hold={null} decor={[]}` to disable motion/decor.
 Center parameters still control geometry and ornaments; fix them for a completely
-fixed static layout. External consumers are tested in stage 07.
+fixed static layout. Stage 07 verifies an installed tarball consumer.
 
 ## Static text and fonts
 
@@ -80,8 +212,7 @@ Stage 04 verified the horizontal static subset against retained font/text code i
 Chrome154 with the same Noto Sans JP file: four cases had zero pixel differences.
 Real Studio display and 960×540 Remotion PNGs were checked separately. This stage
 04 evidence does not establish effect compatibility. Stage 05 separately verified
-Cut boundaries, Sequence offsets, reverse seeks and video updates; Player and
-external consumers remain unverified. Stage 06 separately verified all seven effects
+Cut boundaries, Sequence offsets, reverse seeks and video updates. Stage 06 separately verified all seven effects
 against the retained source with adapted font, seed and cache contracts: 283 frames
 had zero pixel differences. The original planner’s weighted/history selections
 are a separate contract and are not reproduced.
@@ -157,9 +288,8 @@ all 61 parallel Remotion PNGs against direct Canvas drawing, reverse seeks,
 Sequence, StrictMode, cache recreation, remounts and multiple Scenes. Every video
 frame is matched to the corresponding PNG; H.264 compression differences are
 reported separately from exact PNG comparisons. These checks use Chrome154,
-Noto Sans JP 700, 640×360 and 24fps. Other browsers/fonts, Player and external
-consumer installation remain stage 07 validation work. The PartA/PartB example
-is also completed in stage 07.
+Noto Sans JP 700, 640×360 and 24fps. Stage07 adds PartA/PartB, Player and external
+consumer evidence; it does not expand the validated browser/font matrix.
 
 ## Development
 
@@ -230,7 +360,7 @@ The root entry exposes ESM imports and declarations; CommonJS `require` is not a
 supported entry. Pack includes only built `dist/`, README, LICENSE and npm's
 manifest. Source does not import the old engine/effects or other repository code.
 Examples and tests are development-only. `prepack` builds locally; no publish or
-release is part of this stage. External consumer validation is assigned to stage 07.
+release is part of this work. The stage07 consumer uses a real installed tarball.
 
 [MIT License](LICENSE). React and Remotion retain their own dependency licenses;
 [Remotion terms](https://www.remotion.dev/docs/license) apply to Remotion use.
