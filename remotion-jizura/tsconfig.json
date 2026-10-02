@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "types": [
+      "node",
+      "react",
+      "react-dom"
+    ],
+    "paths": {
+      "remotion-jizura": [
+        "./src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "examples/**/*.tsx",
+    "tests/**/*.tsx"
+  ]
+}

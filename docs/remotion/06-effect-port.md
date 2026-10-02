@@ -6,7 +6,7 @@
 ## 開始時に読むもの
 
 - [AGENTS.md](../../AGENTS.md)、[ルートREADME](../../README.md)、[作業一覧](README.md)、[共通計画](PLAN.md)。
-- 段階01〜05の結果、`docs/remotion/API.md`、パッケージREADME。
+- 段階01〜05の結果、[確定API](API.md)、パッケージREADME。
 - [基本layout](../../effects/core/layouts.ts)、[基本animation](../../effects/core/animation.ts)、
   [decor](../../effects/packs/decor.ts)、[decorB](../../effects/packs/decorB.ts)、
   [planner](../../engine/planner.ts)、[effectの型](../../effects/types.ts)。
@@ -45,6 +45,16 @@ center、pop、wipe、drift（exit）、breathe、kasumi、checkerStripを第一
   必要な小さな新fixtureは別の場所へ出所付きで追加し、生成レポートは無視対象に置く。
 - 差分は実測で記録し、フォント・アンチエイリアス・量子化等の理由は根拠を添える。
   大きな差を許容値の拡大だけで解消しない。
+
+## 段階01からの確定事項（2026-10-02）
+
+7候補の初期ID・factory・params範囲・等確率候補順はAPI.mdに従う。
+centerのfontは解決済みFontSpecに写し、旧font抽選の乱数消費順を保持する。
+decorParamsのseed抽選は消費して捨て、group/slot別effect seedをP.seedに使う。
+getBBのWeakMap履歴を移植せず、現在frame boxまたはplan静止boxを使う。
+exit driftはglyph連結成分/polygon断片も必要。API.mdに従いcomponentキーを安定化し、
+fragments cacheをseed別に分離して0seedを保持する。glyph全体のfadeで代替しない。
+入退場時間・抽選・font adapter・bbox/component/cacheの差を個別effect数式の比較と分けて記録する。
 
 ## 結果・引き継ぎ
 

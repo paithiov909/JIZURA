@@ -6,7 +6,7 @@
 ## 開始時に読むもの
 
 - [AGENTS.md](../../AGENTS.md)、[ルートREADME](../../README.md)、[作業一覧](README.md)、[共通計画](PLAN.md)。
-- 段階01〜06の結果、`docs/remotion/API.md`、パッケージREADMEとexamples。
+- 段階01〜06の結果、[確定API](API.md)、パッケージREADMEとexamples。
 - 採用Remotion版の静止画・動画書き出し、並列実行、公開依存に関する公式資料。
 
 ## 目的と成果物
@@ -43,6 +43,12 @@ PartA・PartB相当の例で初期到達点を確認し、利用者が再現で�
   ビルド経路の変更があればルートcheck・spikeチェックも行う。
 - ドキュメントのローカルリンクと `git diff --check` を確認する。
 - PNG/動画/tarball/consumer/レポートは無視対象へ置き、依存・配布資産をコミットしない。
+
+## 段階01からの確定事項（2026-10-02）
+
+PartAのparse結果は3Cut・各20frame、利用側でNoto Sans JP 700を準備する。
+全固定/全無効/部分固定・境界ケースはAPI.mdを基準とする。
+旧planner抽選との一致、effect比較、実Remotionの再現性・外部利用を別項目として報告する。
 
 ## 結果・引き継ぎ
 

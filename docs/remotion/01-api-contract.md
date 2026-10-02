@@ -1,6 +1,7 @@
 # 段階01：API仕様の確定
 
-状態：未着手。前提：移植元の整理が完了していること。
+状態：完了（2026-10-02、文書のみ）。前提：移植元の整理が完了していること。
+成果物：[確定API](API.md)。
 次段階：[02：パッケージ雛形](02-package-scaffold.md)。
 
 ## 開始時に読むもの
@@ -48,5 +49,58 @@
 
 ## 結果・引き継ぎ
 
-未実施。完了時に日付・状態、APIの決定と理由、変更ファイル、実際の確認結果、
-残る制約、次段階の参照先を記入し、[作業一覧](README.md)の状態も更新する。
+2026-10-02：完了。現在のremotionブランチで実施。開始時の作業ツリーはclean。
+パッケージ作成・依存追加・ソース変更・後段階の実装は行っていない。
+
+### 決定と調査根拠
+
+- 公開型、7factory、既定値・許可入力・code/path付きエラー、未対応groupのnull限定をAPI.mdに定義。
+- 既存plannerのparseLyricsはLRC等を扱い、chunkTextはIntl/fallbackで結果が変わる。
+  初期parseLinesはscript分類fallbackを固定し、autoのみ対応。強調を語の集合から
+  code point出現範囲へ置き換え、日本語2行の正確な3Cut例を記録した。
+- plannerの通常入退場秒式を整数化し、D-1予算で静止1frameを確保する。
+  rendererは量子化秒でCutを選択するため、新版は整数境界で先にCutを選ぶ。
+  motionFps既定null、指定時はCut内時刻のみ量子化。旧版との差を明示した。
+- utilのhash/FNV-1a/mulberry32を保持し、Scene既定20260922、宣言indexとgroup/slotでseed分離。
+  明示paramsは完全な自動候補の生成後に上書きし、false/0を維持する。
+  旧単一stream/history抽選との一致は要求しない。
+- centerのfontをFontSpecへ分離して既定faceを固定し、明示trackの優先順位を記録した。
+  FontSpecは全置換、paletteはkey別merge、強調はglyph色だけを変更する。
+- 旧fontsサービスはロード失敗を隠して継続し、初期化時にDOMへ触れる。
+  新版はface準備を計測前の資源境界へ分離し、失敗をE_FONTとして扱う。
+- kasumi/backとcheckerStrip/frontのID・layer、decorParamsの共有schemaを調査。
+  getBBは前frameのWeakMapを読むため、現在frame boxまたはplan静止boxへ変更する契約を採用。
+  この差を段階06の比較項目に追加した。移植元コード・baselineは保存した。
+- exit driftはglyph分解とshatterを使う。fontsの採取順counterとtext/fontsのseedを
+  keyに含めないfragments cacheは再現性を妨げるため、componentの安定hash、
+  seed別cache、0seed保持を契約に追加した。数式とcache/識別子変更の比較を分離する。
+- Remotion公式Sequence/useCurrentFrame/useVideoConfig/delayRenderを2026-10-02に確認。
+  ローカルframe・設定取得・render待機とpreview準備の違いを仕様へ反映。
+  採用バージョンの再確認と実環境検証は段階02以降で行う。
+
+### 変更ファイル
+
+- 新規：docs/remotion/API.md。
+- 更新：ルートREADME.md、docs/remotion/PLAN.md、docs/remotion/README.md、本メモ。
+- 参照リンクと確定事項を同期：docs/remotion/02-package-scaffold.md、03-scene-plan.md、
+  04-static-canvas.md、05-remotion-frames.md、06-effect-port.md、07-scene-validation.md。
+
+### 実際の確認
+
+- `python3 /tmp/jizura-stage01-doc-check.py`：変更Markdown11ファイルのfence外の
+  ローカルリンク132件を相対パスで解決し、欠落0（exit 0）。一時チェッカーはrepo外に保存。
+- `git diff --check`：exit 0、空白エラーなし。新規API.mdは未追跡のため、同ファイルを
+  `git diff --no-index --check /dev/null docs/remotion/API.md`でも検査した。
+  後者はexit 1（新規ファイルの差分あり）、診断出力0件で空白エラーなし。
+- `git status --short --branch`：remotionのまま。変更は上記文書11ファイルのみ。
+
+実装・型検査・契約テスト・画像/動画比較・Remotion/Adobe実行は本段階では実施していない。
+参照コードの読解と公式資料の確認は、将来パッケージの互換性証拠ではない。
+
+### 制約と次の入口
+
+初期実装を止めるAPI未決事項はなし。数値numCuts・全effect・grapheme組版・旧Style等は初期範囲外。
+fontロード・文字計測・短いCutのdecor・bbox差・pixel比較は未実装/未検証。
+[段階02](02-package-scaffold.md)はAPI.mdの公開境界と空Scene契約から着手し、
+workspace・採用バージョン・パッケージversion・検証コマンドを決める。
+段階03以降の前提実装はまだ存在しない。

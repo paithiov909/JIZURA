@@ -6,7 +6,7 @@
 ## 開始時に読むもの
 
 - [AGENTS.md](../../AGENTS.md)、[ルートREADME](../../README.md)、[作業一覧](README.md)、[共通計画](PLAN.md)。
-- 段階01〜03の結果、`docs/remotion/API.md`、パッケージREADME。
+- 段階01〜03の結果、[確定API](API.md)、パッケージREADME。
 - [text.ts](../../engine/text.ts)、[フォントサービス](../../ui/services/fonts.js)、
   [styles.ts](../../engine/styles.ts)、[基本layout](../../effects/core/layouts.ts)。
 - 段階02の採用バージョンに対応するRemotion公式のフォント・描画待機資料。
@@ -39,6 +39,13 @@
 - 専用型検査・focusedテスト・ビルド、実ブラウザでの静止画検証、`git diff --check`。
   ビルド経路を変更した場合は既存チェックも実行する。
 - stub計測と実フォント計測を区別し、画像を実際に確認した範囲を記録する。
+
+## 段階01からの確定事項（2026-10-02）
+
+FontSpec既定は利用側登録のNoto Sans JP 700/normal。src指定も受け、未登録・失敗はE_FONT。
+Cut.fontは全置換、Style.paletteはkey別merge。強調はglyph色だけを変える。
+CanvasにDPRを掛けない。Scene背景とCut palette.bgを区別し、計測後の静止boxを
+後続decorの履歴なしfallbackとして渡す。
 
 ## 結果・引き継ぎ
 

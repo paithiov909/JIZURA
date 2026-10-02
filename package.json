@@ -27,12 +27,22 @@
     "test:i18n": "node --test --test-isolation=none tests/i18n/contract.mts",
     "test:i18n:browser": "python3 dev/i18n_test.py",
     "test:i18n:source": "node dev/i18n_source_test.mjs",
-    "test:editor:browser": "python3 dev/editor_test.py"
+    "test:editor:browser": "python3 dev/editor_test.py",
+    "typecheck:remotion": "npm run typecheck --workspace remotion-jizura",
+    "test:remotion": "npm run test --workspace remotion-jizura",
+    "build:remotion": "npm run build --workspace remotion-jizura",
+    "studio:remotion": "npm run studio --workspace remotion-jizura --",
+    "still:remotion": "npm run still --workspace remotion-jizura --",
+    "render:remotion": "npm run render --workspace remotion-jizura --",
+    "check:remotion": "npm run check --workspace remotion-jizura"
   },
   "devDependencies": {
     "@types/node": "26.6.3",
     "acorn": "8.18.0",
     "typescript": "7.0.2",
     "vite": "8.3.1"
-  }
+  },
+  "workspaces": [
+    "remotion-jizura"
+  ]
 }

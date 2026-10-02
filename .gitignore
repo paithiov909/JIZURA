@@ -22,3 +22,6 @@ node_modules/
 /JIZURA_CEP_en.zip
 /ae/data.json
 /sitemap.xml
+
+# Independent Remotion package builds; example renders remain in root dist/.
+/remotion-jizura/dist/

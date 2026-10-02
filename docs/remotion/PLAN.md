@@ -4,8 +4,9 @@
 実装先：`remotion-jizura/`。パッケージ名は同名を仮称とする。
 
 ユーザーが採用した初期計画を、別スレッドで実施できる単位に分けた資料。
-この文書の作成時点ではパッケージは存在せず、各段階は未実施。
-APIの具体的な表現は以下の作業案から[段階01](01-api-contract.md)で確定する。
+作成時点ではパッケージは存在せず、各段階は未実施だった。
+同日の[段階01](01-api-contract.md)で[API契約](API.md)を確定した。
+現在は01・02完了、03以降は未実施。APIの詳細はAPI.mdを優先する。
 
 ## 到達点
 
@@ -20,7 +21,8 @@ Cut間transition、配布サイト、npm公開は初期段階の対象外。
 
 ## 使用イメージ
 
-ユーザーのスケッチ。段階01で仕様が決まり次第、必要な変更理由を記録して更新する。
+ユーザーのスケッチを段階01のAPI契約として採用。parseLinesの返却値は構造化chunkで、
+この例は3Cutを20frameずつ配置する。Noto Sans JP 700のfaceを利用側で登録してから使う。
 未実装のAPIであり、このコードだけでは現時点で実行できない。
 
 ```jsx
@@ -100,61 +102,62 @@ React・Remotionはpeer dependencyとし、対応バージョンと開発依存�
 実行コード・公開型はパッケージ外の参照ソースをimportしない。
 参照ソースを読む比較テストは公開内容から除外する。生成物は明示した無視対象に置く。
 
-## 公開APIの作業案
+## 確定した公開API
 
-| 対象 | 提案 |
-| --- | --- |
-| Scene | `durationInFrames`必須。幅・高さは省略時にRemotion設定から取得。fpsもRemotionから取得 |
-| Cut | `text`、`seed`、`from`、`durationInFrames`、effect指定、フォント・Styleの上書き |
-| effect指定 | 対応済みIDの文字列、または設定factoryが返すグループ別の宣言オブジェクト |
-| 未指定 | 対応済み候補からseedで選択し、parameterを補う |
-| 無効化 | 単一effectは`null`、decorは`[]`。layoutは必須の役割のため`null`不可 |
-| 明示指定 | IDと明示parameterを尊重し、足りないparameterのみ補う |
-| 未対応・不正指定 | 型と実行時検証でエラー。無言で別effectへ置換しない |
-| フォント・Style | Sceneの既定値をCutで上書き。マージ規則を段階01で決める |
+[API.md](API.md)が公開型・既定値・入力検証・エラー・受け入れケースを定める。
+Scene、Cut、parseLinesと7factoryを公開し、ScenePlan・registry・PRNGは非公開。
+対応ID集合は段階06完了時の予定であり、現在移植済みではない。
+段階02は空Sceneのみ実装する。
 
-`enter={null}`は即時表示、`exit={null}`は範囲終了で消去、`hold={null}`は静止。
-`bg={null}`は背景effectを追加しないことであり、Sceneの基底背景の透明化とは区別する。
-全グループ（layout、enter、exit、hold、decor、treat、bg、cam、fx、trans）の役割を
-設計に残すが、初期の後半5グループは無効状態を基本とし、対応effectを用意するまで自動抽選しない。
-段階01で未対応グループの初期型・無効状態・エラーの表現を明確にする。
-factoryは設定だけを返し、呼び出し時の乱数生成、DOMアクセス、描画は行わない。
+- Scene duration必須、幅・高さ省略はRemotion設定、fpsもRemotionから取得。
+- Cutは文字列またはParsedChunk。直下Cut・配列・Fragmentから宣言を収集する。
+- 省略時はlayout=center、enter=pop/wipe、exit=drift、hold=breathe、
+  decor=kasumi/checkerStripから1個。候補順と等確率を固定し、旧history・重みは導入しない。
+- 単一effect無効化はnull、decorは[]、layoutはnull不可。
+  treat/bg/cam/fx/transの初期型はnullのみ。未知ID・不正parameterはエラー。
+- factoryは設定宣言だけを返し、明示seed・parameter（false/0を含む）を保持する。
+- FontSpecはCutで全置換、Styleはpaletteのkey別mergeと他項目の上書き。
+  centerの明示track→明示Style.track→自動trackの優先順を保つ。
 
-## テキストと時間の作業案
+## 確定したテキストと時間
 
-`parseLines`はScene時間に依存しない。前後の空白・空行を整理し、`/`を明示Cut境界として
-優先する。その他の行は既存chunk分割を出発点に自動分割する。
-`*…*`を本文から除去し、本文・強調情報・元の行位置を持つ構造化データへ残す。
-Cutの`text`は文字列とこのデータを受け付ける。
-`numCuts: "auto"`はテキストだけで決まる分割とし、数値を初期対応するなら各行のCut数とする。
-具体的な分割結果、エスケープ、空・不正入力、分割数の上限、強調の描画規則は段階01で確定する。
+parseLinesは時間・seedに依存せず、正規化本文・code point強調範囲・元行番号を返す。
+手動 / を唯一の分割境界として優先し、それ以外は既存chunkTextのscript分類fallbackを使う。
+Intl.Segmenterは呼ばず、数値numCutsは初期非対応。escape・上限・不正構文はAPI.mdに従う。
+単一Cut文字列は改行を保持する。構造化本文は再parseしない。
 
 | 配置モード | 規則 |
 | --- | --- |
-| 順次配置 | 全Cutで`from`を省略。明示durationを確保し、残りをduration未指定Cutへ均等配分 |
-| 明示配置 | 全Cutで`from`と`durationInFrames`を指定。Scene開始からのframeとして配置 |
+| 順次 | 全from省略。明示durationを確保し残りを未指定Cutへ均等配分。端数は先頭から |
+| 明示 | 全fromとduration指定。非時系列宣言を許しplanを時間順へsort。seed用宣言indexは保持 |
 
-端数は宣言順で先頭から1frameずつ配る。60frame・7Cutなら `9, 9, 9, 9, 8, 8, 8`。
-両モードの混在、重複、範囲外、0frame、負数・非整数・非有限値はエラー。
-順次配置で全duration指定時の未使用時間、CutがないScene、明示配置の非時系列宣言の扱いも
-段階01で決める。明示配置の空白区間はSceneの基底背景だけを描く。
-Cutの範囲は `[from, from + durationInFrames)`。Scene自身も指定durationの範囲で描画する。
-外側のSequenceで得られるローカルframeを使い、Sequenceの開始位置を重ねて加算しない。
-frameから秒への変換はeffect評価境界で行う。
-enter・hold・exitの進行や短いCutへの収まり方、旧コマ打ちの量子化は調査して仕様化する。
+60frame・7Cutは9,9,9,9,8,8,8。全duration指定の余りは末尾空白。空Sceneも許可。
+混在、重複、範囲外、0duration、非整数、不足frameはエラー。
+Scene/Cutの整数frame半開区間でactiveを決め、空白はScene基底背景のみ。
+外側Sequenceのローカルframeを使い、開始位置を重ねて加算しない。
+
+enter/exitは旧planner通常秒式を整数化し、静止1frameを残すD-1予算へ
+自動時間のみ比例縮小する。明示時間は固定し、予算超過はエラー。
+1frame Cutは自動入退場0で文字表示。holdは旧mainDrawの強度rampを保持する。
+motionFpsは既定null（毎frame）、24fpsで12を明示すればon twos相当。
+active判定後にCutローカル評価秒だけを量子化する。
 
 ## seedと描画の契約
 
-- Scene seedは固定の既定値。Cutの明示seedを優先し、省略時はScene seedとCut位置から導出。
-- effectの明示seedを優先する。未指定parameterはeffectの計画時に確定する。
-- グループごとに乱数を分け、decorの固定が無関係なenter選択を変えないようにする。
-  同一decorの複数指定や配列順とseedの関係も段階01で決める。
-- 既存の乱数アルゴリズムを参照し、旧plannerと新しいseed配分の差を記録する。
-- 描画は前frameの実行、mount順、別Sceneの状態に依存しない。
-- 文字itemを毎frameの作業用データとして扱い、計画への変形の蓄積を防ぐ。
-- 旧rendererの紙・ノイズにある`Math.random()`は初期対象から外す。将来移植する際にseed化する。
-- フォント準備後に計測する。フォントの失敗を隠して比較用フォントへ黙って置換しない。
-- 旧plannerと同じ抽選結果になることと、個々のeffectの動きが一致することを分けて検証する。
+- Scene seed既定20260922、Cut省略seedはScene seedと宣言indexから数値hashで導出。
+- effect明示seed優先。抽選とparameter生成をgroup別streamに分ける。
+  decorのslotは配列index。挿入・並べ替えは未指定decor seedだけを変える。
+- utilのhash/FNV-1a/mulberry32を保持する。具体的導出式と生成順はAPI.mdに従う。
+  旧plannerの単一stream/history抽選との一致は要求しない。
+- fontは利用側登録またはsrcから準備する。失敗を隠さず、計測後にplanを確定する。
+- frame用itemへ変形を適用しplanへ蓄積しない。decorの前frame bbox cacheは使わず、
+  当該frame boxかplan静止boxを使う。cacheの再生成でも描画結果を変えない。
+- driftのglyph分解はcomponentキーを安定hashへ置き換え、fragments cacheをseed別にする。
+  採取順counter・最初のseedによる状態へ依存せず、0seedも保持する。
+- Canvasはdesign解像度、CSS表示は親に合わせ、DPRを掛けない。
+  Scene基底背景とbg effectを区別する。Scene範囲外では背景もclearする。
+- 紙・ノイズのMath.random()、chroma/HUD/camera等は初期対象外。
+- 旧抽選結果との一致、個別effectの数式/描画一致、Remotion実書き出しを別々に検証する。
 
 ## 最初のeffect候補
 
@@ -205,3 +208,12 @@ decorのparameter生成は [engine/planner.ts](../../engine/planner.ts) の `dec
 
 - 2026-10-02：初期開発の7段階と `remotion-jizura/` を作業先として採用。
   API詳細は段階01で確定する。今回作成したのは計画と引き継ぎ資料のみ。
+- 2026-10-02（段階01）：[API.md](API.md)を確定。Intl辞書差を避けるautoのfallback固定、
+  数値numCutsの初期非対応、整数境界・静止1frame確保、group別seed、FontSpec/Style、
+  透明基底背景、前frame bbox cache除去を採用した。旧版との差をAPI.mdと後続メモへ記録。
+  ソース・依存・baselineは未変更。
+
+- 2026-10-02（段階02）：npm workspaceと単一ルートlockfileを採用。パッケージ版は
+  `0.1.0-alpha.0`、React/React DOM 19.3.0、Remotion関連4.0.532を固定した。
+  [パッケージREADME](../../remotion-jizura/README.md)にコマンド・実装範囲を記録。
+  空SceneのStudio/PNG/MP4を検証した。API契約の変更はなく、歌詞描画はまだ未実装。

@@ -7,18 +7,19 @@ Remotion内のcanvasへJIZURAのリリックモーションを直接描画する
 移植元の整理は完了した。次に `remotion-jizura/` に独立パッケージの叩き台を作り、
 少数のエフェクトでRemotionのプレビューと書き出しを検証する。
 同日に初期開発の共通計画と7段階の引き継ぎメモを作成した。
-現時点でパッケージ実装やRemotion依存は追加していない。
+同日の段階01で[API契約](API.md)を確定した。段階02で[パッケージ雛形](../../remotion-jizura/README.md)と
+Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを確認した。
 
 ## 各スレッドの作業入口
 
-[共通計画](PLAN.md)が到達点、APIの作業案、時間・seed・描画の契約、検証方針をまとめる。
+[共通計画](PLAN.md)が到達点、確定APIの要点、時間・seed・描画の契約、検証方針をまとめる。
 各段階は別のスレッドで、次の順に実施する。前段階の結果が必要なため、同時実装は想定しない。
 
 | 段階 | 作業メモ | 前提 | 状態 |
 | --- | --- | --- | --- |
-| 01 | [API仕様の確定](01-api-contract.md) | 共通計画・移植元の整理 | 未着手（開始可能） |
-| 02 | [パッケージ雛形とRemotion例](02-package-scaffold.md) | 01完了 | 未着手 |
-| 03 | [parser・時間配分・ScenePlan](03-scene-plan.md) | 02完了 | 未着手 |
+| 01 | [API仕様の確定](01-api-contract.md) | 共通計画・移植元の整理 | 完了（API文書・結果記録） |
+| 02 | [パッケージ雛形とRemotion例](02-package-scaffold.md) | 01完了 | 完了（空Scene・実書き出し） |
+| 03 | [parser・時間配分・ScenePlan](03-scene-plan.md) | 02完了 | 未着手（開始可能） |
 | 04 | [フォント準備と静止Canvas描画](04-static-canvas.md) | 03完了 | 未着手 |
 | 05 | [Remotionのframeと描画の接続](05-remotion-frames.md) | 04完了 | 未着手 |
 | 06 | [少数effectの移植](06-effect-port.md) | 05完了 | 未着手 |
@@ -59,10 +60,11 @@ docs/remotion/01-api-contract.mdを読み、指定された範囲だけを進め
 - `VERSION` とルートの `package.json` は旧アプリの参照ビルド用。
   新パッケージ名は仮称 `remotion-jizura`、パッケージのバージョンは段階02で決める。
 
-## 最初の作業
+## 次の作業
 
-[段階01](01-api-contract.md)で公開API、`parseLines`の戻り値、時間指定、無効化、seed、
-フォント・Styleの扱いを確定する。共通計画内の作業案を出発点にし、判断と未解決事項を記録する。
+[段階02の結果](02-package-scaffold.md)、[確定API](API.md)、[パッケージREADME](../../remotion-jizura/README.md)を読んで、
+[段階03](03-scene-plan.md)のparser・時間配分・ScenePlanへ進む。
+空Sceneの描画証拠はあるが、歌詞・フォント・effect・外部consumerは未実装/未検証。
 各段階の終了時は実際に行った検証を結果欄へ記録する。過去の整理の検証結果とは区別する。
 
 [整理記録](CLEANUP.md)・[ルートREADME](../../README.md)

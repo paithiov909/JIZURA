@@ -6,7 +6,7 @@
 ## 開始時に読むもの
 
 - [AGENTS.md](../../AGENTS.md)、[ルートREADME](../../README.md)、[作業一覧](README.md)、[共通計画](PLAN.md)。
-- 段階01〜04の結果、`docs/remotion/API.md`、パッケージREADME。
+- 段階01〜04の結果、[確定API](API.md)、パッケージREADME。
 - [renderer.ts](../../engine/renderer.ts)、[基本layoutのmainDraw](../../effects/core/layouts.ts)。
 - 採用Remotion版の `useCurrentFrame`、`useVideoConfig`、Sequence、描画待機の公式資料。
 
@@ -38,6 +38,12 @@ Sceneのローカルframeから有効Cutと進行を計算し、Canvas描画をR
 - 専用型検査・focusedテスト・ビルド、実Remotion描画、`git diff --check`。
   ビルド経路の変更には共通計画の既存チェックも行う。
 - 比較は固定フォント・同一ブラウザで行い、プレビューと書き出しの証拠を分ける。
+
+## 段階01からの確定事項（2026-10-02）
+
+整数frameで先にactiveを決め、motionFps（既定null）はCut内評価秒だけに適用する。
+API.mdの入退場進行・hold強度・1frame・D2・Sequence境界のケースを確認する。
+Scene範囲外は背景もclearする。plan・item・bboxを前frameから変形蓄積しない。
 
 ## 結果・引き継ぎ
 

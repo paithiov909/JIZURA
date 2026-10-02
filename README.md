@@ -4,8 +4,10 @@
 [Remotion](https://www.remotion.dev/) 内のcanvasへリリックモーションを直接描画する
 独立したパッケージを開発します。移植元の整理は完了し、初期開発の7段階を計画しました。
 実装先は `remotion-jizura/`、パッケージ名は仮に `remotion-jizura` とします。
-公開APIの詳細は段階01で確定し、少数のエフェクトを使ってRemotionでの描画・書き出しを検証します。
-現時点では計画・引き継ぎ資料のみで、パッケージはまだ作成していません。
+[公開API](docs/remotion/API.md)は段階01で確定しました。段階02以降で実装を進め、
+少数のエフェクトを使ってRemotionでの描画・書き出しを検証します。
+段階02で[パッケージ雛形](remotion-jizura/README.md)と空Scene例を作成し、Studio表示・
+PNG・短いMP4書き出しを確認しました。歌詞・effect描画は後続段階で実装します。
 
 ## 移植元の入口
 

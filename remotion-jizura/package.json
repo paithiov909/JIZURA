@@ -1,0 +1,46 @@
+{
+  "name": "remotion-jizura",
+  "version": "0.1.0-alpha.0",
+  "description": "JIZURA lyric motion on a Remotion canvas (initial scaffold)",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=26.10.0 <27"
+  },
+  "peerDependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.532"
+  },
+  "devDependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.532",
+    "@remotion/cli": "4.0.532",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --project tsconfig.json",
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node --test --test-isolation=none tests/*.test.mjs",
+    "check": "npm run typecheck && npm run test",
+    "studio": "npm run build && remotion studio examples/index.tsx",
+    "still": "npm run build && remotion still examples/index.tsx EmptyScene ../dist/remotion/still.png",
+    "render": "npm run build && remotion render examples/index.tsx EmptyScene ../dist/remotion/empty.mp4",
+    "prepack": "npm run build"
+  }
+}

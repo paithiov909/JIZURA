@@ -6,7 +6,7 @@
 ## 開始時に読むもの
 
 - [AGENTS.md](../../AGENTS.md)、[ルートREADME](../../README.md)、[作業一覧](README.md)、[共通計画](PLAN.md)。
-- [段階01](01-api-contract.md)・段階02の結果、`docs/remotion/API.md`、パッケージREADME。
+- [段階01](01-api-contract.md)・段階02の結果、[確定API](API.md)、パッケージREADME。
 - [planner.ts](../../engine/planner.ts)、[util.ts](../../engine/util.ts)、
   [types.ts](../../engine/types.ts)、[effectの型](../../effects/types.ts)。
 
@@ -38,6 +38,24 @@ Reactから独立したparser、整数frameによる配置、seed導出、effect
 - 型検査・focused契約テスト・ビルドを、段階02で記録したコマンドで実行する。
 - `git diff --check`。ルートのビルド経路を変更した場合は共通計画の既存チェックも実行する。
 - この段階の計測stubやテスト用effectの成功は、実フォント・実effect・描画の証拠として扱わない。
+
+## 段階01からの確定事項（2026-10-02）
+
+parseLinesはscript分類fallback固定でIntlを使わず、数値numCutsを拒否する。
+API.mdの正確な3Cut例・code point範囲・escape・上限を契約テストにする。
+時間はD-1の入退場予算、非時系列宣言の元index保持、group別seedとparameter補完順まで
+仕様どおり実装する。ID候補をテストする定義と実effectを区別する。
+
+## 段階02からの実装入口（2026-10-02）
+
+`remotion-jizura/`がnpm workspaceとして存在し、専用TSX設定とESM公開entryがある。
+ルートで `npm run typecheck:remotion`、`npm run test:remotion`、`npm run build:remotion`、
+`npm run check:remotion` を使う。Studio/still/renderはパッケージREADME参照。
+`src/types.ts`がAPIの公開型、`src/pending.ts`がparser/factoryの未実装エラー。
+`src/core/empty-scene.ts`は空Scene検証だけで、seed/font/Style/motionFpsとCutは未解決。
+本段階でこれらの仮エラーを正式な検証・計画へ置き換え、`src/react/JizuraScene.tsx`に
+宣言収集を接続する。Cutの実描画を成功扱いせず、フォント・描画の接続は04以降へ渡す。
+雛形テストの「未実装」期待値は、対応部分の実装時に正式な契約ケースへ更新する。
 
 ## 結果・引き継ぎ
 
