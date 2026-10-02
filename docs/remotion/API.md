@@ -4,9 +4,9 @@
 この文書は実装仕様であり、実装・型検査・描画の成功記録ではない。
 パッケージ、依存、対応バージョン、検証コマンドは[段階02の結果](02-package-scaffold.md)に記録。
 段階03までに公開型・空Scene・parser・7factoryの宣言検証・計画/seed/parameter補完を実装済み。
-段階04で実フォント準備・glyph/item/box計測と静止描画を実装した。現状は先頭の計画Cutを静止表示し、
-Cut切り替え・frame評価は05、centerを含む実effect描画は06へ残す。
-検証結果は[段階03の結果](03-scene-plan.md)と[段階04の結果](04-static-canvas.md)を参照。
+段階04で実フォント準備・glyph/item/box計測と静止描画、段階05で整数Cut選択・進行/量子化評価を実装した。
+段階06でcenter/pop/wipe/drift/breathe/kasumi/checkerStripの実描画を接続した。
+検証結果は[段階03の結果](03-scene-plan.md)、[段階04の結果](04-static-canvas.md)、[段階05の結果](05-remotion-frames.md)、[段階06の結果](06-effect-port.md)を参照。
 初期実装の契約はこの文書を優先し、変更時は理由と影響するメモを更新する。
 
 ## 公開境界と型
@@ -107,7 +107,7 @@ type JizuraSceneProps = Readonly<{
 }>;
 ```
 
-初期対応ID集合は段階06完了時の予定。現在移植済みという意味ではない。
+初期対応ID集合は段階06で全7候補を移植・比較済み。
 段階02は空Sceneだけ、03〜05は段階メモに従う部分実装とし、テスト用effectを
 公開の対応IDとして扱わない。未実装の指定を黙って成功させない。
 他グループは初期型を `null` のみに絞る。将来はgroupごとのID・宣言型を追加する。
@@ -370,7 +370,7 @@ FontSpec、Style、paletteには未知keyを許さない。CSSPropertiesとは�
 | --- | --- |
 | palette | bg=#111111、fg=#FFFFFF、sub=#B8B8B8、accent=#F5A50C、accent2=#16F4D4、ink=#111111、dim=#333333 |
 | fontSize | 未指定ならcenter旧fitSizeとH*0.33の小さい方。指定は正の有限pxで、その値も上限に加える |
-| track | 未指定ならcenterで生成、静止描画では0.06。指定は有限0..1 em |
+| track | 未指定ならcenterで生成。段階04の歴史的静止subsetでは0.06。指定は有限0..1 em |
 | lead | 未指定ならcenter/静止描画とも1.2。指定は有限0.5..4 em |
 | emphasisColor | 未指定なら最終palette.accent |
 
@@ -378,6 +378,8 @@ center.params.trackが明示ならStyle.trackより優先する。
 Style.trackの明示があれば自動生成trackを上書きする。
 それ以外はcenterの生成値を使う。この「明示」の情報を解決済みplanに残す。
 Styleとfontを先に解決してから計測し、centerの自動改行にもemphasis範囲を追従させる。
+centerは明示改行を境界として保持し、各行に旧splitLines/splitWordsを適用する。
+段階06で「単一Cut文字列は改行を保持」の契約を優先し、旧splitLinesの複数行全体の再分割とは区別した。
 palette.bgはdecorの明暗判定用で、CutごとにSceneの基底背景を塗り直す指定ではない。
 強調はglyphのfillをemphasisColorに変更するだけ。文字サイズ・font・時間・seedを変えない。
 旧plannerの「強調が抽選の重みを変える」挙動は採用しない。

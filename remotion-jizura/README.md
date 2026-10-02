@@ -1,15 +1,15 @@
 # remotion-jizura
 
 Initial ESM package scaffold on the `remotion` branch, version `0.1.0-alpha.0`.
-Stages 03–04 implement parsing, declarations, planning, font preparation and
-static text drawing. The current preview displays the first planned Cut;
-Cut time selection and motion are implemented in stages 05–06.
+Stages 03–06 implement parsing, planning, font preparation, integer frame evaluation
+and seven canvas effects: center, pop, wipe, drift, breathe, kasumi and checkerStrip.
+The current Scene renders the active Cut with deterministic motion and decor.
 The complete target contract is maintained in the repository at `docs/remotion/API.md`.
 
 ```tsx
 import {JizuraScene} from 'remotion-jizura';
 
-// Inside a Remotion Composition or Player (example: 640×360, 24 fps).
+// Inside a Remotion Composition (example: 640×360, 24 fps).
 export const Empty = () => (
   <JizuraScene durationInFrames={24} background="#16324F" />
 );
@@ -36,12 +36,12 @@ validated without loading resources. Empty Scenes accept these settings, and an
 omitted background uses the Scene palette's `bg` (`#111111` by default).
 
 Nonempty Scenes prepare the exact registered font face (or load `font.src`),
-then measure and draw static glyphs. Standalone Cut and unsupported children
+then measure the center layout and draw each frame’s glyphs and effects. Standalone Cut and unsupported children
 throw `E_CHILD`. Unknown IDs, mismatched groups and invalid parameters throw
 `E_EFFECT`; invalid numbers, text and Style have their contracted error codes.
-Use `enter={null} exit={null} hold={null} decor={[]}` for static examples. Effect
-declarations are validated, but their motion/decor and the full center layout
-are not drawn yet. External consumers are tested in stage 07.
+Use `enter={null} exit={null} hold={null} decor={[]}` to disable motion/decor.
+Center parameters still control geometry and ornaments; fix them for a completely
+fixed static layout. External consumers are tested in stage 07.
 
 ## Static text and fonts
 
@@ -69,16 +69,97 @@ finish. Studio uses explicit preparation state. Scene cleanup releases its own
 faces and render handles while preserving caller-owned registrations.
 
 Cut fonts replace the entire Scene FontSpec. Cut Style merges palette keys and
-overrides other defined fields; emphasis changes glyph color only. Static drawing
-keeps manual newlines, uses automatic track 0.06, and fits within the canvas.
-Explicit center track takes precedence over Style.track. The full center reflow,
-scale, offsets and ornaments are assigned to stage 06. Cut palette.bg does not
-replace the Scene background. Geometry and measurement caches are Scene-owned.
+overrides other defined fields; emphasis changes glyph color only. Center preserves
+manual newlines, reflows each long line and fits the text including its horizontal
+scale. Automatic track comes from seeded center planning. Explicit center track
+takes precedence over Style.track. Center also supports offsets, accent, subtitle
+and underline. Cut palette.bg does not replace the Scene background. Geometry
+and measurement caches are Scene-owned; glyph/shard caches belong to the Canvas.
 
 Stage 04 verified the horizontal static subset against retained font/text code in
 Chrome154 with the same Noto Sans JP file: four cases had zero pixel differences.
-Real Studio display and 960×540 Remotion PNGs were checked separately. This does
-not establish effect, Cut-boundary, Sequence, Player or video-update compatibility.
+Real Studio display and 960×540 Remotion PNGs were checked separately. This stage
+04 evidence does not establish effect compatibility. Stage 05 separately verified
+Cut boundaries, Sequence offsets, reverse seeks and video updates; Player and
+external consumers remain unverified. Stage 06 separately verified all seven effects
+against the retained source with adapted font, seed and cache contracts: 283 frames
+had zero pixel differences. The original planner’s weighted/history selections
+are a separate contract and are not reproduced.
+
+## Timed static Cuts
+
+The Scene uses `useCurrentFrame()` directly, including its outer Sequence offset.
+Cuts occupy integer half-open intervals. Gaps draw the Scene background; frames
+outside the Scene clear everything. `motionFps` quantizes Cut-local evaluation
+seconds after Cut selection, so it cannot postpone a text switch. Phase values
+drive the enter → hold → exit pipeline; decor draws behind or in front of the text.
+
+The `TimedCuts` example has four distinct static texts, a one-frame Cut and a gap.
+Its `offset` prop moves the enclosing Sequence; it does not alter the Scene plan.
+After obtaining the comparison font below, run:
+
+```sh
+npm run build:remotion
+node remotion-jizura/tests/frame-browser.mjs
+npm exec --workspace remotion-jizura -- remotion still examples/index.tsx TimedCuts ../dist/remotion/stage05/example.png --frame=10 --public-dir=../dist/remotion/stage04/assets --browser-executable=/usr/bin/google-chrome
+npm run studio:remotion -- --public-dir=../dist/remotion/stage04/assets
+```
+
+The stage 05 browser harness writes PNGs, `timed-cuts.mp4` and `frame-result.json`
+to ignored `dist/remotion/stage05/`. It needs local Chrome, ffmpeg and ffprobe.
+Fifty sequential PNGs match independently rendered static anchors exactly.
+Sequence offsets 12/60 produce identical pixels at the same local frames.
+The H.264 CRF1 video is decoded and checked for the correct text/gap in every
+frame; its RGB/YUV and compression differences are reported separately from PNG
+equality. Preview lifecycle and synthetic test transformations are separate from
+the Remotion export checks and are not evidence of a JIZURA effect port.
+
+## Motion and decor
+
+```tsx
+import {JizuraScene, JizuraCut, center, pop, drift, breathe, kasumi, checkerStrip} from 'remotion-jizura';
+
+export const Motion = () => (
+  <JizuraScene durationInFrames={60}
+    font={{family: 'Noto Sans JP', weight: 700, src: staticFile('NotoSansJP.ttf')}}>
+    <JizuraCut text="新しい*朝*が来た"
+      layout={center({params: {sx: 1, ox: 0, oy: 0, sub: false, under: false}})}
+      enter={pop({seed: 123})} exit={drift({seed: 456})} hold={breathe()}
+      decor={[kasumi({seed: 889}), checkerStrip({seed: 721})]} />
+  </JizuraScene>
+);
+```
+
+Omit any supported group to choose reproducibly from its API candidate order:
+center; pop/wipe; drift; breathe; one kasumi/checkerStrip. These choices use equal
+probability, independent group streams and no history weights. Fix only the
+parameters you need; explicit `false`, `0` and seed `0` survive planning. Repeated
+decor IDs are allowed. Back decor draws first, then text and center ornaments,
+then front decor; each layer preserves declaration order. Drift uses raster
+components and polygon shards, with caches separated by font, glyph, resolution
+and item seed. Current-frame logical boxes (or static fallbacks) position decor,
+so reverse seeking does not depend on a previous frame’s box.
+
+The `EffectSamples` Composition has `mode` values `fixed`, `partial`, `automatic`,
+`disabled`, `seedDifferent` and `repeated`, plus `seed`, `offset` and `motionFps`.
+After preparing the comparison font below:
+
+```sh
+npm run build:remotion
+node remotion-jizura/tests/effect-browser.mjs
+npm exec --workspace remotion-jizura -- remotion still examples/index.tsx EffectSamples ../dist/remotion/stage06/example.png --frame=55 --public-dir=../dist/remotion/stage04/assets --browser-executable=/usr/bin/google-chrome
+npm run studio:remotion -- --public-dir=../dist/remotion/stage04/assets
+```
+
+The harness writes source comparison PNGs, `effects.mp4` and `effect-result.json`
+to ignored `dist/remotion/stage06/`. It verifies 283 source comparison frames,
+all 61 parallel Remotion PNGs against direct Canvas drawing, reverse seeks,
+Sequence, StrictMode, cache recreation, remounts and multiple Scenes. Every video
+frame is matched to the corresponding PNG; H.264 compression differences are
+reported separately from exact PNG comparisons. These checks use Chrome154,
+Noto Sans JP 700, 640×360 and 24fps. Other browsers/fonts, Player and external
+consumer installation remain stage 07 validation work. The PartA/PartB example
+is also completed in stage 07.
 
 ## Development
 
@@ -108,7 +189,7 @@ npm pack --workspace remotion-jizura --dry-run
 | Command | Result |
 | --- | --- |
 | `typecheck:remotion` | Strict TS/TSX checking of source, example and compile-only consumer |
-| `test:remotion` | Build, then 30 Node contracts; font resource tests use mocks |
+| `test:remotion` | Build, then 41 Node contracts; font resource tests use mocks |
 | `build:remotion` | ESM JavaScript and declarations in `remotion-jizura/dist/` |
 | `check:remotion` | Typecheck and Node contracts, including build |
 | `studio:remotion` | Local Remotion Studio for `examples/index.tsx` |

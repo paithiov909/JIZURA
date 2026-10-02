@@ -2,11 +2,14 @@
 import React, {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import {flushSync} from 'react-dom';
-import {Internals} from 'remotion';
+import {Internals, Sequence} from 'remotion';
 import {JizuraScene, JizuraCut} from '../src/index.ts';
 import {prepareScene, finalizeScene} from '../src/core/scene-plan.ts';
 import {CanvasMeasurementService} from '../src/canvas/service.ts';
 import {drawStaticFrame} from '../src/canvas/static-frame.ts';
+import {drawFrame} from '../src/canvas/frame.ts';
+import {measureStaticCut} from '../src/canvas/geometry.ts';
+import {fontCSS} from '../src/canvas/fonts.ts';
 import installFonts from '../../ui/services/fonts.js';
 import installText from '../../engine/text.ts';
 
@@ -25,7 +28,7 @@ class ErrorBoundary extends React.Component {
 }
 
 function context(child, frame = 0) {
-  return <Internals.CompositionManager.Provider value={{compositions: [{id: 'test', ...config, durationInFrames: 60, defaultProps: {}}], canvasContent: {type: 'composition', compositionId: 'test'}}}>
+  return <Internals.CompositionManager.Provider value={{compositions: [{id: 'test', ...config, durationInFrames: 120, defaultProps: {}}], canvasContent: {type: 'composition', compositionId: 'test'}}}>
     <Internals.CanUseRemotionHooksProvider><Internals.TimelineContext.Provider value={{frame: {test: frame}}}>{child}</Internals.TimelineContext.Provider></Internals.CanUseRemotionHooksProvider>
   </Internals.CompositionManager.Provider>;
 }
@@ -36,13 +39,17 @@ async function waitReady(host, count = 1) {
   }
   throw new Error('Canvas never became ready');
 }
+// Preserve stage04's isolated text subset comparison; public Scene uses center.
+class LegacyMeasurementService extends CanvasMeasurementService {
+  measureCut(cut, scene) {const ctx = document.createElement('canvas').getContext('2d'); return measureStaticCut(cut, scene, (font, ch) => {ctx.font = fontCSS(font, 100); const w = ctx.measureText(ch).width / 100; return w > 0 ? w : ch === ' ' ? 0.3 : 1;});}
+}
 window.runCanvasChecks = async () => {
   const report = {cases: [], lifecycle: {}};
   for (const variant of ['normal', 'override', 'small', 'transparent']) {
     const settings = variant === 'small' ? {...config, width: 320, height: 180} : config;
     const props = variant === 'override' ? {...cutProps, font: {...font, weight: 400}, style: {palette: {fg: '#B8B8B8', bg: '#FF0000'}, track: 0.12}} : cutProps;
     const prepared = prepareScene({durationInFrames: 24, font, style, background: variant === 'transparent' ? null : '#16324F'}, settings, [props]);
-    const service = new CanvasMeasurementService(document);
+    const service = new LegacyMeasurementService(document);
     try {
       const plan = await finalizeScene(prepared, service), cut = plan.cuts[0], item = cut.geometry.items[0];
       check(Object.isFrozen(item.glyphs), 'Geometry must be immutable');
@@ -80,7 +87,7 @@ window.runCanvasChecks = async () => {
   }
   const callerFace = new FontFace(font.family, 'url(/NotoSansJP.ttf)', {weight: '100 900', style: 'normal'});
   document.fonts.add(callerFace);
-  const callerService = new CanvasMeasurementService(document);
+  const callerService = new LegacyMeasurementService(document);
   const callerPlan = await finalizeScene(prepareScene({durationInFrames: 24, font: {family: font.family}, style, background: '#16324F'}, config, [cutProps]), callerService);
   const callerCanvas = makeCanvas(960, 540); drawStaticFrame(callerCanvas, callerPlan, true);
   check(callerCanvas.toDataURL() === report.cases[0].target, 'Registered caller face changed pixels');
@@ -126,7 +133,7 @@ window.runCanvasChecks = async () => {
   // Real FontFace failure and bounded wait: no fallback metrics may be used.
   report.failures = [];
   for (const src of ['/missing-font.ttf', '/bad-font.ttf', '/slow-font.ttf']) {
-    const service = new CanvasMeasurementService(document, 100);
+    const service = new LegacyMeasurementService(document, 100);
     try {
       await finalizeScene(prepareScene({durationInFrames: 24, font: {...font, src}}, config, [cutProps]), service);
       throw new Error('Invalid font unexpectedly prepared');
@@ -135,4 +142,91 @@ window.runCanvasChecks = async () => {
   }
   check(document.fonts.size === 0, 'Font failures leaked faces');
   return report;
+};
+
+window.runFrameChecks = async () => {
+  const props = {durationInFrames: 60, font, style, background: '#16324F'};
+  const declarations = [
+    {text: '*夜*', from: 30, durationInFrames: 30},
+    {text: '朝', from: 0, durationInFrames: 10},
+    {text: '一瞬', from: 10, durationInFrames: 1},
+  ];
+  const service = new CanvasMeasurementService(document);
+  const prepared = prepareScene(props, config, declarations), plan = await finalizeScene(prepared, service);
+  const snapshot = JSON.stringify(plan), canvas = makeCanvas(960, 540), images = {};
+  // Deliberately synthetic motion proves frame-local scratch data only. These
+  // formulas are not JIZURA effects and never run in the public Scene.
+  const syntheticTransform = work => {
+    const t = work.state.evaluationSeconds;
+    work.items[0].x += Math.sin(t * 7) * 80;
+    work.items[0].sx *= 1 + work.state.pIn * 0.1;
+    work.items[0].glyphs[0].y += work.state.pOut * 20;
+    work.box.x0 += 10;
+  };
+  for (const f of [0, 30, 10, 30, 31, 40, 59, 30]) {
+    drawFrame(canvas, plan, f, syntheticTransform);
+    const url = canvas.toDataURL();
+    if (images[f]) check(images[f] === url, 'Synthetic seek changed pixels');
+    images[f] = url;
+  }
+  check(images[30] !== images[40], 'Synthetic transform must exercise changing pixels');
+  check(JSON.stringify(plan) === snapshot, 'Drawing changed the plan');
+  for (const f of [-1, 60]) {
+    drawFrame(canvas, plan, f);
+    check(canvas.getContext('2d').getImageData(0, 0, 960, 540).data.every(v => v === 0), 'Direct out-of-range draw retained pixels');
+  }
+  service.dispose();
+  const regeneratedService = new CanvasMeasurementService(document);
+  const regenerated = await finalizeScene(prepareScene(props, config, declarations), regeneratedService);
+  drawFrame(canvas, regenerated, 40, syntheticTransform);
+  check(canvas.toDataURL() === images[40], 'Rebuilt font/metrics/plan changed pixels');
+  const quantized = await finalizeScene(prepareScene({...props, motionFps: 12}, config, declarations), regeneratedService);
+  drawFrame(canvas, quantized, 30, syntheticTransform); const q30 = canvas.toDataURL();
+  drawFrame(canvas, quantized, 31, syntheticTransform); check(canvas.toDataURL() === q30, 'Quantized pose did not repeat');
+  drawFrame(canvas, quantized, 32, syntheticTransform); check(canvas.toDataURL() !== q30, 'Quantized pose never advanced');
+  regeneratedService.dispose();
+
+  const host = document.createElement('div'); document.body.append(host);
+  const root = createRoot(host);
+  const component = extra => <JizuraScene {...props} {...extra}>{declarations.map((c, i) =>
+    <JizuraCut key={i} {...c} enter={null} exit={null} hold={null} decor={[]} />)}</JizuraScene>;
+  flushSync(() => root.render(context(<StrictMode>{component()}</StrictMode>)));
+  await waitReady(host);
+  const original = host.querySelector('canvas'), captured = {};
+  for (const f of [0, 30, 10, 30, 11, 60, 0]) {
+    flushSync(() => root.render(context(<StrictMode>{component()}</StrictMode>, f)));
+    check(host.querySelector('canvas') === original, 'Frame update recreated Scene resources');
+    const url = original.toDataURL();
+    if (captured[f]) check(captured[f] === url, 'Mounted Scene seek changed pixels');
+    captured[f] = url;
+    if (f === 11) check(original.getContext('2d').getImageData(0, 0, 960, 540).data.every((v, i) => v === [22, 50, 79, 255][i % 4]), 'Gap left old text');
+    if (f === 60) check(original.getContext('2d').getImageData(0, 0, 960, 540).data.every(v => v === 0), 'Outside Scene left text/background');
+    check(window.remotion_delayRenderHandles.length === 0, 'Frame commit leaked a render handle');
+  }
+  // Real Sequence components exercise useCurrentFrame, rather than a fabricated
+  // offset passed to the Scene. Nested offsets must also compose exactly once.
+  for (const [parentFrame, child] of [
+    [40, <Sequence from={30} durationInFrames={60}>{component()}</Sequence>],
+    [50, <Sequence from={20} durationInFrames={60}><Sequence from={20} durationInFrames={60}>{component()}</Sequence></Sequence>],
+  ]) {
+    flushSync(() => root.render(context(child, parentFrame)));
+    await waitReady(host);
+    check(host.querySelector('canvas').toDataURL() === captured[10], 'Sequence local time changed pixels');
+  }
+  flushSync(() => root.render(context(<>{component()}{component({width: 320, height: 180, background: null})}</>, 30)));
+  await waitReady(host, 2);
+  check(host.querySelector('canvas').toDataURL() === captured[30], 'Another Scene changed output');
+  root.unmount();
+  const pendingRoot = createRoot(host);
+  const pendingScene = () => component({font: {...font, src: '/slow-font.ttf'}});
+  flushSync(() => pendingRoot.render(context(pendingScene(), 0)));
+  flushSync(() => pendingRoot.render(context(pendingScene(), 30)));
+  await waitReady(host);
+  check(host.querySelector('canvas').toDataURL() === captured[30], 'Async preparation drew a stale frame');
+  pendingRoot.unmount();
+  check(document.fonts.size === 0 && window.remotion_delayRenderHandles.length === 0, 'Frame lifecycle leaked resources');
+  host.remove();
+  return {syntheticTransform: {jizuraEffect: false, seekOrder: [0, 30, 10, 30, 31, 40, 59, 30], identicalPixels: true, rebuiltPlanIdentical: true, planUnchanged: true, quantizedPoses: true, outsideClear: [-1, 60]},
+    scene: {seekOrder: [0, 30, 10, 30, 11, 60, 0], sameCanvas: true, sequenceIdentical: true, nestedSequenceIdentical: true,
+      multipleScenes: true, strictMode: true, latestFrameAfterSlowPreparation: true, finalFaces: document.fonts.size, finalHandles: window.remotion_delayRenderHandles.length}};
 };

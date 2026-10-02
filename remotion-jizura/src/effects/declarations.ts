@@ -13,8 +13,8 @@ export type ResolvedEffect = Readonly<{
   params: Readonly<Record<string, ParamValue>>; explicitParams: readonly string[];
   layer?: 'back' | 'front';
 }>;
-// This catalog describes declarations and parameter planning only. It contains
-// no render/apply callbacks and is not a registry of ported runtime effects.
+// All catalog IDs are implemented by center.ts, motion.ts and decor.ts.
+// Candidate order/weights remain the API v1 equal-probability selection.
 export const CANDIDATES = freeze({layout: ['center'], enter: ['pop', 'wipe'], exit: ['drift'], hold: ['breathe'], decor: ['kasumi', 'checkerStrip']});
 function params(value: unknown, group: Group, path: string): Record<string, ParamValue> | undefined {
   if (value === undefined) return undefined;

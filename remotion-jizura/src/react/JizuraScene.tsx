@@ -2,7 +2,8 @@ import {useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {useCurrentFrame, useDelayRender, useRemotionEnvironment, useVideoConfig} from 'remotion';
 import {drawEmptyFrame} from '../canvas/empty-frame.js';
 import {CanvasMeasurementService} from '../canvas/service.js';
-import {drawStaticFrame} from '../canvas/static-frame.js';
+import {clearEffectCache} from '../canvas/effect-frame.js';
+import {drawFrame} from '../canvas/frame.js';
 import type {CutGeometry} from '../canvas/geometry.js';
 import {finalizeScene, type PreparedScene, type ScenePlan} from '../core/scene-plan.js';
 import {prepareSceneFromProps} from './collect-cuts.js';
@@ -30,7 +31,6 @@ export function JizuraScene(props: JizuraSceneProps) {
 function SceneCanvas({scene, frame}: {scene: PreparedScene; frame: number}) {
   const ref = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(frame);
-  frameRef.current = frame;
   const [plan, setPlan] = useState<ScenePlan<CutGeometry> | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const {delayRender, continueRender, cancelRender} = useDelayRender();
@@ -38,15 +38,16 @@ function SceneCanvas({scene, frame}: {scene: PreparedScene; frame: number}) {
 
   useLayoutEffect(() => {
     if (!scene.cuts.length) return;
-    const service = new CanvasMeasurementService(ref.current!.ownerDocument);
-    const handle = delayRender('JIZURA fonts, measurement and static drawing');
+    const canvas = ref.current!;
+    const service = new CanvasMeasurementService(canvas.ownerDocument);
+    const handle = delayRender('JIZURA fonts, measurement and first frame');
     let cancelled = false, released = false;
     const release = () => { if (!released) { released = true; continueRender(handle); } };
     finalizeScene(scene, service).then(result => {
       if (cancelled) return;
       // Draw before releasing the render handle; preview readiness is also
       // explicit because delayRender itself has no effect in Studio/Player.
-      drawStaticFrame(ref.current!, result, frameRef.current >= 0 && frameRef.current < scene.durationInFrames);
+      drawFrame(ref.current!, result, frameRef.current);
       ref.current!.dataset.jizuraReady = 'true';
       setPlan(result);
       release();
@@ -60,13 +61,18 @@ function SceneCanvas({scene, frame}: {scene: PreparedScene; frame: number}) {
         try { cancelRender(failure); } catch (cancellation) { if (cancellation !== failure) throw cancellation; }
       }
     });
-    return () => { cancelled = true; service.dispose(); release(); };
+    return () => { cancelled = true; clearEffectCache(canvas); service.dispose(); release(); };
   }, [scene, delayRender, continueRender, cancelRender, isRendering]);
 
   useLayoutEffect(() => {
+    // Async preparation must read the latest committed frame, never a frame
+    // from a speculative React render that was abandoned.
+    frameRef.current = frame;
     if (!ref.current) return;
     const active = frame >= 0 && frame < scene.durationInFrames;
-    if (plan) drawStaticFrame(ref.current, plan, active);
+    // Canvas drawing is synchronous in the commit's layout effect, before
+    // Remotion's frame-ready acknowledgement. Only font/plan work is async.
+    if (plan) drawFrame(ref.current, plan, frame);
     else drawEmptyFrame(ref.current, scene.background, active);
   }, [frame, scene, plan]);
   if (error) throw error;

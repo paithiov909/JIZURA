@@ -11,6 +11,8 @@ Remotion内のcanvasへJIZURAのリリックモーションを直接描画する
 Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを確認した。
 段階03でparser・時間配分・seed・宣言/parameter検証・計測前計画と計測サービス境界を実装した。
 段階04で実フォント・文字計測と静止Canvas描画を接続し、Studio・PNG・参照pixel比較を確認した。
+段階05でCut選択・進行/量子化評価を接続し、境界PNG・Sequence・逆順取得・短い動画を確認した。
+段階06で7effectを接続し、参照283frameの画素差0と実PNG/動画・seek/cache再生成を確認した。
 
 ## 各スレッドの作業入口
 
@@ -23,9 +25,9 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 | 02 | [パッケージ雛形とRemotion例](02-package-scaffold.md) | 01完了 | 完了（空Scene・実書き出し） |
 | 03 | [parser・時間配分・ScenePlan](03-scene-plan.md) | 02完了 | 完了（Node契約・計測stub） |
 | 04 | [フォント準備と静止Canvas描画](04-static-canvas.md) | 03完了 | 完了（実フォント・静止PNG・pixel比較） |
-| 05 | [Remotionのframeと描画の接続](05-remotion-frames.md) | 04完了 | 未着手（開始可能） |
-| 06 | [少数effectの移植](06-effect-port.md) | 05完了 | 未着手 |
-| 07 | [利用例・書き出し・外部利用検証](07-scene-validation.md) | 06完了 | 未着手 |
+| 05 | [Remotionのframeと描画の接続](05-remotion-frames.md) | 04完了 | 完了（frame評価・境界/Sequence・実書き出し） |
+| 06 | [少数effectの移植](06-effect-port.md) | 05完了 | 完了（7effect・参照画素差0・実書き出し） |
+| 07 | [利用例・書き出し・外部利用検証](07-scene-validation.md) | 06完了 | 未着手（開始可能） |
 
 新しいスレッドには、段階番号と対応するメモを指定する。開始依頼の例：
 
@@ -64,10 +66,10 @@ docs/remotion/01-api-contract.mdを読み、指定された範囲だけを進め
 
 ## 次の作業
 
-[段階04の結果](04-static-canvas.md)、[確定API](API.md)、[パッケージREADME](../../remotion-jizura/README.md)を読んで、
-[段階05](05-remotion-frames.md)のCut選択・frame評価へ進む。
-parser/factory/計画のNode契約と固定フォントの静止歌詞描画は検証済み。
-現在の描画は先頭の計画Cutの静止表示。実effect・Cut境界/Sequence・動画更新・外部consumerは未検証。
+[段階06の結果](06-effect-port.md)、[確定API](API.md)、[パッケージREADME](../../remotion-jizura/README.md)を読んで、
+[段階07](07-scene-validation.md)のPartA/PartB・Player・外部consumer検証へ進む。
+7effectとframe/cache再現性、固定フォントの同一ブラウザ比較、実Remotion書き出しは検証済み。
+`EffectSamples` と `node remotion-jizura/tests/effect-browser.mjs` が回帰入口。
 各段階の終了時は実際に行った検証を結果欄へ記録する。過去の整理の検証結果とは区別する。
 
 [整理記録](CLEANUP.md)・[ルートREADME](../../README.md)

@@ -2,7 +2,8 @@ import {JizuraError} from '../core/error.js';
 import type {MeasurementService, PreparedCut, PreparedScene} from '../core/scene-plan.js';
 import type {ResolvedFont} from '../core/style.js';
 import {fontCSS, SceneFonts} from './fonts.js';
-import {measureStaticCut, type CutGeometry} from './geometry.js';
+import type {CutGeometry} from './geometry.js';
+import {measureCenterCut} from './center.js';
 
 export class CanvasMeasurementService implements MeasurementService<CutGeometry> {
   private fonts: SceneFonts;
@@ -16,10 +17,11 @@ export class CanvasMeasurementService implements MeasurementService<CutGeometry>
   async prepareFonts(scene: PreparedScene): Promise<void> {
     const groups = new Map<string, {font: ResolvedFont; text: string; path: string}>();
     for (const cut of scene.cuts) {
+      const sample = cut.text + (cut.layout.params.sub ? cut.lineText : "");
       const key = JSON.stringify(cut.font);
       const entry = groups.get(key);
-      if (entry) entry.text += cut.text;
-      else groups.set(key, {font: cut.font, text: cut.text, path: `cuts[${cut.declarationIndex}].font`});
+      if (entry) entry.text += sample;
+      else groups.set(key, {font: cut.font, text: sample, path: `cuts[${cut.declarationIndex}].font`});
     }
     for (const {font, text, path} of groups.values()) await this.fonts.prepare(font, text, path);
     if (this.disposed) throw new JizuraError('E_FONT', 'font', 'Measurement service was disposed.');
@@ -32,7 +34,7 @@ export class CanvasMeasurementService implements MeasurementService<CutGeometry>
 
   measureCut(cut: PreparedCut, scene: PreparedScene): CutGeometry {
     if (!this.ready || this.disposed || !this.context) throw new JizuraError('E_FONT', `cuts[${cut.declarationIndex}].font`, 'Prepare fonts before measuring text.');
-    return measureStaticCut(cut, scene, (font, ch) => {
+    return measureCenterCut(cut, scene, (font, ch) => {
       const key = JSON.stringify([font, ch]);
       let advance = this.cache.get(key);
       if (advance === undefined) {

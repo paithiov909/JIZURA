@@ -50,6 +50,19 @@ PartAのparse結果は3Cut・各20frame、利用側でNoto Sans JP 700を準備�
 全固定/全無効/部分固定・境界ケースはAPI.mdを基準とする。
 旧planner抽選との一致、effect比較、実Remotionの再現性・外部利用を別項目として報告する。
 
+## 段階06からの実装入口（2026-10-03）
+
+7候補がすべて描画に接続済み。`EffectSamples` のmode（fixed/partial/automatic/disabled/
+seedDifferent/repeated）、offset、motionFpsを利用できる。PartA/PartB統合は本段階の作業。
+`npm run check:remotion` は41件Node契約、`node remotion-jizura/tests/effect-browser.mjs` は
+参照283frame・全61並列PNG・MP4/Sequence/seek/cache再生成の回帰入口。
+固定font・環境・adapterの差・出力は[06の結果](06-effect-port.md)を参照する。
+
+centerは明示改行を保持して各行へreflowを適用する。自動track/sx/offset/sub/underも描画するため、
+完全な静止例ではmotion/decor無効化に加えてcenter.paramsを固定する。
+公開sourceから参照ソースをimportしない。font準備・計測geometryはScene所有、glyph cacheは
+Canvas所有でcleanup/seed分離済み。Player・外部pack consumer・他環境fontは未検証。
+
 ## 結果・引き継ぎ
 
 未実施。日付・状態、最終APIと対応effect、変更ファイル、正確な実行コマンドと結果、

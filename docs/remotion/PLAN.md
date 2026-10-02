@@ -6,7 +6,7 @@
 ユーザーが採用した初期計画を、別スレッドで実施できる単位に分けた資料。
 作成時点ではパッケージは存在せず、各段階は未実施だった。
 同日の[段階01](01-api-contract.md)で[API契約](API.md)を確定した。
-現在は01〜04完了、05以降は未実施。APIの詳細はAPI.mdを優先する。
+現在は01〜06完了、07は未実施。APIの詳細はAPI.mdを優先する。
 
 ## 到達点
 
@@ -23,8 +23,7 @@ Cut間transition、配布サイト、npm公開は初期段階の対象外。
 
 ユーザーのスケッチを段階01のAPI契約として採用。parseLinesの返却値は構造化chunkで、
 この例は3Cutを20frameずつ配置する。Noto Sans JP 700のfaceを利用側で登録してから使う。
-段階04で静止歌詞描画は接続済みだが、Cut切り替え・effect描画は未実装のため、
-この例全体の時間・モーション動作はまだ検証できない。
+段階06でCut/frame評価と7effectを接続済み。このPartA/PartB統合例の検証は段階07で行う。
 
 ```jsx
 const PartA = ({durationInFrames}) => {
@@ -107,7 +106,7 @@ React・Remotionはpeer dependencyとし、対応バージョンと開発依存�
 
 [API.md](API.md)が公開型・既定値・入力検証・エラー・受け入れケースを定める。
 Scene、Cut、parseLinesと7factoryを公開し、ScenePlan・registry・PRNGは非公開。
-対応ID集合は段階06完了時の予定であり、現在移植済みではない。
+対応ID集合は段階06で全7候補を移植済み。
 段階02は空Sceneのみ実装する。
 
 - Scene duration必須、幅・高さ省略はRemotion設定、fpsもRemotionから取得。
@@ -231,3 +230,16 @@ decorのparameter生成は [engine/planner.ts](../../engine/planner.ts) の `dec
   04の静止経路は先頭の計画Cutを中央表示し、自動trackは0.06、sx/syは1。
   centerのreflow/params/装飾を含む静止boxへの更新は06、Cut選択/phase評価は05。
   公開契約は変更なし。詳細は[04の結果](04-static-canvas.md)。
+
+- 2026-10-03（段階05）：整数active判定・Cutローカル秒・進行/hold強度・motionFpsを接続。
+  frame用item/glyph/font/boxを複製し、同期layout effectでCanvas更新を完了する。
+  退出開始は `(D-exitFrames)/fps` で計算し、浮動小数の相殺誤差による微小pOutを防ぐ。
+  35件のNode契約、境界PNG・Sequence・逆順seek・50frameの連続PNG/動画を検証。
+  実effectは未移植で、テスト用変形と区別した。API契約変更なし。詳細は[05の結果](05-remotion-frames.md)。
+
+- 2026-10-03（段階06）：center/pop/wipe/drift/breathe/kasumi/checkerStripを接続。
+  centerは明示改行を保持して各行を旧reflowへ渡し、fontSize/lead/強調を解決する。
+  APIの改行保持を優先した差で、型・候補・parameter範囲は変更なし。
+  glyph連結成分/polygon分解を安定キー・seed別cacheで移植し、現在frame bboxを使用。
+  41件Node契約、参照283frame画素差0、全61並列PNG/短い動画・Studio・再mountを検証。
+  PartA/PartB統合・Player・外部consumerは07へ残す。詳細は[06の結果](06-effect-port.md)。

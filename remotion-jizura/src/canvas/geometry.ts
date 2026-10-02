@@ -10,7 +10,7 @@ export type StaticItem = Readonly<{
   text: string; font: ResolvedFont; size: number; track: number; lead: number;
   x: number; y: number; sx: number; sy: number; glyphs: readonly Glyph[];
 }>;
-export type CutGeometry = Readonly<{items: readonly StaticItem[]; box: Box | null}>;
+export type CutGeometry = Readonly<{items: readonly StaticItem[]; box: Box | null; subtitle?: StaticItem}>;
 export type Advance = (font: ResolvedFont, ch: string) => number;
 
 // Horizontal, centered, typeset=false subset of engine/text.ts. Newlines count
