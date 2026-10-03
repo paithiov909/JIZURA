@@ -1,6 +1,6 @@
 # remotion-jizura 表現拡充・レビュー体験の開発計画
 
-作成日：2026-10-03。ブランチ：`remotion`。状態：計画のみ、08〜14は未着手。
+作成日：2026-10-03。ブランチ：`remotion`。状態：08は実装・技術検証完了、09〜14は未着手。
 初期01〜07の[計画](PLAN.md)・[API](API.md)・[検証記録](VALIDATION.md)を前提とする。
 [作業一覧](README.md)から各タスクへ進む。
 
@@ -109,3 +109,15 @@ JIZURAとの実接続や新しいレビュー体験は、この計画の作成�
 未追跡を含む末尾空白、08〜14の必須欄と状態表を確認し、欠落・空白エラー0。
 `git diff --check`も成功。checkerはこの計画作成時の一時ファイルで、repositoryには追加していない。
 最初の着手先は08。
+
+## 段階08の結果（2026-10-03）
+
+既存7effectの単独例とcombined/editedの比較9案を追加した。明示seed・全center/decor
+params・2Cutの時間を固定し、最初のCutだけの変更・保存入力の再読込・復元を実測した。
+実Playerのseek/両Cut loop、99代表PNG、9本の2.5秒MP4、実Studio保存backendと
+再読み込み15frameを確認。詳細・実行条件・目視とユーザーレビューの区別は[08の結果](08-review-workbench.md)。
+
+公開契約は変更していない。例の入力ラベルは公開Cut IDではなく、JSONは開発用入力。
+Studioの保存には採用版が探索できるentry/root名とリテラルdefault propsが必要だったため、
+`examples/studio-entry.tsx` / `StudioRoot.tsx`を追加し、初期候補を文字列propsにした。
+09には局所編集用parameterの意味、構成確認、識別・seedの条件、Player/Studio間の転記の不便を渡す。

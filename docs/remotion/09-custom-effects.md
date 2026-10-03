@@ -50,6 +50,23 @@
 配布plugin管理、外部effectの動的取得、旧registry全移植、標準画像fx、旧JSON互換、全group対応。
 拡張APIの設計で後続範囲が変わる場合は理由と対応案をメモへ反映する。
 
+## 段階08からの入口（2026-10-03）
+
+[08の結果](08-review-workbench.md)と[レビュー例の手順](../../remotion-jizura/examples/review/README.md)を読む。
+`examples/review/inputs.tsx` / `ReviewWorkbench.tsx`のtarget/reference 2Cutを利用する。
+全seed・center/decor paramsを固定したcombined→edited→combinedの保存JSON、
+frame6/24/52とreference84/112、9動画、環境/hash対応はignored `dist/remotion/stage08/`。
+再生成は`node remotion-jizura/tests/review-browser.mjs`。新APIによる局所修正・復元の比較入口とする。
+
+08は例側だけの変更で公開APIを追加していない。`id`はReact key/開発ラベル、
+`candidate`/`input`は例のprops、JSONは公開プロジェクト形式ではない。
+動きの強度/速度は現factoryの空paramsで調整できない。decor.v/r等の意味を確認できる
+metadata、計測前後の解決済み構成、明示seedと安定した識別の関係が09の検討材料。
+Player選択・Studio保存・JSON編集は自動同期されず、全入力の転記が必要。
+初期candidateを含むリテラルdefault propsでStudio保存backendは動くが、
+`reviewInputs.combined`のようなcomputed値は保存できない。保存入口は
+`examples/studio-entry.tsx` / `StudioRoot.tsx`。Saveボタンの手操作とユーザーのdesign承認は未確認。
+
 ## 結果・引き継ぎ
 
 未着手。確定した公開値/型、独自例の場所、構成取得のタイミング、checks/実描画、制約を追記する。

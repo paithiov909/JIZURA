@@ -39,7 +39,7 @@
     "build": "node scripts/build.mjs",
     "test": "npm run build && node --test --test-isolation=none tests/*.test.mjs",
     "check": "npm run typecheck && npm run test",
-    "studio": "npm run build && remotion studio examples/index.tsx",
+    "studio": "npm run build && remotion studio examples/studio-entry.tsx",
     "still": "npm run build && remotion still examples/index.tsx EmptyScene ../dist/remotion/still.png",
     "render": "npm run build && remotion render examples/index.tsx EmptyScene ../dist/remotion/empty.mp4",
     "prepack": "npm run build",

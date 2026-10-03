@@ -17,7 +17,9 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 
 次は、AIが組んだコードを人間が見て直す制作フローに向け、表現の拡充・選択・レビュー体験を整えます。
 [拡張計画](docs/remotion/EXTENSION-PLAN.md)に08〜14の7タスクを用意しました。
-最初の着手先は[08：既存7effectの最小レビュー環境](docs/remotion/08-review-workbench.md)です。
+[08：既存7effectの最小レビュー環境](docs/remotion/08-review-workbench.md)を実装し、
+比較9案・局所変更と復元・保存入力からのPNG/短い動画・Studio保存を検証しました。
+次の着手先は[09：独自effect・構成確認API](docs/remotion/09-custom-effects.md)です。
 旧版の完全互換は目標にせず、LRC・音声解析・拍スナップは利用側のワークフローで扱います。
 AE/CEP連携は対象外。大きなプロジェクト構造・導入・配布の決定は後段に置きます。
 

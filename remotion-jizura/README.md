@@ -51,6 +51,17 @@ independent decor seeds. The executable repository example is
 `examples/lyrics.tsx`, shared by Studio and Player. It also accepts `fontSrc`,
 `seed` (Scene seed, default 20260922) and `cutSeed` (PartA base seed, default 1234).
 
+## Minimal effect review
+
+Stage08 adds `ReviewWorkbench` and a small Player selector for the seven current
+effects, combined/edited inputs, and target/reference Cut loops. See the
+[review example](examples/review/README.md) for the shortest comparison, local edit,
+saved JSON, PNG/video export and restore workflow. Run the existing Player command
+and open `http://localhost:3108/?review`; the original LyricsDemo remains at `/`.
+`node remotion-jizura/tests/review-browser.mjs` writes ignored
+`dist/remotion/stage08/` outputs. `review-studio.mjs` checks saving in running Studio.
+These are development inputs, not a public project format or new effect API.
+
 ## Choosing effects and timing
 
 These Cut declarations fit inside a Scene with a loaded font:
@@ -328,10 +339,10 @@ npm pack --workspace remotion-jizura --dry-run
 | Command | Result |
 | --- | --- |
 | `typecheck:remotion` | Strict TS/TSX checking of source, example and compile-only consumer |
-| `test:remotion` | Build, then 41 Node contracts; font resource tests use mocks |
+| `test:remotion` | Build, then 42 Node contracts; font resource tests use mocks |
 | `build:remotion` | ESM JavaScript and declarations in `remotion-jizura/dist/` |
 | `check:remotion` | Typecheck and Node contracts, including build |
-| `studio:remotion` | Local Remotion Studio for `examples/index.tsx` |
+| `studio:remotion` | Local Remotion Studio for `examples/studio-entry.tsx` / `StudioRoot.tsx` |
 | `still:remotion` | Frame 0 PNG, `dist/remotion/still.png`, 640×360 |
 | `render:remotion` | H.264 MP4, `dist/remotion/empty.mp4`, 24 frames at 24 fps |
 
