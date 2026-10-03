@@ -171,3 +171,41 @@ push・公開・release・依存追加は行っていない。
 [段階05](05-remotion-frames.md)は `ScenePlan<CutGeometry>` と `drawStaticFrame` の先頭Cut選択を
 frame評価/activeCut選択へ置き換えるところから開始する。サービスとhandle管理を保ち、
 frame用変形をplanへ蓄積しない。center geometryの完成と静止box更新は06の範囲。
+
+### 追補：Studioのフォント失敗診断（2026-10-03）
+
+初期01〜07の完了後、`npm run studio:remotion` で `--public-dir` を省略すると
+`staticFile('NotoSansJP.ttf')` が404になり、ブラウザの `NetworkError` だけでは
+原因や設定の確認箇所が分からない問題を修正した。
+
+- `src/canvas/fonts.ts`：非同期失敗・timeout・cancelを、code/pathを保った `E_FONT` に
+  統一して文脈を付加。Studioの折りたたまれた表示でも冒頭に `font.src` と
+  `--public-dir` の確認を案内する。family/weight/style・指定src・baseURIで解決したURL・
+  原因を続け、元の例外を `cause` に保持。srcなしの場合は登録方法を案内する。
+  ロード・参照数・cleanup・描画・公開propsの契約は変更しない。
+- `tests/canvas.test.mjs`：native NetworkErrorの情報とcause、未登録・timeout・cancelの
+  診断を検証。`tests/browser-entry.jsx`：実際の欠落/不正/遅延fontとReact境界の
+  表示にURL・対処が含まれ、失敗時にface/待機handleが残らないことを確認する。
+- 文書：package READMEに診断内容とworkspace基準の `--public-dir` を追記。
+  本結果欄と作業一覧の04状態を更新した。共通計画・後続段階の契約変更はない。
+
+実行チェック：
+
+- `npm run check:remotion`：strict型検査・package build・Node契約42件が成功。
+- `node remotion-jizura/tests/canvas-browser.mjs`：Chrome154/Noto Sans JPで欠落404・
+  不正データ・timeout・React境界表示・cleanupを確認。正常4条件の参照画素差0。
+  証拠は無視対象 `dist/remotion/stage04/browser-result.json`。
+- `npm run studio:remotion -- --port=3118 --no-open` と
+  `node dist/remotion/font-error-check.mjs missing 3118`：実StudioのLyricsDemoで
+  欠落fontのURL・フォント情報・public-dir案内を確認。ready=false、face0、handle0。
+- `npm run studio:remotion -- --port=3119 --no-open --public-dir=../dist/remotion/stage04/assets` と
+  `node dist/remotion/font-error-check.mjs ready 3119`：ready=true、handle0で正常描画。
+  一時probe・JSON・画面証拠は無視対象 `dist/remotion/font-error-*`。
+- `git diff --check` とPythonによる変更Markdown3ファイルのローカルリンク検査：
+  空白エラー0、36リンクすべて参照先あり。実Studioのエラー画面も目視確認した。
+
+通常sandboxの `spawnSync tsc EPERM` / `listen EPERM` は許可されたsandbox外実行で検証した。
+build経路・依存・baselineは変更せず、旧 `npm run check` / spikeは今回再実行していない。
+FontFace APIはHTTP statusを例外に含めないため、404・CORS・不正データの原因を断定せず、
+URLとブラウザの原因を示して確認を促す。実書き出し・別OS/font/browserの追加検証は未実施。
+次の入口はpackage READMEのfont取得/Studio起動手順と今回の診断。初期7段階の完了状態を維持する。

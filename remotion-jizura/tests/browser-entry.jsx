@@ -24,7 +24,7 @@ const style = {fontSize: 64, track: 0.08, lead: 1.4};
 class ErrorBoundary extends React.Component {
   state = {error: null};
   static getDerivedStateFromError(error) { return {error}; }
-  render() { return this.state.error ? <span data-font-error={this.state.error.code}>{this.state.error.path}</span> : this.props.children; }
+  render() { return this.state.error ? <span data-font-error={this.state.error.code}>{this.state.error.message}</span> : this.props.children; }
 }
 
 function context(child, frame = 0) {
@@ -126,6 +126,8 @@ window.runCanvasChecks = async () => {
   flushSync(() => failureRoot.render(context(<ErrorBoundary>{scene({font: {...font, src: '/missing-font.ttf'}})}</ErrorBoundary>)));
   for (let i = 0; i < 500 && !host.querySelector('[data-font-error]'); i++) await pause();
   check(host.querySelector('[data-font-error]')?.dataset.fontError === 'E_FONT', 'Preview must show the font failure');
+  const previewError = host.querySelector('[data-font-error]').textContent;
+  check(previewError.includes('/missing-font.ttf') && previewError.includes('--public-dir'), 'Preview must identify the font source and public directory remedy');
   failureRoot.unmount();
   check(document.fonts.size === 0 && window.remotion_delayRenderHandles.length === 0, 'Failed Scene leaked resources');
   report.lifecycle.previewError = 'E_FONT';
@@ -137,7 +139,11 @@ window.runCanvasChecks = async () => {
     try {
       await finalizeScene(prepareScene({durationInFrames: 24, font: {...font, src}}, config, [cutProps]), service);
       throw new Error('Invalid font unexpectedly prepared');
-    } catch (error) { check(error.code === 'E_FONT', 'Wrong font error code'); report.failures.push({src, code: error.code, path: error.path, message: error.message}); }
+    } catch (error) {
+      check(error.code === 'E_FONT', 'Wrong font error code');
+      check(error.message.includes(new URL(src, document.baseURI).href) && error.message.includes('--public-dir'), 'Font failure must identify the URL and remedy');
+      report.failures.push({src, code: error.code, path: error.path, message: error.message});
+    }
     finally { service.dispose(); }
   }
   check(document.fonts.size === 0, 'Font failures leaked faces');

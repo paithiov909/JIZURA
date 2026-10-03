@@ -18,7 +18,7 @@ const resources = new WeakMap<Document, Map<string, Resource>>();
 function bounded<T>(job: Promise<T>, signal: AbortSignal, timeout: number, path: string): Promise<T> {
   return new Promise((resolve, reject) => {
     const abort = () => finish(() => reject(new JizuraError('E_FONT', path, 'Font preparation was cancelled.')));
-    const timer = setTimeout(() => finish(() => reject(new JizuraError('E_FONT', path, 'Font preparation timed out.'))), timeout);
+    const timer = setTimeout(() => finish(() => reject(new JizuraError('E_FONT', path, `Font preparation timed out after ${timeout}ms.`))), timeout);
     const finish = (fn: () => void) => { clearTimeout(timer); signal.removeEventListener('abort', abort); fn(); };
     signal.addEventListener('abort', abort, {once: true});
     if (signal.aborted) abort();
@@ -35,6 +35,7 @@ export class SceneFonts {
   constructor(doc: Document, timeout = 15000) { this.doc = doc; this.timeout = timeout; }
 
   async prepare(font: ResolvedFont, text: string, path: string): Promise<void> {
+    let src: string | undefined;
     try {
       if (this.disposed) throw new Error('Scene font resources have been disposed.');
       const fonts = this.doc.fonts;
@@ -44,8 +45,8 @@ export class SceneFonts {
       const key = JSON.stringify([font.family.toLowerCase(), font.weight, font.style]);
       let resource = table.get(key);
       if (font.src !== undefined) {
-        const src = new URL(font.src, this.doc.baseURI).href;
-        if (resource && resource.src !== src) throw new Error('Conflicting sources for the same font face.');
+        src = new URL(font.src, this.doc.baseURI).href;
+        if (resource && resource.src !== src) throw new Error(`Conflicting sources for the same font face; already loading ${JSON.stringify(resource.src)}.`);
         if (!resource) {
           // A caller-owned face has no inspectable source; do not shadow it.
           if (Array.from(fonts).some(face => matches(face, font))) throw new Error('A matching caller-owned face is already registered; omit src.');
@@ -78,8 +79,20 @@ export class SceneFonts {
         throw new Error('The requested font face did not load.');
       }
     } catch (error) {
-      if (error instanceof JizuraError) throw error;
-      throw new JizuraError('E_FONT', path, error instanceof Error ? error.message : String(error));
+      const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      const source = font.src === undefined ? 'Source: caller-registered FontFace or @font-face.' :
+        `Source: ${JSON.stringify(font.src)}${src === undefined ? '' : ` (resolved URL: ${JSON.stringify(src)})`}.`;
+      const hint = font.src === undefined ?
+        'Register a matching FontFace or @font-face before mounting JizuraScene, or provide font.src.' :
+        'Check that font.src points to an accessible, valid font file (and check CORS for remote URLs). ' +
+        'For Remotion staticFile(), put the file in the public directory or pass --public-dir pointing to the directory containing it when starting Studio or rendering.';
+      const failure = new JizuraError('E_FONT', path, [
+        `[E_FONT] ${path}: Font preparation failed. ${font.src === undefined ? 'Register the requested font face.' : 'Check font.src and Remotion --public-dir.'}`,
+        `Font: ${JSON.stringify(font.family)} (weight ${font.weight}, style ${font.style}).`,
+        source, `Reason: ${reason}`, hint,
+      ].join('\n'));
+      failure.cause = error;
+      throw failure;
     }
   }
 

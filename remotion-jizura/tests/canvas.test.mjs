@@ -8,14 +8,14 @@ import {measureStaticCut} from '../dist/canvas/geometry.js';
 const config = {width: 640, height: 360, fps: 24};
 const prepared = (text, extra = {}) => prepareScene({durationInFrames: 24}, config, [{text, enter: null, exit: null, hold: null, decor: [], ...extra}]);
 const font = {family: 'Noto Sans JP', weight: 700, style: 'normal', src: './font.ttf'};
-function documentFixture({fail = false, pending = false} = {}) {
+function documentFixture({fail = false, pending = false, failure = new Error('bad font')} = {}) {
   let calls = 0;
   class Face {
     constructor(family, source, descriptors) { Object.assign(this, {family, source, ...descriptors, status: 'unloaded'}); }
     async load() {
       calls++;
       if (pending) await new Promise(() => {});
-      if (fail) throw new Error('bad font');
+      if (fail) throw failure;
       this.status = 'loaded'; return this;
     }
   }
@@ -49,8 +49,28 @@ test('font check fallback cannot authorize missing registered faces or premature
   const service = new CanvasMeasurementService(doc);
   const scene = prepared('朝');
   assert.throws(() => service.measureCut(scene.cuts[0], scene), {code: 'E_FONT'});
-  await assert.rejects(finalizeScene(scene, service), {code: 'E_FONT', path: 'cuts[0].font'});
+  await assert.rejects(finalizeScene(scene, service), error => {
+    assert.equal(error.code, 'E_FONT'); assert.equal(error.path, 'cuts[0].font');
+    assert.match(error.message, /not registered/);
+    assert.match(error.message, /Register a matching FontFace or @font-face/);
+    return true;
+  });
   service.dispose();
+});
+test('font load errors identify the face, input path, resolved URL and Remotion public directory remedy', async () => {
+  const failure = new DOMException('A network error occurred.', 'NetworkError');
+  const fixture = documentFixture({fail: true, failure}), fonts = new SceneFonts(fixture.doc);
+  try {
+    await assert.rejects(fonts.prepare(font, '朝', 'cuts[2].font'), error => {
+      assert.equal(error.code, 'E_FONT'); assert.equal(error.path, 'cuts[2].font');
+      assert.equal(error.cause, failure);
+      for (const detail of ['[E_FONT] cuts[2].font', 'Noto Sans JP', 'weight 700', 'style normal',
+        './font.ttf', 'https://example.test/font.ttf', 'NetworkError: A network error occurred.',
+        'valid font file', 'staticFile()', '--public-dir', 'CORS']) assert.ok(error.message.includes(detail), detail);
+      return true;
+    });
+  } finally { fonts.dispose(); }
+  assert.equal(fixture.doc.fonts.size, 0);
 });
 test('matching source loads share ownership; conflicts fail and last cleanup removes only owned faces', async () => {
   const fixture = documentFixture(), a = new SceneFonts(fixture.doc), b = new SceneFonts(fixture.doc), c = new SceneFonts(fixture.doc);
@@ -69,11 +89,20 @@ test('matching source loads share ownership; conflicts fail and last cleanup rem
 test('failed, cancelled and timed-out font preparations release resources', async () => {
   for (const mode of ['fail', 'pending']) {
     const fixture = documentFixture({[mode]: true}), fonts = new SceneFonts(fixture.doc, 10);
-    await assert.rejects(fonts.prepare(font, '朝', mode), {code: 'E_FONT', path: mode});
+    await assert.rejects(fonts.prepare(font, '朝', mode), error => {
+      assert.equal(error.code, 'E_FONT'); assert.equal(error.path, mode);
+      assert.match(error.message, /https:\/\/example.test\/font.ttf/);
+      assert.ok(error.message.includes(mode === 'pending' ? 'timed out after 10ms' : 'bad font'));
+      return true;
+    });
     fonts.dispose(); assert.equal(fixture.doc.fonts.size, 0);
   }
   const fixture = documentFixture({pending: true}), fonts = new SceneFonts(fixture.doc);
   const job = fonts.prepare(font, '朝', 'cancel'); fonts.dispose();
-  await assert.rejects(job, {code: 'E_FONT', path: 'cancel'});
+  await assert.rejects(job, error => {
+    assert.equal(error.code, 'E_FONT'); assert.equal(error.path, 'cancel');
+    assert.match(error.message, /cancelled/); assert.match(error.message, /font.ttf/);
+    return true;
+  });
   assert.equal(fixture.doc.fonts.size, 0);
 });

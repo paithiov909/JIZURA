@@ -200,6 +200,15 @@ has a 15 second timeout; rendering waits until fonts, measurement and drawing
 finish. Studio uses explicit preparation state. Scene cleanup releases its own
 faces and render handles while preserving caller-owned registrations.
 
+Font preparation errors include `E_FONT`, the affected Cut path, family/weight/style,
+the supplied `src` and its resolved URL, and the original browser error as `cause`.
+For missing or invalid files, check that the URL serves a valid font, the Remotion
+public directory contains it, and remote servers allow CORS. For this repository's
+examples, first obtain the comparison font as described below, then start Studio
+with `npm run studio:remotion -- --public-dir=../dist/remotion/stage04/assets`.
+The `--public-dir` path is relative to the `remotion-jizura` workspace where the
+Studio command runs. Without `src`, register a matching face before mounting.
+
 Cut fonts replace the entire Scene FontSpec. Cut Style merges palette keys and
 overrides other defined fields; emphasis changes glyph color only. Center preserves
 manual newlines, reflows each long line and fits the text including its horizontal

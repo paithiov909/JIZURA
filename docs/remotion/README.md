@@ -26,7 +26,7 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 | 01 | [API仕様の確定](01-api-contract.md) | 共通計画・移植元の整理 | 完了（API文書・結果記録） |
 | 02 | [パッケージ雛形とRemotion例](02-package-scaffold.md) | 01完了 | 完了（空Scene・実書き出し） |
 | 03 | [parser・時間配分・ScenePlan](03-scene-plan.md) | 02完了 | 完了（Node契約・計測stub） |
-| 04 | [フォント準備と静止Canvas描画](04-static-canvas.md) | 03完了 | 完了（実フォント・静止PNG・pixel比較） |
+| 04 | [フォント準備と静止Canvas描画](04-static-canvas.md) | 03完了 | 完了（実フォント・静止PNG・pixel比較、フォント失敗診断を追補） |
 | 05 | [Remotionのframeと描画の接続](05-remotion-frames.md) | 04完了 | 完了（frame評価・境界/Sequence・実書き出し） |
 | 06 | [少数effectの移植](06-effect-port.md) | 05完了 | 完了（7effect・参照画素差0・実書き出し） |
 | 07 | [利用例・書き出し・外部利用検証](07-scene-validation.md) | 06完了 | 完了（PartA/PartB・Player・120frame・外部tarball） |
