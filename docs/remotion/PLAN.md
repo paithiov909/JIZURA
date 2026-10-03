@@ -7,6 +7,8 @@
 作成時点ではパッケージは存在せず、各段階は未実施だった。
 同日の[段階01](01-api-contract.md)で[API契約](API.md)を確定した。
 現在は01〜07完了。初期到達点の実測は[VALIDATION.md](VALIDATION.md)、APIの詳細はAPI.mdを優先する。
+2026-10-03に次の開発方針を採用し、[拡張計画](EXTENSION-PLAN.md)へ08〜14を分けた。
+本書の範囲・互換性条件は初期01〜07の記録として保持する。今後の担当範囲は拡張計画と各メモを読む。
 
 ## 到達点
 
@@ -252,3 +254,8 @@ decorのparameter生成は [engine/planner.ts](../../engine/planner.ts) の `dec
   export検証のinputProps変更ではselectCompositionを再実行して解決済みpropsを更新する。
   06のmode別PNG採取手順も修正し、過去の記録へ訂正を追記した。
   初期7段階は完了。固定環境と未検証項目、次の候補は[全体検証](VALIDATION.md)を参照。
+
+- 2026-10-03（次期計画）：AIによるコード生成と人間のデザイン/モーションレビューを前提に、
+  表現拡充・検索catalog・独自effect/構成確認API・標準effects試作・共通検証を優先する。
+  旧版の完全互換は目標にせず、LRC/audio解析/拍スナップは利用側、AE/CEP連携は対象外とした。
+  [08〜14の計画](EXTENSION-PLAN.md)とメモを作成。今回の追加は文書のみで、各タスクは未着手。

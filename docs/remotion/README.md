@@ -16,10 +16,29 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 段階07でPartA/PartB・Player・外部tarballを検証し、初期7段階を完了した。
 [全体の検証記録と制約](VALIDATION.md)・[利用手順](../../remotion-jizura/README.md)を参照。
 
+2026-10-03に次の方針を採用した。AIがRemotionコードを組み、人間がデザイン・モーションを
+見て直すフローに向け、表現の拡充・選択・局所調整・再現を優先する。
+[拡張計画](EXTENSION-PLAN.md)と08〜14のメモを作成した。各タスクは未着手。
+旧版の完全互換は目標にせず、LRC/audio解析/拍スナップは利用側のツールで扱う。
+AE/CEP連携は対象外。大きなrepository構造・導入・配布の決定は後段へ置く。
+
 ## 各スレッドの作業入口
 
-[共通計画](PLAN.md)が到達点、確定APIの要点、時間・seed・描画の契約、検証方針をまとめる。
-各段階は別のスレッドで、次の順に実施する。前段階の結果が必要なため、同時実装は想定しない。
+[初期計画](PLAN.md)と[API](API.md)は01〜07の仕様・実績を残す。
+今後は[拡張計画](EXTENSION-PLAN.md)と担当メモを読み、08→14の順に別スレッドへ引き継ぐ。
+前段階の結果が必要なため、同時実装・自動スレッド作成は想定しない。
+
+| 段階 | 作業メモ | 前提 | 状態 |
+| --- | --- | --- | --- |
+| 08 | [既存7effectの最小レビュー環境](08-review-workbench.md) | 初期01〜07 | 未着手 |
+| 09 | [独自effect・構成確認API](09-custom-effects.md) | 08完了 | 未着手 |
+| 10 | [Remotion標準effects接続の試作](10-remotion-effects.md) | 09完了 | 未着手 |
+| 11 | [選択カタログ・移植候補の整理](11-effect-catalog.md) | 10完了、09のmetadata | 未着手 |
+| 12 | [共通の移植・検証手順](12-port-validation.md) | 11完了、09/10の実測 | 未着手 |
+| 13 | [最初の小さな移植群](13-first-effect-batch.md) | 12完了、11の対象確定 | 未着手 |
+| 14 | [AI生成コードからのレビュー体験](14-review-loop.md) | 13完了 | 未着手 |
+
+初期開発の結果：
 
 | 段階 | 作業メモ | 前提 | 状態 |
 | --- | --- | --- | --- |
@@ -34,13 +53,14 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 新しいスレッドには、段階番号と対応するメモを指定する。開始依頼の例：
 
 ```text
-remotionブランチの段階01を実施してください。
+remotionブランチの段階08を実施してください。
 AGENTS.md、README.md、docs/remotion/README.md、docs/remotion/PLAN.md、
-docs/remotion/01-api-contract.mdを読み、指定された範囲だけを進めてください。
+docs/remotion/EXTENSION-PLAN.md、docs/remotion/08-review-workbench.mdを読み、
+前提の実装と結果を確認したうえで、指定された範囲だけを進めてください。
 完了後は作業メモの結果欄とdocs/remotion/README.mdの状態を更新してください。
 ```
 
-段階02以降は番号・メモのパスを置き換え、前段階の結果も読む。
+09以降は番号・メモのパスを置き換え、担当メモに指定した前段階の結果も読む。
 同じ作業ツリーで引き継ぐ場合は現在の差分を確認し、別の作業ツリーでは前提の変更が
 取り込まれていることを確認する。メモを読むだけで実装が存在すると判断しない。
 
@@ -74,8 +94,10 @@ docs/remotion/01-api-contract.mdを読み、指定された範囲だけを進め
 `node remotion-jizura/tests/consumer-validation.mjs` を使う。Studio比較は稼働中のStudioで
 `node remotion-jizura/tests/studio-validation.mjs`。fontの取得と各前提はpackage READMEを参照。
 
-今後は追加browser/font/OS比較、callerのfont preload、次のeffect群を別途選ぶ。
-全effect・audio/BPM/LRC・overlap/transitionや公開/配布は今回の初期到達点に含めていない。
+次に着手するのは[08：既存7effectの最小レビュー環境](08-review-workbench.md)。
+08〜14の成果と検証範囲は[拡張計画](EXTENSION-PLAN.md)を参照する。
+新しい公開API・command・移植候補は担当タスクで決め、後続メモへ引き継ぐ。
+全effect・audio/BPM/LRC・overlap/transitionや公開/配布は初期到達点に含めていない。
 過去の各段階の検証記録と制約はその時点の実績として保持する。
 
 [整理記録](CLEANUP.md)・[ルートREADME](../../README.md)

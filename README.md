@@ -15,6 +15,12 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 段階07でPartA/PartBの120frame例、Player、tarballの外部利用まで検証し、初期7段階を完了しました。
 [利用手順](remotion-jizura/README.md)と[検証結果・制約](docs/remotion/VALIDATION.md)を参照してください。
 
+次は、AIが組んだコードを人間が見て直す制作フローに向け、表現の拡充・選択・レビュー体験を整えます。
+[拡張計画](docs/remotion/EXTENSION-PLAN.md)に08〜14の7タスクを用意しました。
+最初の着手先は[08：既存7effectの最小レビュー環境](docs/remotion/08-review-workbench.md)です。
+旧版の完全互換は目標にせず、LRC・音声解析・拍スナップは利用側のワークフローで扱います。
+AE/CEP連携は対象外。大きなプロジェクト構造・導入・配布の決定は後段に置きます。
+
 ## 移植元の入口
 
 | 場所 | 内容 |
@@ -34,6 +40,7 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 
 - [現在の目的と参照マップ](docs/remotion/README.md)
 - [初期開発の共通計画](docs/remotion/PLAN.md)・[段階01：API仕様](docs/remotion/01-api-contract.md)
+- [表現拡充・レビュー体験の計画と08〜14](docs/remotion/EXTENSION-PLAN.md)
 - [今回の整理と検証記録](docs/remotion/CLEANUP.md)
 - [このブランチの作業指示](AGENTS.md)
 - [以前のv1.x移行計画・タスク結果](docs/v1x/README.md)
