@@ -1,6 +1,6 @@
 # 段階12：共通の移植・検証手順
 
-状態：未着手。前提：[11の結果](11-effect-catalog.md)、09の定義と10の実測。
+状態：完了（2026-10-03、共通harness・実装/技術検証。ユーザーのdesign/motion確認は未実施）。前提：[11の結果](11-effect-catalog.md)、09の定義と10の実測。
 次段階：[13：最初の移植群](13-first-effect-batch.md)。
 
 ## 開始時に読むもの
@@ -56,8 +56,106 @@
 
 ## 結果・引き継ぎ
 
-未着手。追加手順とsource、確定command、検証実績、目視、基準画像の扱い、制約を追記する。
-13へそのまま使えるケース/harnessとレビュー記録templateを渡す。
+2026-10-03：現在の`remotion`ブランチで段階12を実施した。開始時はAGENTS.mdに
+hostの低concurrency指示の未コミット差分があり、そのまま保持した。08〜11の実装・結果と固定fontを確認。
+13の新5件、本体API/exports、依存/lockfile、build設定、参照source・baseline、初期PLAN/VALIDATIONは変更していない。
+
+### 確定した手順・変更ファイル
+
+- [PORTING.md](PORTING.md)に定義→型/parameter→catalog→case→比較→目視→引き継ぎの追加手順、
+  command/asset前提/判定/失敗診断を記録。[PORT-REVIEW-TEMPLATE.md](PORT-REVIEW-TEMPLATE.md)に
+  実装、技術検証、担当agent目視、ユーザー確認、回帰基準の採否を分けた記録形式を追加した。
+- `remotion-jizura/tests/port-cases.ts`：23個の理由付きscalar入力。7単独effect、組み合わせ、
+  短/長/Latin/改行・強調/横長/縦長/透明/D1/seed0・uint32上端/params端点/量子化、
+  09のcaller3定義と10のnative slice/標準blur/順序/独立画像を選択する。総当たりではない。
+- `tests/port-model.tsx` / `port-composition.tsx`：import済みfactoryへの接続とcase別のmetadata。
+  Scene終了frameをclampしないComposition時間を採用。画像triggerは同じCutのfrom/end/seedに従う。
+  独立画像はgapでも原画像を保持しchainだけを無効化する。
+- `tests/port-entry.jsx`：実Playerと同じemitted runtimeの直接Canvas、旧adapter参考比較、
+  prepared/計測geometry/frame state/current box/glyph色・index/位置/advance/item中心・track/motionsを採取。
+  順/逆seek、cache破棄、StrictMode再mount、font/handle cleanup、input edit/restore、
+  背景のみとのanchor差・gap/Scene終了clear・Canvas alpha/transformを確認する。
+  mixed/shrink/jitter/bracketsの固有期待式を追加する位置を示し、公開caller型は拡張していない。
+- `tests/port-metrics.mjs` / `port-validation.mjs` / `port.test.mjs`：画素/空/古いpropsのgate、
+  caseごとのPNG/比較画像/選択動画/入力/環境/計画JSON/レビューJSONの一括出力。
+  input.json再読込→selectComposition再実行→解決props照合→edited PNGの有意差/復元を確認し、
+  古いCompositionへ新inputPropsだけを渡す実PNGもnegative gateへ通す。
+  全runを新規ignored directoryへ保存し、baseline更新commandは設けない。
+- 文書：上記2新文書、本メモ、root/package README、docs/remotion/README、EXTENSION-PLAN、13の入口。
+  技術証拠とユーザーの採用を分ける。case IDはharness専用で公開Cut IDではない。
+
+### 実行command・結果
+
+すべてrepo rootから。新しいcommandは`node remotion-jizura/tests/port-validation.mjs`。
+詳細なoptionと前提は[共通手順](PORTING.md)。重いchecksは重ねず、Chromeは同時に1browserだけ所有した。
+
+| command | 実測結果・範囲 |
+| --- | --- |
+| `npm run check:remotion` | 最終strict TS/TSX、ESM/d.ts build、59/59 Node契約成功（既存57＋gate/case2）。fontのNode契約はmock/stubで、下記の実fontと区別 |
+| `node remotion-jizura/tests/port-validation.mjs --list` | 23caseの種類・選定理由を表示 |
+| `node remotion-jizura/tests/port-validation.mjs` | 全23case成功。代表162 PNG（153件raw完全一致、画像9件はraw最大1、全件alpha差0/premultiplied差0）、edited23PNG、旧source参考105frameすべて画素差0。全caseの逆seek/remount/cache/不変plan/edit復元、gap/clearと可視anchor、built-in/caller/native invalid paramsを確認 |
+| 同commandの並列/動画 | combined全33frameのconcurrency1/2を順次取得しraw差0。7本の640×360または360×640、24fps、32frame/約1.33秒H264 CRF1/yuv444pをconcurrency1で取得しffprobe/全decode成功。lossyであり全動画frameのPNG照合ではない |
+| `node remotion-jizura/tests/port-validation.mjs --case=center,pop,drift,combined,multiline-tall,custom,image-combined --compare-to=/home/paithiov909/Documents/JIZURA/dist/remotion/stage12/run-TIYWRS` | 同環境・同case入力/解決構成を照合し54PNGすべてraw差0。7動画を再取得し、filmstripを動画の正確な代表frame選択へ変更した範囲を確認。sampleFramesをJSONへ保存し空tileを避ける。並列33frameも再確認 |
+| `node remotion-jizura/tests/port-validation.mjs --case=center --stills-only --inject=parameter` | 期待したexit1、Invalid numeric parameter。診断run-9hxDJX |
+| 同commandの`--inject=empty` | 期待したexit1、Empty/blank anchor。診断run-a1ufx1 |
+| 同commandの`--inject=pixels` | 期待したexit1、意図した20×20赤い描画の400pixel差/最大233を検出。expected/actual PNGと指標を保存。診断run-d17pJe |
+| 同commandの`--inject=stale-props` | 期待したexit1、古いComposition propsを検出。旧propsの実PNG対edited previewの不一致を先に確認。診断run-885zFF |
+| `JIZURA_EFFECT_COMPARE_ONLY=1 node remotion-jizura/tests/effect-browser.mjs` | 既存adapterのfocused回帰、283旧参照frame画素差0、seed差/seed0、量子化、seek/cache/StrictMode/複数Scene/cleanup成功。旧PNG/MP4 export部分は省略 |
+| `node --check`（port-validation.mjs / port-metrics.mjs / port.test.mjs） / `python3 /tmp/jizura-stage12-doc-check.py` / `git diff --check` | 構文成功、既存AGENTS差分を含む変更/未追跡16fileの空白、Markdown25本のlocal link411件を確認。欠落・空白エラー0。一時checkerはrepoへ追加しない |
+
+型チェック後の初回sandbox buildは既知のspawnSync tsc EPERM、browser serverはlisten EPERM。
+同commandを許可された通常環境で実行した成功結果を採用した。Viteの既存use-client warningは残る。
+root/spike buildと外部tarball/Studio checksは今回実行していない。本体/公開export/build経路の変更はなく、
+既存のconsumer/Studio証拠へ新しい検証済み範囲を加えたとは主張しない。
+Markdown local linksと未追跡を含む空白、mjs構文、git diff --checkも上記の範囲で成功した。
+
+### 環境・取得経路と診断で分かった限界
+
+Node26.10.0、React19.3.0、Remotion/effects4.0.532、HeadlessChrome154/Linux x64、24fps、
+preview DPR2、HtmlInCanvas pixelDensity1。Noto Sans JP700/normal、SHA256
+`c2f3b4d463500a2ddcd3849cded1fceeb9fd6d1c32e6cbecd568453ba50fc68f`。
+sizeは640×360、long-wide800×320、portrait360×640。通常D30、最短D1、from1、seed/paramsはcase.json。
+
+文字は従来のGL既定（gl:null）、画像は必要なsoftware WebGL2 swangleを別browserへ順次適用する。
+初期試行のswangle kasumi seed0/frame16で逆seekに360pixel/最大50の差が出て、
+PNG経由の観測でも残った。同caseのGL既定条件では解消した。
+backend由来が疑われるが完全な原因分離は未実施。swangle文字の再現性を保証しない。
+描画元への繰り返しgetImageData後の復元にも1936pixel/最大2の差が出たため、
+保存PNGをdecodeしたCPU witnessで画素診断する。heuristicの説明はChromium sourceと切り分けからの推定。
+本体変更、一般許容差、旧baseline更新で吸収していない。
+
+Canvas PNG→screenshotの丸めは10の条件を使用し、初期swangle透明custom frame4でも
+2pixel/raw最大1・alpha差0/premultiplied差0を実測した。この取得経路だけへ適用する。
+最終23caseの文字PNGはすべてraw差0、画像9sampleは上記丸め条件を満たした。
+同render同士の過去run/並列比較は透明・画像でもraw差0を要求する。
+公開Player/直接Canvasは同じemitted runtimeへ揃え、src/distの別font所有権・独自WeakMapを混ぜない。
+
+### 生成証拠・目視と基準の扱い
+
+全case証拠はignored `dist/remotion/stage12/run-TIYWRS/`、最終7caseの回帰と正確なfilmstripは
+`dist/remotion/stage12/run-iSs5X2/`。result.json、case/input/edited-input/browser.json、
+prepared/計測/当該framegeometry、preview/export/legacy/edited/stale negative PNG、comparison.png、
+MP4/filmstrip、source/環境/font hash、review.jsonを保持する。
+このrun-TIYWRSを同環境の**技術的な回帰比較用candidate**として選んだ理由は、
+独立gap/clear/有意差gate、旧source105比較、各種再現性を通ったため。
+54frame再比較でも一致したが、ユーザーのdesign承認や採用済みsource baselineとは扱わない。
+sourceはcase・手順・template、生成証拠はdist。新しい小fixtureの採用と一括baseline更新は行っていない。
+
+担当agentは最終7本の動画からsampleFrames通り採取したfilmstrip、custom/image-combinedの
+preview/export/edited比較、portrait・bounds-highの比較PNGを目視した。
+逐字pop、保持、driftの破片退出、朝/希望の強調、caller waveとrule、画像の帯ずれ/blur、
+gap/透明背景、edit後の配置差/加工無効化を確認した。bounds-highのsx4/track1はfitで小さく扁平になり、
+可読性が低い。端点入力の技術成立であって推奨presetではない。強いblurの読みやすさも採用判断へ残す。
+連続再生による鑑賞・ユーザーのdesign/motion承認・全case全frame目視は未実施。
+review.jsonは目視したartifact/所見を追記し、user=unconfirmed、regression=candidateを保持する。
+
+### 次の着手先
+
+13は[PORTING.md](PORTING.md)と[13の確定表/入口](13-first-effect-batch.md)を使い、
+mixed→slideLeft→shrink→jitter→bracketsの5件だけを実装する。
+mixedの個別glyph geometry、shrinkのitem中心/track、jitter step、brackets null/current boxの
+case固有期待式と旧adapterを追加する。共通harnessの診断値だけで正しさを保証しない。
+未確認：別font/OS/GPU、swangle文字、全parameter総当たり、長尺/1080p性能、ユーザー採用。
 
 ## 段階09の検証入口（2026-10-03）
 

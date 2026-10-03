@@ -18,7 +18,7 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 
 2026-10-03に次の方針を採用した。AIがRemotionコードを組み、人間がデザイン・モーションを
 見て直すフローに向け、表現の拡充・選択・局所調整・再現を優先する。
-[拡張計画](EXTENSION-PLAN.md)と08〜14のメモを作成した。08〜11は実装・技術検証完了、12〜14は未着手。
+[拡張計画](EXTENSION-PLAN.md)と08〜14のメモを作成した。08〜12は実装・技術検証完了、13〜14は未着手。
 旧版の完全互換は目標にせず、LRC/audio解析/拍スナップは利用側のツールで扱う。
 AE/CEP連携は対象外。大きなrepository構造・導入・配布の決定は後段へ置く。
 
@@ -34,7 +34,7 @@ AE/CEP連携は対象外。大きなrepository構造・導入・配布の決定�
 | 09 | [独自effect・構成確認API](09-custom-effects.md) | 08完了 | 完了（公開独自3例・構成確認・実Player/PNG/外部consumer、ユーザー目視は未確認） |
 | 10 | [Remotion標準effects接続の試作](10-remotion-effects.md) | 09完了 | 完了（HtmlInCanvas接続・独自slice・実Player/Studio/PNG/動画/外部consumer、ユーザー目視は未確認） |
 | 11 | [選択カタログ・移植候補の整理](11-effect-catalog.md) | 10完了、09のmetadata | 完了（12件検索/実表示・旧860件照合/分類・13の5件確定・外部consumer、ユーザー目視は未確認） |
-| 12 | [共通の移植・検証手順](12-port-validation.md) | 11完了、09/10の実測 | 未着手 |
+| 12 | [共通の移植・検証手順](12-port-validation.md) | 11完了、09/10の実測 | 完了（23case/実PNG・7動画・並列/回帰比較・失敗診断、ユーザー目視は未確認） |
 | 13 | [最初の小さな移植群](13-first-effect-batch.md) | 12完了、11の対象確定 | 未着手 |
 | 14 | [AI生成コードからのレビュー体験](14-review-loop.md) | 13完了 | 未着手 |
 
@@ -98,7 +98,9 @@ docs/remotion/EXTENSION-PLAN.md、docs/remotion/08-review-workbench.mdを読み�
 [09：独自effect・構成確認API](09-custom-effects.md)も完了。
 [10：Remotion標準effects接続の試作](10-remotion-effects.md)も完了。
 [11：選択カタログ・移植候補の整理](11-effect-catalog.md)も完了。
-次は[12：共通の移植・検証手順](12-port-validation.md)。
+[12：共通の移植・検証手順](12-port-validation.md)も完了。
+[追加手順](PORTING.md)と[レビューtemplate](PORT-REVIEW-TEMPLATE.md)を使う。
+次は[13：最初の小さな移植群](13-first-effect-batch.md)。
 [catalogの検索・比較入口](../../remotion-jizura/examples/catalog/README.md)と
 [分類・確定5件](EFFECT-CANDIDATES.md)、09/10の実測を使い、既存例で共通harnessを整える。
 08〜14の成果と検証範囲は[拡張計画](EXTENSION-PLAN.md)を参照する。

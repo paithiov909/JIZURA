@@ -76,6 +76,9 @@ guide's no-workspaces statement describes the reference build, not a restriction
 on the new package. Give the package its own TS/TSX configuration and public
 exports; published code must not import reference sources outside its package.
 
+On the current 16 GB host, keep Remotion render concurrency low and explicit;
+avoid overlapping heavy Chrome, rendering and build checks to prevent memory pressure.
+
 Run focused checks for changed files. For changes that touch build paths, run
 `npm run check` and the preserved spike checks; distinguish syntax checks,
 contract tests, pixel/browser comparisons and mocks from actual Adobe runs.

@@ -385,6 +385,16 @@ consumer evidence; it does not expand the validated browser/font matrix.
 
 ## Development
 
+For repeatable effect ports, use the stage12 [porting workflow](../docs/remotion/PORTING.md)
+and [review template](../docs/remotion/PORT-REVIEW-TEMPLATE.md). After building and preparing
+the fixed comparison font, run `node remotion-jizura/tests/port-validation.mjs` from
+the repository root. `--list`, `--case=combined,custom,image-combined`, `--stills-only`,
+`--compare-to=/absolute/completed/run` and deliberate `--inject` failures are documented
+there. It saves representative PNGs, selected short movies, inputs, measured geometry,
+environment and separate technical/visual/user review data in a new ignored run directory.
+Text uses the default GL condition; native image cases use software WebGL2 swangle.
+Generated runs start as candidates, and user visual acceptance remains separate.
+
 Use Node **26.10.0**, npm **11.19.1** and the repository root lockfile.
 This package is an npm workspace; do not create a package-local lockfile.
 React and React DOM **19.3.0**, Remotion and all `@remotion/*` packages **4.0.532**
@@ -411,7 +421,7 @@ npm pack --workspace remotion-jizura --dry-run
 | Command | Result |
 | --- | --- |
 | `typecheck:remotion` | Strict TS/TSX checking of source, example and compile-only consumer |
-| `test:remotion` | Build, then 42 Node contracts; font resource tests use mocks |
+| `test:remotion` | Build, then 59 Node contracts; font resource tests use mocks |
 | `build:remotion` | ESM JavaScript and declarations in `remotion-jizura/dist/` |
 | `check:remotion` | Typecheck and Node contracts, including build |
 | `studio:remotion` | Local Remotion Studio for `examples/studio-entry.tsx` / `StudioRoot.tsx` |

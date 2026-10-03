@@ -1,6 +1,6 @@
 # remotion-jizura 表現拡充・レビュー体験の開発計画
 
-作成日：2026-10-03。ブランチ：`remotion`。状態：08〜11は実装・技術検証完了、12〜14は未着手。
+作成日：2026-10-03。ブランチ：`remotion`。状態：08〜12は実装・技術検証完了、13〜14は未着手。
 初期01〜07の[計画](PLAN.md)・[API](API.md)・[検証記録](VALIDATION.md)を前提とする。
 [作業一覧](README.md)から各タスクへ進む。
 
@@ -167,3 +167,19 @@ vcolsは縦組metrics/約物/outline列のため延期した。標準blurやslic
 57 Node契約、12実preview PNG対同条件の元例差0、検索と9動画URL、外部tarballの型/検索/11既存PNGを確認。
 旧保存画像とのbackend条件差は別記録で、baseline更新・一般許容差は導入しない。
 ユーザーのdesign/motion承認は未確認。次は12の共通検証手順。
+
+## 段階12の結果（2026-10-03）
+
+[追加・検証手順](PORTING.md)と[レビューtemplate](PORT-REVIEW-TEMPLATE.md)、
+case駆動の開発harnessを追加した。理由付き23caseで旧7件、09のcaller3定義、
+10のslice/標準blurを実行し、代表162PNG、旧参考105比較、7短編動画、
+並列33frame（concurrency1/2）を確認。最終7caseの過去run54PNGはraw差0。
+不正params・空anchor・意図した400pixel変更・古いComposition propsの4失敗を非zeroで検出した。
+詳細・command・runtime条件・目視範囲は[12の結果](12-port-validation.md)。
+
+文字はGL既定、画像fxはswangleを使い、同条件内の再現性を判定する。
+swangle文字のkasumi逆seek差は未解決条件として保存し、一般許容差で吸収しない。
+画像fx/透明文字のCanvas PNG→screenshotだけraw最大1/alpha差0/premultiplied差0、
+同renderの回帰/並列比較はraw差0。ユーザー承認・採用済みbaselineとcandidateを分ける。
+13にはglyph/強調/item中心/spacing/step/null-current boxの診断とcase拡張位置を渡した。
+本体API/公開export/候補/依存は変更せず、13の新5件は未実装。次は13。

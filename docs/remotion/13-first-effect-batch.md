@@ -72,3 +72,19 @@ parameter名/型/範囲は13で実装・検証して確定する。vcolsは縦�
 
 未着手。effect別の変更・特徴・旧との差・checks・目視・制約と、共通手順の改善点を追記する。
 14へ追加候補、調整可能parameter、実描画の例、局所修正時の注意を渡す。
+
+## 段階12の共通手順からの入口（2026-10-03）
+
+[追加・検証手順](PORTING.md)と[レビューtemplate](PORT-REVIEW-TEMPLATE.md)を使う。
+`tests/port-cases.ts`へ理由付きcase、`port-model.tsx`へ明示factory接続を追加し、
+`node remotion-jizura/tests/port-validation.mjs --case=追加case`でPNG/入力/計画/動画を取得する。
+geometry採取にはglyph位置/advance/強調index/色、item中心/size/track、motions、step/current boxを含む。
+mixed/shrink/jitter/brackets固有の式/関係のgateと旧adapterは13で足す。12のJSON採取だけで
+未実装5件を検証済みとはしない。既存自動候補と公開caller型を先に広げない。
+
+文字はGL既定（gl:null）、native画像はswangleを使い、case別に条件を記録する。
+swangle文字のkasumiで逆seek差が残ったため、一般GPU許容差や本体変更で吸収しない。
+画像fx/透明文字のCanvas PNG→screenshotだけraw最大1/alpha差0/premultiplied差0、
+同renderの回帰/並列比較はraw差0。旧source比較は参考、ユーザー確認は別状態。
+新5件はparam端点、最短Cut、phase境界、portrait、seed/quantized step、null/current boxを
+選んで拡張する。公開追加後は既存consumerへ型/実tarball PNGを追加する。
