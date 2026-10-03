@@ -3,6 +3,7 @@
 Initial ESM package on the `remotion` branch, version `0.1.0-alpha.0`.
 Stages 03–06 implement parsing, planning, font preparation, integer frame evaluation
 and seven canvas effects: center, pop, wipe, drift, breathe, kasumi and checkerStrip.
+Stage13 adds explicit-only mixed, slideLeft, shrink, jitter and brackets.
 The current Scene renders the active Cut with deterministic motion and decor.
 Stage 07 adds the 120-frame PartA/PartB example, Player buffering and tarball
 consumer validation. The complete contract is maintained in the repository at
@@ -115,10 +116,40 @@ uses `@remotion/effects@4.0.532`. Studio/Player needs Chrome149+ with the
 HTML-in-Canvas flag. Fixed tests use Chrome154 and software WebGL2 `swangle`.
 This experimental connection does not add a Scene/Cut `effects` prop.
 
+## First effect batch
+
+Stage13 adds `mixed`, `slideLeft`, `shrink`, `jitter` and `brackets`, their typed
+options, and catalog records with `autoSelect: false`. Use strings or factories
+explicitly; omitted groups still select from the original seven candidates.
+See [batch comparisons](examples/batch/README.md) and the repository's stage13 API.
+
+```tsx
+import {mixed, slideLeft, shrink, jitter, brackets} from 'remotion-jizura';
+// Inside a font-ready Scene. Explicit Cut timing remains integer frames.
+<JizuraCut text="新しい*朝* ABC！" seed={1234}
+  layout={mixed({params: {mode: 'wave', rotAmp: 6, smallK: 0.5, accentIdx: 2}})}
+  enter={slideLeft()} exit={shrink()} hold={jitter({params: {amount: 1}})}
+  decor={[brackets({params: {pad: 18, stroke: 2.2, accent: false}})]} />
+```
+
+Mixed removes spaces/newlines, keeps original emphasis indices, and uses one
+resolved font with different glyph sizes and seeded rotations. More than nine
+glyphs uses two rows. Style.fontSize caps each glyph; Style.track/lead do not alter
+this layout. With one glyph per item, slideLeft enters the items together and
+shrink contracts each at its own center. Jitter uses deterministic 24Hz steps;
+amount0 disables it. Brackets follows the current logical box (rotation/clip are
+excluded), with a central fallback on null; large pad/stroke can clip at an edge.
+
+Mixed accepts mode line/stair/wave, rotAmp0..20, smallK0.25..1, and integer
+accentIdx0..9999. Its omitted params are seeded. Jitter amount is0..4 (default1).
+Brackets pad is0..64 (default18), stroke0.5..12 (default2.2), accent boolean
+(defaultfalse). SlideLeft/shrink have no params. All bounds are inclusive;
+invalid values/unknown keys fail with E_EFFECT.
+
 ## Choosing effects and timing
 
 Stage11 adds `getEffectCatalog()` and `searchEffects(query?, entries?)`.
-The package catalog contains seven text/decor effects plus native sliceGlitch;
+The package catalog contains twelve text/decor effects plus native sliceGlitch;
 image records describe native effects, not Cut declarations. Search supports name,
 tag, group, use and conditions, preserves source order, and never changes automatic
 selection. The [catalog example](examples/catalog/README.md) includes the three
@@ -214,7 +245,7 @@ It does not publish. Reports and images are in `dist/remotion/stage07/`.
 `JIZURA_BROWSER` overrides the local Chrome path and `JIZURA_STUDIO_URL` the Studio
 URL. System ffmpeg/ffprobe are required for these optional validation harnesses.
 
-The initial API supports only the seven listed effects. Numeric `numCuts`,
+The initial automatic choices remain the seven listed effects; stage13 adds five explicit-only effects. Numeric `numCuts`,
 grapheme-aware typography, audio/BPM/LRC synchronization, Cut overlaps/transitions,
 custom effect registration and the remaining legacy groups are outside this alpha.
 Chrome154 with the fixed Noto Sans JP file and the pinned dependency versions is
@@ -421,7 +452,7 @@ npm pack --workspace remotion-jizura --dry-run
 | Command | Result |
 | --- | --- |
 | `typecheck:remotion` | Strict TS/TSX checking of source, example and compile-only consumer |
-| `test:remotion` | Build, then 59 Node contracts; font resource tests use mocks |
+| `test:remotion` | Build, then 64 Node contracts; font resource tests use mocks |
 | `build:remotion` | ESM JavaScript and declarations in `remotion-jizura/dist/` |
 | `check:remotion` | Typecheck and Node contracts, including build |
 | `studio:remotion` | Local Remotion Studio for `examples/studio-entry.tsx` / `StudioRoot.tsx` |

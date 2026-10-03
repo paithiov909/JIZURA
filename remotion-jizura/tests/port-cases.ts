@@ -1,11 +1,12 @@
 // Development inputs, not accepted regression baselines or a project format.
-import type {CenterParams, DecorParams} from '../src/types.js';
+import type {CenterParams, DecorParams, MixedParams, BracketsParams} from '../src/types.js';
 
 export type PortCase = {
   id: string; kind: 'text' | 'image'; preset: string; reason: string;
   text: string; width: number; height: number; fps: number;
   duration: number; from: number; enter: number; exit: number;
   seed: number; background: string | null; motionFps: number | null;
+  mixed?: Partial<MixedParams>; jitterAmount?: number; brackets?: Partial<BracketsParams>; extraFrames?: number[];
   layout?: Partial<CenterParams>; decor?: Partial<DecorParams>;
   custom?: {offset: number; amplitude: number; cycles: number; thickness: number; accent: boolean};
   image?: {mode: 'glitch' | 'standard' | 'combined' | 'reverse'; target: 'lyrics' | 'image'; amount: number; radius: number};
@@ -43,6 +44,28 @@ export const portCases: readonly PortCase[] = [
     image: {mode, target: 'lyrics', amount: 0.65, radius: 4},
   })),
   c('image-independent', 'center', 'Same native factory on a separate image; full amount endpoint.', {kind: 'image', legacy: false, image: {mode: 'glitch', target: 'image', amount: 1, radius: 0}}),
+  c('mixed', 'mixed', 'Two glyphs and original size rhythm with emphasis.', {text: '*朝*だ', video: true}),
+  c('mixed-nine', 'mixed', 'Nine glyphs stay on one row; script, punctuation, small kana.', {text: '朝あアABC！ゃ夜'}),
+  c('mixed-ten', 'mixed', 'Ten glyphs switch to two rows and stair mode.', {text: '朝あアABC！ゃ夜光', mixed: {mode: 'stair', rotAmp: 0}}),
+  c('mixed-sixteen', 'mixed', 'Sixteen glyphs with wave baseline and explicit emphasis.', {text: '朝あアABC！ゃ夜光空海*春夏秋冬*', mixed: {mode: 'wave'}}),
+  c('mixed-portrait', 'mixed', 'Long portrait; whitespace/newline removal keeps emphasis indices.', {width: 360, height: 640, text: '朝 かな ABC！？\n*希望の夜*が明ける今日', video: true}),
+  c('mixed-low', 'mixed', 'Latin/space and lower bounds; seed zero.', {text: 'A *b* C？', mixed: {mode: 'line', rotAmp: 0, smallK: 0.25, accentIdx: 0}}),
+  c('mixed-high', 'mixed', 'Upper bounds, small kana, repeated emphasis and uint32 seed.', {text: 'かなゃ*朝朝*かな', seed: 4294967295, mixed: {mode: 'wave', rotAmp: 20, smallK: 1, accentIdx: 9999}}),
+  c('slideLeft', 'slideLeft', 'Explicit enter timing and last glyph stagger.', {enter: 8, video: true}),
+  c('slide-single', 'slideLeft', 'One glyph has no stagger.', {text: '*朝*', enter: 4}),
+  c('slide-multiline', 'slideLeft', 'Multiple lines and original glyph traversal.', {text: '朝ABC\n*希望*かな', enter: 12, width: 360, height: 640}),
+  c('batch-one-frame', 'batch', 'All new effects at D1: static text, no forced decor.', {text: '*朝*だ', duration: 1, enter: 0, exit: 0}),
+  c('shrink', 'shrink', 'Item-center shrink plus breathe spacing; exit start/mid/end.', {exit: 10, video: true}),
+  c('jitter', 'jitter', 'Step-indexed motion and hold ramp.', {video: true, extraFrames: [7, 8, 9, 10]}),
+  c('jitter-high', 'jitter', 'Upper displacement bound on portrait/multiline text.', {jitterAmount: 4, width: 360, height: 640, text: '朝ABC\n*希望*かな'}),
+  c('jitter-zero', 'jitter', 'Zero motion amount; invariant hold geometry.', {jitterAmount: 0}),
+  c('jitter-quantized', 'jitter', 'Same/adjacent quantized steps, reverse seeks and parallel.', {motionFps: 12, seed: 4294967295, extraFrames: [7, 8, 9, 10], parallel: true}),
+  c('brackets', 'brackets', 'Current box, original defaults, front layer and closing.', {exit: 8, video: true}),
+  c('brackets-low', 'brackets-pop', 'Null box at hidden enter and low pad/stroke, transparent.', {enter: 6, background: null, brackets: {pad: 0, stroke: 0.5, accent: false}}),
+  c('brackets-high', 'brackets-pop', 'High pad/stroke on portrait and moving current box.', {enter: 6, exit: 8, width: 360, height: 640, text: '朝\n*希望*の朝だ', brackets: {pad: 64, stroke: 12, accent: true}}),
+  c('batch', 'batch', 'All five plus per-item geometry/alpha/seeds; serial/parallel.', {enter: 8, exit: 10, text: '新しい*朝*ABC！', seed: 1234, video: true, parallel: true}),
+  c('mixed-breathe-shrink', 'mixed-breathe-shrink', 'Mixed items with original breathe and shrinking item centers.', {exit: 10, text: '新しい*朝*ABC！？'}),
+
 ];
 export function getPortCase(id: string): PortCase {
   const value = portCases.find(entry => entry.id === id);
@@ -54,5 +77,5 @@ export const anchorFrame = (spec: PortCase) => spec.from + Math.floor(spec.durat
 export function representativeFrames(spec: PortCase): number[] {
   return [...new Set([spec.from - 1, spec.from, spec.from + Math.floor(spec.enter / 2), spec.from + spec.enter,
     anchorFrame(spec), spec.from + spec.duration - spec.exit, spec.from + spec.duration - 1,
-    spec.from + spec.duration, sceneDuration(spec)])].sort((a, b) => a - b);
+    spec.from + spec.duration, sceneDuration(spec), ...(spec.extraFrames ?? [])])].sort((a, b) => a - b);
 }

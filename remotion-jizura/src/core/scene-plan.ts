@@ -61,7 +61,7 @@ export function prepareScene(
     const cutFont = c.font === undefined ? font : resolveFont(c.font, `${path}.font`);
     const cutStyle = resolveStyle(props.style, c.style, `${path}.style`);
     const layout = resolveEffect(c.layout, 'layout', s, `${path}.layout`)!;
-    const trackSource = layout.customKey === undefined && layout.explicitParams.includes('track') ? 'params' as const : layout.customKey === undefined && cutStyle.track !== undefined ? 'style' as const : 'auto' as const;
+    const trackSource = layout.id === 'center' && layout.customKey === undefined && layout.explicitParams.includes('track') ? 'params' as const : layout.id === 'center' && layout.customKey === undefined && cutStyle.track !== undefined ? 'style' as const : 'auto' as const;
     const resolvedLayout = trackSource === 'style' ? freeze({...layout, params: {...layout.params, track: cutStyle.track!}}) : layout;
     const enter = resolveEffect(c.enter, 'enter', s, `${path}.enter`);
     const exit = resolveEffect(c.exit, 'exit', s, `${path}.exit`);

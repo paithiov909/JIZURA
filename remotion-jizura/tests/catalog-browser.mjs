@@ -7,7 +7,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
 import {catalogMedia} from '../examples/catalog/media.mjs';
-const repo=path.resolve(import.meta.dirname,'../..'),out=path.join(repo,'dist/remotion/stage11');
+const repo=path.resolve(import.meta.dirname,'../..'),out=path.join(repo,'dist/remotion/stage13/catalog');
 await mkdir(out,{recursive:true});
 const font=await readFile(path.join(repo,'dist/remotion/stage04/assets/NotoSansJP.ttf'));
 await build({configFile:false,root:repo,publicDir:false,logLevel:'warn',define:{'process.env.NODE_ENV':'"development"'},
@@ -44,11 +44,14 @@ try {
   // Never let assert format megabytes of Buffer differences. Compare booleans and metrics.
   const pixels=rgba(file),actualReference=rgba(fresh);
   assert.ok(pixels.equals(actualReference),`Catalog differs from the original example in this browser: ${im.key}`);
-  const prior=rgba(reference); assert.equal(prior.length,pixels.length);
-  let differentPixels=0,maxChannelDifference=0;
-  for(let i=0;i<pixels.length;i+=4){let changed=false;for(let c=0;c<4;c++){const d=Math.abs(pixels[i+c]-prior[i+c]);if(d)changed=true;maxChannelDifference=Math.max(maxChannelDifference,d);}if(changed)differentPixels++;}
-  report.previews.push({key:im.key,frame:im.frame,file:path.basename(file),reference:path.basename(fresh),rgbaSHA256:hash(pixels),differentPixels:0,
-    historicalEvidence:{file:path.relative(repo,reference),differentPixels,maxChannelDifference,scope:'Older run, backend differs for text previews. Informational; no new tolerance or baseline.'}});
+  let historicalEvidence = null;
+  if (entry.visual.route !== 'batch') {
+    const prior=rgba(reference); assert.equal(prior.length,pixels.length);
+    let differentPixels=0,maxChannelDifference=0;
+    for(let i=0;i<pixels.length;i+=4){let changed=false;for(let c=0;c<4;c++){const d=Math.abs(pixels[i+c]-prior[i+c]);if(d)changed=true;maxChannelDifference=Math.max(maxChannelDifference,d);}if(changed)differentPixels++;}
+    historicalEvidence={file:path.relative(repo,reference),differentPixels,maxChannelDifference,scope:'Older run, backend differs for text previews. Informational; no new tolerance or baseline.'};
+  }
+  report.previews.push({key:im.key,frame:im.frame,file:path.basename(file),reference:path.basename(fresh),rgbaSHA256:hash(pixels),differentPixels:0,historicalEvidence});
  }
  delete report.images;
  const videos=[...new Set(report.metadata.map(e=>e.visual.video))];
@@ -60,11 +63,11 @@ try {
   assert.equal(hash(Buffer.from(await response.arrayBuffer())),hash(await readFile(path.join(repo,video))));
   report.videos.push({video,servedByteMatch:true});
  }
- for(const key of ['hold/breathe','enter/pop','decor/kasumi','image/io.jizura.sliceGlitch']) {
+ for(const key of ['hold/breathe','enter/pop','decor/kasumi','image/io.jizura.sliceGlitch','layout/mixed','enter/slideLeft','exit/shrink','hold/jitter','decor/brackets']) {
   await page.evaluate(k=>window.catalogShow(k),key);
   const shot=await page._client().send('Page.captureScreenshot',{format:'png'});
   await writeFile(path.join(out,`catalog-${key.replaceAll('/','-')}.png`),Buffer.from(shot.value.data,'base64'));
  }
  await writeFile(path.join(out,'catalog-result.json'),JSON.stringify(report,null,2)+'\n');
- console.log(`Catalog: 12 metadata entries, 3 queries, group/text filters, 12 preview PNGs match original examples in this browser; ${videos.length} video links serve matching bytes.`);
+ console.log(`Catalog: ${report.metadata.length} metadata entries, 3 queries, group/text filters, ${report.previews.length} preview PNGs match original examples in this browser; ${videos.length} video links serve matching bytes.`);
 } finally {if(browser)await browser.close({silent:true}); await new Promise(r=>server.close(r));}

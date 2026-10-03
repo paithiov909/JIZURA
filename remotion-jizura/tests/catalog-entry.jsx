@@ -7,6 +7,7 @@ import {offsetLines, glyphWave, boxRule} from '../examples/custom/effects.tsx';
 import {validateCatalog} from './catalog-validation.mjs';
 import {searchEffects} from 'remotion-jizura';
 import {Player} from '@remotion/player';
+import {FirstEffectBatch} from '../examples/batch/FirstEffectBatch.tsx';
 import {ReviewWorkbench} from '../examples/review/ReviewWorkbench.tsx';
 import {CustomEffects} from '../examples/custom/CustomEffects.tsx';
 import {ImageEffects} from '../examples/image-effects/ImageEffects.tsx';
@@ -43,7 +44,7 @@ async function choose(entry) {
   return host.querySelector('canvas').toDataURL();
 }
 window.runCatalogChecks = async () => {
-  check(validateCatalog(exampleCatalog)===12,'Catalog missing entries');
+  check(validateCatalog(exampleCatalog)===17,'Catalog missing entries');
   for(const factory of [offsetLines,glyphWave,boxRule]) {
     const entry=exampleCatalog.find(e=>e.id===factory.metadata.id);
     check(JSON.stringify(Object.keys(entry.parameters))===JSON.stringify(Object.keys(factory.metadata.schema)), 'Custom schema keys diverged');
@@ -71,11 +72,11 @@ window.runCatalogChecks = async () => {
   const images=[], links=[];
   for(const entry of exampleCatalog) {
     const png=await choose(entry);
-    const component=entry.visual.route==='review' ? ReviewWorkbench : entry.visual.route==='custom' ? CustomEffects : ImageEffects;
-    const inputProps=entry.visual.route==='review' ? {candidate:entry.visual.candidate,fontSrc:'/NotoSansJP.ttf'} :
+    const component=entry.visual.route==='batch' ? FirstEffectBatch : entry.visual.route==='review' ? ReviewWorkbench : entry.visual.route==='custom' ? CustomEffects : ImageEffects;
+    const inputProps=entry.visual.route==='batch' ? {candidate:entry.visual.candidate,fontSrc:'/NotoSansJP.ttf'} : entry.visual.route==='review' ? {candidate:entry.visual.candidate,fontSrc:'/NotoSansJP.ttf'} :
       entry.visual.route==='custom' ? {} : {mode:entry.visual.candidate,fontSrc:'/NotoSansJP.ttf'};
     flushSync(()=>referenceRoot.render(<StrictMode><Player ref={referenceRef} component={component} inputProps={inputProps}
-      durationInFrames={entry.group==='image'?144:120} compositionWidth={640} compositionHeight={360} fps={24} style={{width:640}} /></StrictMode>));
+      durationInFrames={entry.visual.route==='batch'?60:entry.group==='image'?144:120} compositionWidth={640} compositionHeight={360} fps={24} style={{width:640}} /></StrictMode>));
     flushSync(()=>referenceRef.current.seekTo(entry.visual.frame));
     for(let i=0;i<500;i++) {if(referenceHost.querySelector('canvas') && [...referenceHost.querySelectorAll('[data-jizura-ready]')].every(c=>c.dataset.jizuraReady==='true'))break; await wait(20); if(i===499)throw new Error('Original example timeout');}
     await raf();await raf();await raf();await raf();

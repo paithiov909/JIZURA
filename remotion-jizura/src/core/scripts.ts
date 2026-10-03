@@ -2,9 +2,10 @@
 // engine/planner.ts and effects/core/layouts.ts. Deliberately no Intl.Segmenter.
 export const isKanji = (c: string) => /[㐀-鿿豈-﫿々〆ヶ]/.test(c);
 export const isHira = (c: string) => /[ぁ-ゟ]/.test(c);
-const isKata = (c: string) => /[゠-ヿㇰ-ㇿｦ-ﾟ]/.test(c);
-const isSmallKana = (c: string) => 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ'.includes(c);
-const isPunct = (c: string) => /[、。，．,.!?！？…‥・「」『』（）()【】〈〉《》〔〕［］\[\]'"“”‘’ー〜～:：;；\-—―]/.test(c);
+export const isKata = (c: string) => /[゠-ヿㇰ-ㇿｦ-ﾟ]/.test(c);
+export const isSmallKana = (c: string) => 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ'.includes(c);
+export const isPunct = (c: string) => /[、。，．,.!?！？…‥・「」『』（）()【】〈〉《》〔〕［］\[\]'"“”‘’ー〜～:：;；\-—―]/.test(c);
+export const isLatin = (c: string) => /[A-Za-z0-9]/.test(c);
 const WORDCH = /[A-Za-z\u00c0-\u024f0-9\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]/;
 const wordLike = (t: string) => /^[A-Za-z\u00c0-\u024f0-9\uac00-\ud7af'’.,!?‐–—-]+$/.test(t) && WORDCH.test(t);
 export const latinText = (t: string) => {

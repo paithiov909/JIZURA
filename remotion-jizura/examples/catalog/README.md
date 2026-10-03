@@ -86,3 +86,14 @@ specify that backend. This does not establish a general pixel tolerance.
 It writes PNGs/UI screenshots and metadata to ignored `dist/remotion/stage11/`
 and does not adopt new baselines. The consumer checks the real tarball's new search API/types and the
 original eleven Remotion PNGs; the stage07 scene report must also exist.
+
+## Stage13 additions
+
+The current example catalog has17 entries: package13 (original7, native slice,
+explicit-only mixed/slideLeft/shrink/jitter/brackets), caller3 and standard blur1.
+New entries route to [FirstEffectBatch](../batch/README.md). Generate its five
+single-effect movies and combined movie with `node remotion-jizura/tests/batch-consumer.mjs`.
+The shrink preview/movie also uses breathe. `catalog-browser.mjs` now verifies
+all17 real previews against fresh original examples and writes evidence to
+`dist/remotion/stage13/catalog/`; historical stage11 evidence is preserved.
+The media handler accepts only authored stage08/09/10/13 movie paths.

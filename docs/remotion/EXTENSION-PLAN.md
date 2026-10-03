@@ -1,6 +1,6 @@
 # remotion-jizura 表現拡充・レビュー体験の開発計画
 
-作成日：2026-10-03。ブランチ：`remotion`。状態：08〜12は実装・技術検証完了、13〜14は未着手。
+作成日：2026-10-03。ブランチ：`remotion`。状態：08〜13は実装・技術検証完了、14は未着手。
 初期01〜07の[計画](PLAN.md)・[API](API.md)・[検証記録](VALIDATION.md)を前提とする。
 [作業一覧](README.md)から各タスクへ進む。
 
@@ -183,3 +183,19 @@ swangle文字のkasumi逆seek差は未解決条件として保存し、一般許
 同renderの回帰/並列比較はraw差0。ユーザー承認・採用済みbaselineとcandidateを分ける。
 13にはglyph/強調/item中心/spacing/step/null-current boxの診断とcase拡張位置を渡した。
 本体API/公開export/候補/依存は変更せず、13の新5件は未実装。次は13。
+
+## 段階13の結果（2026-10-03）
+
+固定5件mixed/slideLeft/shrink/jitter/bracketsを公開factory/型/catalog/例へ接続した。
+明示指定専用、autoSelect=false、初期7候補/順序/省略seedを維持。
+mixedは単一fontの個別glyph item/強調写像、shrinkはitem中心/track再計測へ適応し、
+公開callerのlayout/motion型は拡張しなかった。paramsと範囲は[API追補](API.md#段階13の明示effect追加2026-10-03)。
+21新case149代表PNG、旧参考140一致とbracketsの拡張端点9sampleの意図した差、
+逆seek/StrictMode/再mount/cache/edit復元、2compositionの並列1/2、7短編動画を確認。
+外部tarballの公開型/新30PNG/旧11PNG、公開例6動画、17件catalog/14動画URL、
+既存283参考frameと84保存PNG回帰、新7case57PNG再比較、root/spikeも成功。
+詳細なcommand・条件・目視artifact/限界は[13の結果](13-first-effect-batch.md)。
+
+生成物はdist、ユーザーレビューと採用済みbaselineは未確認。高pad/strokeの縦長clipと
+高回転の可読性は採用判断へ残す。14へ17件catalog、新60frame例、調整paramsと
+item数変更のmotion seedへの影響を渡した。14の統合例/UXと次の移植群は実装していない。

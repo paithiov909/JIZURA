@@ -8,6 +8,7 @@ export const rs = (a: number, b = 0, c = 0, d = 0, e = 0) => r(a, b, c, d, e) * 
 export const E = {
   inQuad: (x: number) => {x = clamp(x); return x * x;},
   inCubic: (x: number) => {x = clamp(x); return x * x * x;},
+  outQuint: (x: number) => 1 - Math.pow(1 - clamp(x), 5),
   outCubic: (x: number) => 1 - Math.pow(1 - clamp(x), 3),
   inOutCubic: (x: number) => {x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;},
   outExpo: (x: number) => {x = clamp(x); return x >= 1 ? 1 : 1 - Math.pow(2, -10 * x);},

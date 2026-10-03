@@ -812,3 +812,53 @@ groupは完全一致、tags/uses/conditionsは各指定値が同じfieldに完�
 [検索例と実Player一覧](../../remotion-jizura/examples/catalog/README.md)に
 静かな保持・短いキメ・控えめな装飾の例、条件、再生成commandを記録する。
 [旧候補の分類と確定5件](EFFECT-CANDIDATES.md)は公開実行APIとは分ける。
+
+## 段階13の明示effect追加（2026-10-03）
+
+公開factory `mixed`、`slideLeft`、`shrink`、`jitter`、`brackets` と対応する
+MixedEffect/SlideLeftEffect/ShrinkEffect/JitterEffect/BracketsEffect、
+MixedParams/JitterParams/BracketsParamsを追加した。IDはfactoryと同名、groupは順に
+layout/enter/exit/hold/decor。Cutはfactory宣言またはID文字列を明示指定できる。
+`{seed?, params?}`、uint32 seed、不正入力のE_EFFECTは既存と同じ。未知key・null・型違い・
+範囲外・非有限numberを拒否し、0/falseを保持する。slideLeft/shrinkはparameterなし。
+
+| factory.parameter | 既定・範囲 | 意味 |
+| --- | --- | --- |
+| mixed.mode | seed生成：line/stair/line/wave、入力line/stair/wave | 行内の縦リズム |
+| mixed.rotAmp | seed生成2..10、入力0..20度 | 各itemのseed回転の最大角度 |
+| mixed.smallK | seed生成0.42..0.6、入力0.25..1 | かな等の基準比率。0..0.14のseed値を加え、小さいかなはさらに0.8倍 |
+| mixed.accentIdx | seed生成整数0..20、入力整数0..9999 | 空白除去後の文字indexを文字数で剰余。漢字にはaccentを付けず、本文の強調指定を優先 |
+| jitter.amount | 1、0..4 | 旧fx.motion相当の変位倍率。0で無効。回転は旧4度×hold量、変位0.2px未満は回転も無効 |
+| brackets.pad | 18、0..64px | 基本余白。現在box高さの12%を加える |
+| brackets.stroke | 2.2、0.5..12px | 枠の線幅 |
+| brackets.accent | false、boolean | falseは本文色、trueはaccent色 |
+
+5件は**明示指定専用**。省略指定のCANDIDATES・順序・省略seed導出・既存7effectの
+parameter生成は維持する。catalogは旧7＋native1＋新5の13件、autoSelect=trueは旧7件のみ。
+比較routeに`batch`を追加し、caller例の一覧は17件。組み込みfactoryには独自factoryの
+`.metadata`を付けず、情報はgetEffectCatalogから得る。新IDも同groupの独自定義からの置換を拒否する。
+
+mixedは旧layoutの大小・1/2行・0.96のadvance・seed回転を保持し、複数fontをCutの単一fontへ適応する。
+空白と明示改行を除いて各code pointを1itemへ配置し、元本文のemphasis indexは保持する。
+9字以下は1行、10字以上は2行、各行の基準sizeを幅86%／高さ40%（2行30%）と
+Style.fontSizeの上限で決める。2〜16字が原型の主用途で、長文も2行のまま縮小する。
+Style.track/leadとcenterのoffset/sub/underは配置に使わない。fontSizeは各glyphの上限。
+漢字1、カナ0.88、ASCII英数字0.8、約物0.42、その他smallK+seed値という比率を用いる。
+配置・item回転のseedは旧同様Cut seed、motionは `h(effect.seed, itemIndex+1, 7)`。
+inspection.itemSeedは既存同様先頭itemの値。公開TextPlacement/GlyphTransformは拡張しない。
+
+slideLeftはglyph traversalでstagger0.5、qを0..1へclampし、q=0では非表示、
+q=1で静止へ戻る。dxは `-0.85*size*(1-outQuint(q))`、alphaは `clamp(q*1.6)^1.6`。
+mixedの各itemは1文字なのでitem間のstaggerは付かず、同時に入場する（旧mixedも同じ）。
+shrinkはbreathe後のitem sizeを `1-0.96*pOut^3` 倍、trackを `0.2*pOut^3` 減らし、
+item中心からglyphを再配置する。alphaは `1-pOut^6`。mixedは各item中心へ縮み、全体中央への移動ではない。
+退場中の内部trackは負を許す。jitterは既存FrameState.step（量子化後秒の24Hz）とitem seedを使う。
+時間・hold量・D1・phase境界・cleanup・不変planの契約は維持する。
+
+bracketsはfront。現在frameの論理glyph boxを使い、nullでは旧中央fallback
+（幅35〜65%、高さ40〜60%）を使う。このeffectに静止boxや前frameを渡さない。
+開きは `outExpo(clamp(seconds/0.35))*(1-pOut^3)`。論理boxはitem/glyph回転やclipの厳密な可視境界を含まない。
+大きいpad/stroke、縦長やoffsetの組み合わせではcanvas端へ触れ、clipされうる。
+線を自動で内側へfitする仕様ではない。端点入力の技術成立と推奨presetは区別する。
+
+[実装・技術検証と制約](13-first-effect-batch.md)、[公開利用例](../../remotion-jizura/examples/batch/README.md)を参照。

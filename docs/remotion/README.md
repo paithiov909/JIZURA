@@ -18,7 +18,7 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 
 2026-10-03に次の方針を採用した。AIがRemotionコードを組み、人間がデザイン・モーションを
 見て直すフローに向け、表現の拡充・選択・局所調整・再現を優先する。
-[拡張計画](EXTENSION-PLAN.md)と08〜14のメモを作成した。08〜12は実装・技術検証完了、13〜14は未着手。
+[拡張計画](EXTENSION-PLAN.md)と08〜14のメモを作成した。08〜13は実装・技術検証完了、14は未着手。
 旧版の完全互換は目標にせず、LRC/audio解析/拍スナップは利用側のツールで扱う。
 AE/CEP連携は対象外。大きなrepository構造・導入・配布の決定は後段へ置く。
 
@@ -35,7 +35,7 @@ AE/CEP連携は対象外。大きなrepository構造・導入・配布の決定�
 | 10 | [Remotion標準effects接続の試作](10-remotion-effects.md) | 09完了 | 完了（HtmlInCanvas接続・独自slice・実Player/Studio/PNG/動画/外部consumer、ユーザー目視は未確認） |
 | 11 | [選択カタログ・移植候補の整理](11-effect-catalog.md) | 10完了、09のmetadata | 完了（12件検索/実表示・旧860件照合/分類・13の5件確定・外部consumer、ユーザー目視は未確認） |
 | 12 | [共通の移植・検証手順](12-port-validation.md) | 11完了、09/10の実測 | 完了（23case/実PNG・7動画・並列/回帰比較・失敗診断、ユーザー目視は未確認） |
-| 13 | [最初の小さな移植群](13-first-effect-batch.md) | 12完了、11の対象確定 | 未着手 |
+| 13 | [最初の小さな移植群](13-first-effect-batch.md) | 12完了、11の対象確定 | 完了（新5件・21case/149PNG・外部consumer・17件catalog、ユーザー目視は未確認） |
 | 14 | [AI生成コードからのレビュー体験](14-review-loop.md) | 13完了 | 未着手 |
 
 初期開発の結果：
@@ -109,3 +109,8 @@ docs/remotion/EXTENSION-PLAN.md、docs/remotion/08-review-workbench.mdを読み�
 過去の各段階の検証記録と制約はその時点の実績として保持する。
 
 [整理記録](CLEANUP.md)・[ルートREADME](../../README.md)
+
+[13：最初の小さな移植群](13-first-effect-batch.md)は完了。mixed/slideLeft/shrink/jitter/bracketsを
+明示指定専用で追加し、公開型/catalog/例、21case149PNG・旧参考140一致/意図した端点差、
+動画・逆seek/再mount/並列・外部tarball・既存回帰を確認した。
+次は[14：AI生成コードからのレビュー体験](14-review-loop.md)。新例の60frame比較と17件catalogを入口にする。

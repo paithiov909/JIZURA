@@ -36,6 +36,14 @@ export type CenterParams = {
   sx: number; track: number; sub: boolean; under: boolean;
   accent: boolean; ox: number; oy: number;
 };
+export type MixedParams = {mode: 'line' | 'stair' | 'wave'; rotAmp: number; smallK: number; accentIdx: number};
+export type JitterParams = {amount: number};
+export type BracketsParams = {pad: number; stroke: number; accent: boolean};
+export type MixedEffect = EffectDeclaration<'layout', 'mixed', MixedParams>;
+export type SlideLeftEffect = EffectDeclaration<'enter', 'slideLeft', NoParams>;
+export type ShrinkEffect = EffectDeclaration<'exit', 'shrink', NoParams>;
+export type JitterEffect = EffectDeclaration<'hold', 'jitter', JitterParams>;
+export type BracketsEffect = EffectDeclaration<'decor', 'brackets', BracketsParams>;
 export type NoParams = Readonly<Record<string, never>>;
 export type DecorParams = {
   n: number; right: boolean; low: boolean; accent: boolean;
@@ -49,11 +57,11 @@ export type DriftEffect = EffectDeclaration<"exit", "drift", NoParams>;
 export type BreatheEffect = EffectDeclaration<"hold", "breathe", NoParams>;
 export type KasumiEffect = EffectDeclaration<"decor", "kasumi", DecorParams>;
 export type CheckerStripEffect = EffectDeclaration<"decor", "checkerStrip", DecorParams>;
-export type LayoutInput = CustomEffect<"layout"> | "center" | CenterEffect;
-export type EnterInput = CustomEffect<"enter"> | "pop" | "wipe" | PopEffect | WipeEffect | null;
-export type ExitInput = CustomEffect<"exit"> | "drift" | DriftEffect | null;
-export type HoldInput = CustomEffect<"hold"> | "breathe" | BreatheEffect | null;
-export type DecorInput = CustomEffect<"decor"> | "kasumi" | "checkerStrip" | KasumiEffect | CheckerStripEffect;
+export type LayoutInput = CustomEffect<"layout"> | "center" | "mixed" | CenterEffect | MixedEffect;
+export type EnterInput = CustomEffect<"enter"> | "pop" | "wipe" | "slideLeft" | PopEffect | WipeEffect | SlideLeftEffect | null;
+export type ExitInput = CustomEffect<"exit"> | "drift" | "shrink" | DriftEffect | ShrinkEffect | null;
+export type HoldInput = CustomEffect<"hold"> | "breathe" | "jitter" | BreatheEffect | JitterEffect | null;
+export type DecorInput = CustomEffect<"decor"> | "kasumi" | "checkerStrip" | "brackets" | KasumiEffect | CheckerStripEffect | BracketsEffect;
 export type EffectOptions<P> = Readonly<{seed?: Seed; params?: Readonly<Partial<P>>}>;
 
 export type JizuraCutProps = Readonly<{

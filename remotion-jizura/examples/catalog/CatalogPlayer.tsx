@@ -2,12 +2,14 @@ import {useEffect, useRef, useState, type Ref} from 'react';
 import {Player, type PlayerRef} from '@remotion/player';
 import {HtmlInCanvas} from 'remotion';
 import {searchEffects, type CatalogEntry} from 'remotion-jizura';
+import {FirstEffectBatch} from '../batch/FirstEffectBatch.tsx';
 import {ReviewWorkbench} from '../review/ReviewWorkbench.tsx';
 import {CustomEffects} from '../custom/CustomEffects.tsx';
 import {ImageEffects} from '../image-effects/ImageEffects.tsx';
 import {exampleCatalog, searchExamples} from './entries.tsx';
 
 export const CatalogPreview = ({entry, fontSrc = '/NotoSansJP.ttf'}: {entry: CatalogEntry; fontSrc?: string}) => {
+  if (entry.visual.route === 'batch') return <FirstEffectBatch candidate={entry.visual.candidate} fontSrc={fontSrc} />;
   if (entry.visual.route === 'custom') return <CustomEffects />;
   if (entry.visual.route === 'image-effects') return <ImageEffects fontSrc={fontSrc} mode={entry.visual.candidate as 'glitch' | 'standard'} />;
   return <ReviewWorkbench candidate={entry.visual.candidate} fontSrc={fontSrc} />;
@@ -41,14 +43,14 @@ export function CatalogPlayer({playerRef}: {playerRef?: Ref<PlayerRef>}) {
         <h2>{entry.name}</h2><p>{entry.description}</p><p>用途候補: {entry.uses.join(' / ')}</p>
         <p>動き: {entry.movements.join(' / ')} · 条件: {entry.conditions.join(' / ')}</p>
         {supported ? <Player ref={node => {ref.current = node; if (typeof playerRef === 'function') playerRef(node); else if (playerRef) playerRef.current = node;}}
-          component={CatalogPreview} inputProps={{entry}} durationInFrames={entry.group === 'image' ? 144 : 120}
+          component={CatalogPreview} inputProps={{entry}} durationInFrames={entry.visual.route === 'batch' ? 60 : entry.group === 'image' ? 144 : 120}
           compositionWidth={640} compositionHeight={360} fps={24} controls loop
           errorFallback={({error}) => <pre role="alert">{error.message}</pre>} style={{width: '100%', backgroundColor: '#16324F'}} />
           : <p>画像例にはHTML-in-Canvas対応Chromeとflagが必要です。</p>}
         <p>代表frame: {entry.visual.frame} / {entry.visual.composition}。
           {entry.origin === 'caller-example' && ' 独自3定義を組み合わせた例です。'}
           {entry.group === 'image' && ' 動画はsliceと標準blurの組み合わせ例です。'}</p>
-        <a href={`?${entry.visual.route === 'review' ? `review&candidate=${entry.visual.candidate}` : entry.visual.route === 'custom' ? 'custom' : `image-effects&mode=${entry.visual.candidate}`}`}>比較例を開く</a>{' · '}
+        <a href={`?${entry.visual.route === 'review' ? `review&candidate=${entry.visual.candidate}` : entry.visual.route === 'batch' ? `batch&candidate=${entry.visual.candidate}` : entry.visual.route === 'custom' ? 'custom' : `image-effects&mode=${entry.visual.candidate}`}`}>比較例を開く</a>{' · '}
         <a href={`/catalog-media/${entry.visual.video.replace('dist/remotion/', '')}`}>代表動画（検証commandで生成）</a>
         <ul>{entry.constraints.map(c => <li key={c}>{c}</li>)}</ul>
         <details><summary>調整値・根拠</summary>

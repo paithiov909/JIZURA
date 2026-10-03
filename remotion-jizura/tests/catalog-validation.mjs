@@ -15,8 +15,8 @@ export function validateCatalog(entries) {
     if (e.suitability?.status !== 'hypothesis' || !e.suitability.reason) fail(`suitability ${key}`);
     if (e.provenance?.description !== 'source') fail(`provenance ${key}`);
     words(e.provenance.sources, `sources ${key}`); words(e.provenance.evidence, `evidence ${key}`);
-    if (!['review','custom','image-effects'].includes(e.visual?.route) || !e.visual.candidate || !e.visual.composition ||
-      !Number.isSafeInteger(e.visual.frame) || e.visual.frame < 0 || !/^dist\/remotion\/stage(?:08|09|10)\/[\w-]+\.mp4$/.test(e.visual.video)) fail(`visual ${key}`);
+    if (!['review','custom','image-effects','batch'].includes(e.visual?.route) || !e.visual.candidate || !e.visual.composition ||
+      !Number.isSafeInteger(e.visual.frame) || e.visual.frame < 0 || !/^dist\/remotion\/stage(?:08|09|10|13)\/[\w-]+\.mp4$/.test(e.visual.video)) fail(`visual ${key}`);
     if (e.group === 'decor' && !['back','front'].includes(e.layer)) fail(`layer ${key}`);
     if (e.group === 'image' && !['2d','webgl2'].includes(e.backend)) fail(`backend ${key}`);
     if (!e.parameters || typeof e.parameters !== 'object') fail(`parameters ${key}`);

@@ -76,3 +76,23 @@ getEffectCatalog/searchEffectsのmetadataと用途3例から候補の理由・pa
 検索entryをCut宣言として使わない。未移植候補は[EFFECT-CANDIDATES](EFFECT-CANDIDATES.md)の別report。
 13の新5件が完了したら既存一覧へ明示追加し、AIの選定理由と局所修正/再現へ接続する。
 代表動画は生成物であり、独自3件/画像2件の動画は組み合わせ例。選択effect単独の動画と取り違えない。
+
+## 段階13からの入口（2026-10-03）
+
+新5factory/型とparameterの確定契約は[API追補](API.md#段階13の明示effect追加2026-10-03)。
+[FirstEffectBatch](../../remotion-jizura/examples/batch/README.md)を`/?batch`/Studioで表示でき、
+`/?catalog`は新5件を含む17件、package catalogは13件。新5件は明示指定専用、
+既存自動候補/seedは変えない。組み込みの意味情報はfactory.metadataではなくcatalogから得る。
+
+mixedは空白/改行を除去し1文字1itemへ配置する。slideLeftはmixedで同時入場、
+shrinkは各文字中心へ縮む。centerへ差し替えればglyph staggerと全文中心の収縮になる。
+item数/順序の変更はmotion item seedに影響する。inspectionのitemSeedは先頭itemの値、
+詳細glyph/rotationは開発harnessのgeometryへ残し、公開snapshotのshapeは拡張していない。
+局所編集ではCut/effect seed・font/寸法・時間・全paramsを保存し、固定した別Cutを検証する。
+
+調整値はmixed.mode/rotAmp/smallK/accentIdx、jitter.amount、brackets.pad/stroke/accent、
+入退場frame数。縦長で大きなbrackets.pad/stroke、center.offsetは枠/本文をclipしうる。
+端点入力が成立しても推奨presetやユーザー承認ではない。
+比較command・149PNG/旧参考差・動画/外部consumer・目視と制約は[13の結果](13-first-effect-batch.md)。
+13の例は60frameの小比較で、3〜5Cut/10〜20秒の統合例や編集保存syncは14で作る。
+Studioの新例登録は済み、Studio操作/Save/reloadは13で未検証なので14で実測する。

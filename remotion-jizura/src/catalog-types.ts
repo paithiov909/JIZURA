@@ -19,7 +19,7 @@ export type CatalogEntry = Readonly<{
   suitability: Readonly<{status: 'hypothesis'; reason: string}>;
   provenance: Readonly<{description: 'source'; sources: readonly string[]; evidence: readonly string[]}>;
   parameters: Readonly<Record<string, CatalogParameter>>;
-  visual: Readonly<{route: 'review' | 'custom' | 'image-effects'; candidate: string; frame: number;
+  visual: Readonly<{route: 'review' | 'custom' | 'image-effects' | 'batch'; candidate: string; frame: number;
     composition: string; video: string}>;
   layer?: 'back' | 'front'; backend?: '2d' | 'webgl2';
 }>;

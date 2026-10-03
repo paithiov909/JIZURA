@@ -1,5 +1,6 @@
 import type {CatalogEntry, CatalogParameter, CatalogQuery} from './catalog-types.js';
 import {freeze} from './core/validation.js';
+import {batchSchemas} from './effects/batch-schema.js';
 import {sliceGlitch} from './effects/slice-glitch.js';
 
 const seeded = {kind: 'seeded'} as const;
@@ -71,6 +72,23 @@ entries.push({group: 'image', id: slice.type, name: '画像スライス / sliceG
   provenance: {description: 'source', sources: ['src/effects/slice-glitch.ts'], evidence: ['docs/remotion/10-remotion-effects.md']},
   parameters: sliceParams, visual: {route: 'image-effects', candidate: 'glitch', frame: 24, composition: 'ImageEffects', video: 'dist/remotion/stage10/image-effects.mp4'}});
 
+// Explicit-only batch: never change the initial automatic candidate order.
+for (const [group, id, name, description, moods, movements, uses, constraints, frame] of [
+  ['layout', 'mixed', '大小ミックス / mixed', '漢字・かな・Latin・約物の大きさを変え、1/2行でseed回転する。', ['pop'], ['大小', '静止'], ['短いキメ', '本文配置'], ['単一font。空白/改行は除去し、10字から2行。縦組ではない。', '論理boxは回転を含まない。Style.track/leadは配置へ影響しない。'], 24],
+  ['enter', 'slideLeft', '左からスライド / slideLeft', '0.5の逐字staggerとoutQuintで左から滑り込み、alphaを開く。', ['calm', 'pop'], ['逐字', '横移動'], ['入場', '短いキメ'], ['mixedは1文字1itemなので各文字の入場は同時。Cutの入場frame数で調整。'], 6],
+  ['exit', 'shrink', '収縮 / shrink', 'item中心へsizeと文字間隔を縮め、inCubicで消える。', ['calm'], ['収縮'], ['退場', '切り替え'], ['mixedでは各item中心へ収縮する。全体を中央へ集約しない。trackは退場中に負になる。'], 54],
+  ['hold', 'jitter', 'ジッター / jitter', '24Hzのstepとseedで文字を小さく揺らす。', ['glitch'], ['揺れ', '逐字'], ['短いキメ', '保持'], ['変位0.2px未満は無効。motionFpsでstepの評価を量子化できる。amountは変位倍率。'], 24],
+  ['decor', 'brackets', '枠マーク / brackets', '現在の文字boxの4隅へ0.35秒で枠を開き、退出で閉じる。', ['graphic'], ['展開', '枠'], ['装飾', '本文強調'], ['front layer。null boxでは中央fallback。大きいpad/strokeや縦長で端へ触れることがある。'], 24],
+] as const) {
+  const schema = batchSchemas[id] ?? {};
+  const parameters = Object.fromEntries(Object.entries(schema).map(([key, field]) => [key, {...field,
+    ...(field.type === 'number' ? {bounds: 'input' as const} : {}),
+    default: id === 'mixed' ? seeded : {kind: 'fixed' as const, value: field.default}, usage: 'effective' as const}])) as Record<string, CatalogParameter>;
+  const entry = builtin(group, id, name, description, [...moods], [...movements], [...uses], [...constraints], parameters, frame);
+  entries.push({...entry, autoSelect: false, conditions: ['横長640×360', '縦長360×640', '日本語・Latin・約物', '明示seed'],
+    provenance: {description: 'source', sources: [group === 'layout' ? 'src/canvas/mixed.ts' : group === 'decor' ? 'src/effects/decor.ts' : 'src/effects/motion.ts'], evidence: ['docs/remotion/13-first-effect-batch.md']},
+    visual: {route: 'batch', candidate: id, frame, composition: 'FirstEffectBatch', video: `dist/remotion/stage13/${id}.mp4`}});
+}
 const catalog = freeze(entries);
 /** Package implementations only; caller examples are supplied explicitly to searchEffects. */
 export function getEffectCatalog(): readonly CatalogEntry[] {return catalog;}

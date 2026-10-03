@@ -1,7 +1,9 @@
 import type {
   CenterParams, DecorParams, EffectOptions, NoParams, CenterEffect, PopEffect,
   WipeEffect, DriftEffect, BreatheEffect, KasumiEffect, CheckerStripEffect,
+  MixedParams, MixedEffect, SlideLeftEffect, ShrinkEffect, JitterParams, JitterEffect, BracketsParams, BracketsEffect,
 } from '../types.js';
+import {batchSchemas} from './batch-schema.js';
 import {customRuntime, attachCustom, customParams} from './custom.js';
 import {fail, freeze, keys, record, seed} from '../core/validation.js';
 import {effectSeed, itemSeed, parameterSeed, rng, selectionSeed} from '../core/random.js';
@@ -14,11 +16,15 @@ export type ResolvedEffect = Readonly<{
   params: Readonly<Record<string, ParamValue>>; explicitParams: readonly string[];
   layer?: 'back' | 'front'; customKey?: number;
 }>;
-// All catalog IDs are implemented by center.ts, motion.ts and decor.ts.
+// Supported text/decor IDs are implemented by center/mixed, motion and decor.
 // Candidate order/weights remain the API v1 equal-probability selection.
 export const CANDIDATES = freeze({layout: ['center'], enter: ['pop', 'wipe'], exit: ['drift'], hold: ['breathe'], decor: ['kasumi', 'checkerStrip']});
-function params(value: unknown, group: Group, path: string): Record<string, ParamValue> | undefined {
+// Accepted IDs are separate from the unchanged automatic candidate list.
+export const SUPPORTED = freeze({layout: ['center', 'mixed'], enter: ['pop', 'wipe', 'slideLeft'], exit: ['drift', 'shrink'], hold: ['breathe', 'jitter'], decor: ['kasumi', 'checkerStrip', 'brackets']});
+function params(value: unknown, group: Group, path: string, id: string): Record<string, ParamValue> | undefined {
   if (value === undefined) return undefined;
+  const schema = batchSchemas[id];
+  if (schema) return customParams(value, schema, path);
   const v = record(value, path, 'E_EFFECT');
   const bounds: Record<string, readonly [number, number, boolean?]> = group === 'layout'
     ? {sx: [0.25, 4], track: [0, 1], ox: [-0.25, 0.25], oy: [-0.25, 0.25]}
@@ -43,9 +49,9 @@ export function validateDeclaration(value: unknown, group: Group, path: string):
   const v = typeof value === 'string' ? {group, id: value} : record(value, path, 'E_EFFECT');
   keys(v, ['group', 'id', 'seed', 'params'], path, 'E_EFFECT');
   const custom = customRuntime(v);
-  if (v.group !== group || typeof v.id !== 'string' || (!custom && !CANDIDATES[group].includes(v.id)) ||
-      (custom && (custom.metadata.group !== group || custom.metadata.id !== v.id || CANDIDATES[group].includes(v.id)))) fail('E_EFFECT', path, 'Unsupported effect ID or group.');
-  const p = custom ? customParams(v.params, custom.metadata.schema, `${path}.params`) : params(v.params, group, `${path}.params`);
+  if (v.group !== group || typeof v.id !== 'string' || (!custom && !SUPPORTED[group].includes(v.id)) ||
+      (custom && (custom.metadata.group !== group || custom.metadata.id !== v.id || SUPPORTED[group].includes(v.id)))) fail('E_EFFECT', path, 'Unsupported effect ID or group.');
+  const p = custom ? customParams(v.params, custom.metadata.schema, `${path}.params`) : params(v.params, group, `${path}.params`, v.id as string);
   const declaration = freeze({group, id: v.id as string,
     ...(v.seed === undefined ? {} : {seed: seed(v.seed, `${path}.seed`)}),
     ...(p === undefined ? {} : {params: p})});
@@ -64,8 +70,16 @@ export function drift(o?: EffectOptions<NoParams>): DriftEffect { return factory
 export function breathe(o?: EffectOptions<NoParams>): BreatheEffect { return factory('hold', 'breathe', o) as BreatheEffect; }
 export function kasumi(o?: EffectOptions<DecorParams>): KasumiEffect { return factory('decor', 'kasumi', o) as KasumiEffect; }
 export function checkerStrip(o?: EffectOptions<DecorParams>): CheckerStripEffect { return factory('decor', 'checkerStrip', o) as CheckerStripEffect; }
-function generatedParams(group: Group, effect: number): Record<string, ParamValue> {
+export function mixed(o?: EffectOptions<MixedParams>): MixedEffect {return factory('layout', 'mixed', o) as MixedEffect;}
+export function slideLeft(o?: EffectOptions<NoParams>): SlideLeftEffect {return factory('enter', 'slideLeft', o) as SlideLeftEffect;}
+export function shrink(o?: EffectOptions<NoParams>): ShrinkEffect {return factory('exit', 'shrink', o) as ShrinkEffect;}
+export function jitter(o?: EffectOptions<JitterParams>): JitterEffect {return factory('hold', 'jitter', o) as JitterEffect;}
+export function brackets(o?: EffectOptions<BracketsParams>): BracketsEffect {return factory('decor', 'brackets', o) as BracketsEffect;}
+function generatedParams(group: Group, effect: number, id: string): Record<string, ParamValue> {
   const r = rng(parameterSeed(effect));
+  if (id === 'mixed') {r.pick([0]); r.pick([0]); return {mode: r.pick(['line', 'stair', 'line', 'wave']), rotAmp: r.range(2, 10), smallK: r.range(0.42, 0.6), accentIdx: r.int(0, 20)};}
+  if (id === 'jitter') return {amount: 1};
+  if (id === 'brackets') return {pad: 18, stroke: 2.2, accent: false};
   if (group === 'layout') {
     r.chance(0.7); r.pick([0]); // old center font role choice, now one resolved face
     return {sx: r.pick([1, 1, 1, 1.25, 1.45, 0.78]), track: r.range(0.02, 0.14),
@@ -86,7 +100,7 @@ export function resolveEffect(value: unknown, group: Group, cut: number, path: s
   const custom = customRuntime(declaration);
   const effect = freeze({group, id: declaration.id, seed: s, itemSeed: itemSeed(s, 0),
     ...(custom ? {customKey: custom.key} : {}),
-    params: custom ? customParams(declaration.params, custom.metadata.schema, `${path}.params`, true) : {...generatedParams(group, s), ...declaration.params}, explicitParams: Object.keys(declaration.params ?? {}),
+    params: custom ? customParams(declaration.params, custom.metadata.schema, `${path}.params`, true) : {...generatedParams(group, s, declaration.id), ...declaration.params}, explicitParams: Object.keys(declaration.params ?? {}),
     ...(group === 'decor' ? {layer: custom?.metadata.layer ?? (declaration.id === 'kasumi' ? 'back' as const : 'front' as const)} : {})});
   if (custom) attachCustom(effect, custom);
   return effect;

@@ -12,15 +12,15 @@ import {portCases, getPortCase, sceneDuration} from './port-cases.ts';
 import {requirePixels, requireResolvedProps} from './port-metrics.mjs';
 
 const flags = Object.fromEntries(process.argv.slice(2).map(arg => {
-  const match = /^--(case|compare-to|inject|list|stills-only)(?:=(.+))?$/.exec(arg);
+  const match = /^--(case|compare-to|inject|list|stills-only|output)(?:=(.+))?$/.exec(arg);
   if (!match) throw new Error(`Unknown option ${arg}`);
-  if (['case', 'compare-to', 'inject'].includes(match[1]) && !match[2]) throw new Error(`Missing value ${arg}`);
+  if (['case', 'compare-to', 'inject', 'output'].includes(match[1]) && !match[2]) throw new Error(`Missing value ${arg}`);
   return [match[1], match[2] ?? true];
 }));
 if (flags.list) {console.log(portCases.map(c => `${c.id}\t${c.kind}/${c.preset}\t${c.reason}`).join('\n')); process.exit(0);}
 const selected = flags.case ? [...new Set(flags.case.split(','))].map(getPortCase) : portCases;
 if (flags.inject && !['pixels', 'parameter', 'empty', 'stale-props'].includes(flags.inject)) throw new Error('Unknown injection');
-const repo = path.resolve(import.meta.dirname, '../..'), parent = path.join(repo, 'dist/remotion/stage12');
+const repo = path.resolve(import.meta.dirname, '../..'), parent = flags.output ? path.resolve(flags.output) : path.join(repo, 'dist/remotion/stage12');
 const publicDir = path.join(repo, 'dist/remotion/stage04/assets');
 const font = await readFile(path.join(publicDir, 'NotoSansJP.ttf'));
 const browserExecutable = process.env.JIZURA_BROWSER ?? '/usr/bin/google-chrome';
@@ -74,9 +74,10 @@ try {
     platform: process.platform, arch: process.arch, fontSHA256, font: {family: 'Noto Sans JP', weight: 700, style: 'normal'},
     previewDPR: 2, pixelDensity: 1, backends, browserExecutable};
   report.sources = [];
-  for (const file of ['port-cases.ts', 'port-model.tsx', 'port-entry.jsx', 'port-composition.tsx', 'port-metrics.mjs', 'port-validation.mjs', 'effect-reference.jsx']) {
+  for (const file of ['port-cases.ts', 'port-model.tsx', 'port-entry.jsx', 'port-composition.tsx', 'port-metrics.mjs', 'port-validation.mjs', 'effect-reference.jsx', 'batch-gates.jsx']) {
     report.sources.push({file: `remotion-jizura/tests/${file}`, sha256: hash(await readFile(path.join(import.meta.dirname, file)))});
   }
+  for (const file of ['remotion-jizura/src/canvas/mixed.ts', 'remotion-jizura/src/canvas/effect-frame.ts', 'remotion-jizura/src/effects/motion.ts', 'remotion-jizura/src/effects/decor.ts', 'remotion-jizura/src/effects/batch-schema.ts', 'effects/core/layouts.ts', 'effects/core/animation.ts', 'effects/core/decor.ts', 'effects/packs/enter.ts']) report.sources.push({file, sha256: hash(await readFile(path.join(repo, file)))});
   if (previous) {
     assert.equal(previous.status, 'passed', 'Previous run incomplete');
     assert.deepEqual(previous.environment, report.environment, 'Regression environment differs; use visual assessment for different conditions');

@@ -2,7 +2,7 @@ export {JizuraScene} from './react/JizuraScene.js';
 export {JizuraCut} from './react/JizuraCut.js';
 export {JizuraError} from './core/error.js';
 export {parseLines} from './core/text.js';
-export {center, pop, wipe, drift, breathe, kasumi, checkerStrip} from './effects/declarations.js';
+export {center, pop, wipe, drift, breathe, kasumi, checkerStrip, mixed, slideLeft, shrink, jitter, brackets} from './effects/declarations.js';
 export type * from './types.js';
 
 export {defineLayoutEffect, defineMotionEffect, defineDecorEffect} from './effects/custom.js';

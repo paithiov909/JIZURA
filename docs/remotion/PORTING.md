@@ -19,13 +19,15 @@ node remotion-jizura/tests/port-validation.mjs --list
 node remotion-jizura/tests/port-validation.mjs
 node remotion-jizura/tests/port-validation.mjs --case=combined,custom,image-combined
 node remotion-jizura/tests/port-validation.mjs --case=combined --stills-only
+node remotion-jizura/tests/port-validation.mjs --case=mixed,slideLeft,shrink,jitter,brackets,batch --output=dist/remotion/stage13
 # 過去の完了runの絶対pathを指定する。raw PNG比較で、採用状態は自動変更しない。
 node remotion-jizura/tests/port-validation.mjs --case=center,custom,image-combined --stills-only --compare-to=/absolute/path/to/dist/remotion/stage12/run-XXXXXX
 ```
 
-全runは23case、7本の短い動画を選ぶ。`video:true`を指定したcaseは自動でMP4を取得する。
+段階12当時は23case/7動画。段階13で21case/7動画を追加し、現在の全runは44case/14動画。`video:true`を指定したcaseは自動でMP4を取得する。
 `--stills-only`は動画取得だけを省略し、代表PNG・seek/remount・negative gate・指定caseの
-並列比較は実行する。全case全parameter全frameの総当たりではない。
+並列比較は実行する。`--output=dist/remotion/stage13`は保存先parentだけを変え、run directoryを毎回新規作成する。
+全case全parameter全frameの総当たりではない。
 Chrome/build/render checksを重ねず、この16GB hostでは通常concurrency1、combinedの
 PNG比較だけconcurrency1/2を順次実行する。文字はGL既定（gl:null）、画像fxはswangle。
 種類が変わるとbrowserを閉じて次を開き、同時に所有するbrowserは1つ。条件はcase別にも保存する。
@@ -134,3 +136,15 @@ heuristicが原因という説明はsourceとこの切り分けからの推定�
 swangle文字の厳密な再現性を保証せず、差を許容するgateやbaseline更新を追加しない。
 直接Canvas/公開Playerは同じemitted runtimeをimportする。src/distの別runtimeを混ぜると
 font所有権と独自宣言のWeakMapが分離する。build後にharnessを起動し、動作中に再buildしない。
+
+## 段階13で追加したgate
+
+新5件のcaseはbatchSchemasの端点、mixedの2/9/10/16字・長文/縦長・元強調index、
+slideLeftの1字/複数行/D1、shrinkのbreathe/mixed、jitterの0/step/量子化/並列、
+bracketsのnull/current boxとpad/stroke端点を含む。`tests/batch-gates.jsx`は
+旧util/classificationと実測advanceを使い、geometry/alpha/seed/boxの固有期待式を検査する。
+新helperの出力だけを期待値にコピーしない。旧reference adapterは原型を独立実行し、
+単一font・Style.fontSizeの行単位cap・強調・motion item seedへ適応する。
+旧bracketsは固定pad18/stroke2.2のままなので、新しい端点値とは意図した画素差がある。
+公開consumerとcatalog例の検証は`batch-consumer.mjs`と`catalog-browser.mjs`、
+command/結果は[13](13-first-effect-batch.md)に記録する。

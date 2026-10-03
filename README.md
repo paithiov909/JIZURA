@@ -27,7 +27,9 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 旧860部品の登録照合・分類と最初の移植5件を確定し、公開検索APIの外部tarball利用を確認しました。
 [12：共通の移植・検証手順](docs/remotion/12-port-validation.md)では、理由付き23case、
 実PNG/短い動画・並列比較・失敗診断と[追加手順](docs/remotion/PORTING.md)を整備しました。
-次の着手先は[13：最初の小さな移植群](docs/remotion/13-first-effect-batch.md)です。
+[13：最初の小さな移植群](docs/remotion/13-first-effect-batch.md)では、mixed/slideLeft/shrink/jitter/bracketsを
+明示指定専用で追加し、21case149PNG・動画・外部tarball・17件catalogと既存回帰を検証しました。
+次の着手先は[14：AI生成コードからのレビュー体験](docs/remotion/14-review-loop.md)です。
 旧版の完全互換は目標にせず、LRC・音声解析・拍スナップは利用側のワークフローで扱います。
 AE/CEP連携は対象外。大きなプロジェクト構造・導入・配布の決定は後段に置きます。
 

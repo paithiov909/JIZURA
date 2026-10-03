@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import * as api from '../dist/index.js';
-import {CANDIDATES} from '../dist/effects/declarations.js';
+import {SUPPORTED} from '../dist/effects/declarations.js';
 import {validateCatalog} from './catalog-validation.mjs';
 const catalog = api.getEffectCatalog();
 test('package catalog covers every automatic candidate and separates native image execution', () => {
-  assert.equal(validateCatalog(catalog), 8);
+  assert.equal(validateCatalog(catalog), 13);
   assert.deepEqual(catalog.filter(e => e.origin === 'builtin').map(e => `${e.group}/${e.id}`).sort(),
-    Object.entries(CANDIDATES).flatMap(([group, ids]) => ids.map(id => `${group}/${id}`)).sort());
+    Object.entries(SUPPORTED).flatMap(([group, ids]) => ids.map(id => `${group}/${id}`)).sort());
   assert.equal(catalog.filter(e => e.autoSelect).length, 7);
   assert.equal(catalog.find(e => e.group === 'image').autoSelect, false);
   assert.throws(() => api.resolveScene({durationInFrames: 60}, {width:640,height:360,fps:24}, [{text:'朝', hold:catalog[7].id}]));
@@ -44,7 +44,7 @@ test('search combines name, tokens, tags, group and usage conditions without cha
   assert.ok(api.searchEffects({name:'BREATHE',group:'hold',tags:['calm'],uses:['静かな保持'],conditions:['明示seed']}).some(e=>e.id==='breathe'));
   assert.deepEqual(api.searchEffects({text:'not-an-effect'}), []);
   assert.deepEqual(api.searchEffects({group:'decor',conditions:['WebGL2']}), []);
-  assert.deepEqual(api.searchEffects({text:'CALM 静か'}), catalog.filter(e=>e.tags.includes('calm')));
+  assert.deepEqual(api.searchEffects({text:'CALM 静か'}), catalog.filter(e=>e.tags.includes('calm') && e.tags.includes('静か')));
 });
 test('metadata gate detects duplicates, missing descriptions and invalid parameter data', () => {
   const copy = () => structuredClone(catalog);

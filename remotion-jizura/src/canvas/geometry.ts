@@ -8,7 +8,7 @@ export type Glyph = Readonly<{
 export type Box = Readonly<{x0: number; y0: number; x1: number; y1: number; cx: number; cy: number}>;
 export type StaticItem = Readonly<{
   text: string; font: ResolvedFont; size: number; track: number; lead: number;
-  x: number; y: number; sx: number; sy: number; glyphs: readonly Glyph[];
+  x: number; y: number; sx: number; sy: number; rot?: number; index?: number; glyphs: readonly Glyph[];
 }>;
 export type CutGeometry = Readonly<{items: readonly StaticItem[]; box: Box | null; subtitle?: StaticItem}>;
 export type Advance = (font: ResolvedFont, ch: string) => number;

@@ -1,9 +1,9 @@
-// Only checkerStrip/kasumi and their drawing dependencies are ported.
+// checkerStrip/kasumi/brackets and their drawing dependencies.
 import type {Box} from '../canvas/geometry.js';
 import type {ResolvedStyle} from '../core/style.js';
-import {E, clamp, r, contrast, lum} from './math.js';
+import {E, clamp, r, contrast, lum, lerp} from './math.js';
 type Point = [number, number];
-export type DecorBag = {seed: number; n: number; v: number; right: boolean; low: boolean; accent: boolean};
+export type DecorBag = {seed: number; n: number; v: number; right: boolean; low: boolean; accent: boolean; pad?: number; stroke?: number};
 export type DecorEnv = {W: number; H: number; sc: ResolvedStyle['palette']; ctx: CanvasRenderingContext2D; lt: number; ltb: number; pOut: number; pass: 'main'};
 const U = (env: DecorEnv) => Math.min(env.W, env.H) / 1080;
 const MG = (env: DecorEnv) => Math.round(Math.min(env.W, env.H) * 0.05);
@@ -111,4 +111,23 @@ export function drawKasumi(env: DecorEnv, bb: Box, P: DecorBag) {
     stroke(env, part(tl, 0, E.inOutCubic(clamp((env.lt - 0.3 - k * 0.12) / 0.6))), line, lw, la);
     stroke(env, part([[xc + Lm / 2 - hb / 2, yc + hb / 2], [xc - Lm / 2 + hb / 2, yc + hb / 2]], 0, E.inOutCubic(clamp((env.lt - 0.4 - k * 0.12) / 0.6))), line, lw, la * 0.7);
   }
+}
+
+// The new brackets uses the current box, or the original central fallback on null.
+// No frame-history cache or static-geometry fallback is used by this effect.
+export function bracketGeometry(env: Pick<DecorEnv, 'W' | 'H' | 'lt' | 'pOut'>, box: Box | null, padBase: number) {
+  const bb = box ?? {x0: env.W * 0.35, x1: env.W * 0.65, y0: env.H * 0.4, y1: env.H * 0.6};
+  const e = E.outExpo(clamp(env.lt / 0.35)) * (1 - E.inCubic(env.pOut));
+  const pad = padBase + (bb.y1 - bb.y0) * 0.12;
+  const x0 = bb.x0 - pad, x1 = bb.x1 + pad, y0 = bb.y0 - pad, y1 = bb.y1 + pad;
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, L = Math.min(x1 - x0, y1 - y0) * 0.16 + 8;
+  const X0 = lerp(cx, x0, e), X1 = lerp(cx, x1, e), Y0 = lerp(cy, y0, e), Y1 = lerp(cy, y1, e);
+  return {e, pad, L, corners: [[[X0, Y0 + L], [X0, Y0], [X0 + L, Y0]], [[X1 - L, Y0], [X1, Y0], [X1, Y0 + L]],
+    [[X0, Y1 - L], [X0, Y1], [X0 + L, Y1]], [[X1 - L, Y1], [X1, Y1], [X1, Y1 - L]]]};
+}
+export function drawBrackets(env: DecorEnv, box: Box | null, p: DecorBag): void {
+  const geo = bracketGeometry(env, box, p.pad as number); if (geo.e <= 0) return;
+  const ctx = env.ctx; ctx.strokeStyle = p.accent ? env.sc.accent : env.sc.fg; ctx.lineWidth = p.stroke as number;
+  ctx.lineJoin = 'miter'; ctx.lineCap = 'butt';
+  for (const points of geo.corners) {ctx.beginPath(); ctx.moveTo(points[0][0], points[0][1]); for (const [x, y] of points.slice(1)) ctx.lineTo(x, y); ctx.stroke();}
 }

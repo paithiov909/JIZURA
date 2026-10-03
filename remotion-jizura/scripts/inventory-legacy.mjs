@@ -45,6 +45,8 @@ const report = {scope: 'Ordinary ordered catalog only. Styles/fonts excluded; un
   registryAndOrderMatch: true, measurements, total: rows.length, counts: {group: count('group'), category: count('category'), disposition: count('disposition'), review: count('review')},
   caution: 'Group-based coarse classification plus selected authored annotations. Helper hints miss aliases and indirect calls; all 860 have not been visually reviewed.',
   special, batch, rows};
-const out = path.join(repo,'dist/remotion/stage11'); await mkdir(out,{recursive:true});
+const outputArg = process.argv.slice(2);
+assert.ok(outputArg.length === 0 || outputArg.length === 1 && /^--output=.+$/.test(outputArg[0]), 'Expected --output=dist/path');
+const out = outputArg.length ? path.resolve(repo, outputArg[0].slice('--output='.length)) : path.join(repo,'dist/remotion/stage11'); await mkdir(out,{recursive:true});
 await writeFile(path.join(out,'legacy-inventory.json'), JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({total:report.total,counts:report.counts,special,batch:batch.map(b=>b.key),registryAndOrderMatch:true}));

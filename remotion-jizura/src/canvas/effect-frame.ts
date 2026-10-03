@@ -6,7 +6,7 @@ import {layoutGlyphs, type Box, type CutGeometry} from './geometry.js';
 import {fontCSS} from './fonts.js';
 import {GlyphCache} from './glyphs.js';
 import {applyMotion, driftPiece, PID, type ItemMotion} from '../effects/motion.js';
-import {drawCheckerStrip, drawKasumi, type DecorBag, type DecorEnv} from '../effects/decor.js';
+import {drawCheckerStrip, drawKasumi, drawBrackets, type DecorBag, type DecorEnv} from '../effects/decor.js';
 import {fail} from '../core/validation.js';
 import {E, DEG, lerp} from '../effects/math.js';
 
@@ -38,7 +38,7 @@ export function prepareEffectItems(work: CanvasFrame, scene?: ScenePlan<CutGeome
     const s = c?.s ?? 1; return [{x0: item.x + (c?.dx ?? 0) + (g.x - g.w * s / 2) * item.sx, x1: item.x + (c?.dx ?? 0) + (g.x + g.w * s / 2) * item.sx,
       y0: item.y + (c?.dy ?? 0) + (g.y - g.h * s / 2) * item.sy, y1: item.y + (c?.dy ?? 0) + (g.y + g.h * s / 2) * item.sy, cx: item.x, cy: item.y}];
   }));
-  work.box = boxes.length ? {x0: Math.min(...boxes.map(b => b.x0)), x1: Math.max(...boxes.map(b => b.x1)), y0: Math.min(...boxes.map(b => b.y0)), y1: Math.max(...boxes.map(b => b.y1)), cx: boxes[0].cx, cy: boxes[0].cy} : null;
+  work.box = boxes.length ? {x0: Math.min(...boxes.map(b => b.x0)), x1: Math.max(...boxes.map(b => b.x1)), y0: Math.min(...boxes.map(b => b.y0)), y1: Math.max(...boxes.map(b => b.y1)), cx: work.cut.prepared.layout.id === 'mixed' ? (Math.min(...boxes.map(b => b.x0)) + Math.max(...boxes.map(b => b.x1))) / 2 : boxes[0].cx, cy: work.cut.prepared.layout.id === 'mixed' ? (Math.min(...boxes.map(b => b.y0)) + Math.max(...boxes.map(b => b.y1))) / 2 : boxes[0].cy} : null;
   return motions;
 }
 function drawItem(canvas: HTMLCanvasElement, item: FrameItem, motion: ItemMotion, work: CanvasFrame): void {
@@ -47,7 +47,7 @@ function drawItem(canvas: HTMLCanvasElement, item: FrameItem, motion: ItemMotion
   ctx.save();
   try {
     if (motion.clip) {ctx.beginPath(); ctx.rect(motion.clip[0], -canvas.height, motion.clip[1] - motion.clip[0], canvas.height * 3); ctx.clip();}
-    ctx.translate(item.x, item.y); ctx.font = fontCSS(item.font, item.size); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.translate(item.x, item.y); if (item.rot) ctx.rotate(item.rot * DEG); ctx.font = fontCSS(item.font, item.size); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (const g of item.glyphs) {
       const c = motion.chars[g.i]; if (c?.hide || c?.a === 0 || g.ch === ' ' || g.ch === '　') continue;
       const gx = g.x * item.sx + (c?.dx ?? 0), gy = g.y * item.sy + (c?.dy ?? 0), rot = c?.rot ?? 0, sx = item.sx * (c?.s ?? 1), sy = item.sy * (c?.s ?? 1);
@@ -89,13 +89,13 @@ export function drawEffects(canvas: HTMLCanvasElement, plan: ScenePlan<CutGeomet
         if (custom?.draw) {
           const result = custom.draw(Object.freeze({...frameContext(plan.prepared, work, effect), ctx, box: work.box ? Object.freeze({...work.box}) : null}));
           if (result !== undefined) fail('E_EFFECT', `decor.${effect.id}.draw`, 'Custom decor draw must return void synchronously.');
-        } else if (effect.id === 'kasumi') drawKasumi(env, bb, p); else if (effect.id === 'checkerStrip') drawCheckerStrip(env, bb, p);} finally {ctx.restore();}
+        } else if (effect.id === 'kasumi') drawKasumi(env, bb, p); else if (effect.id === 'checkerStrip') drawCheckerStrip(env, bb, p); else if (effect.id === 'brackets') drawBrackets(env, work.box, p);} finally {ctx.restore();}
     }
   };
   decor('back');
   work.items.forEach((item, i) => drawItem(canvas, item, motions[i], work));
   const item = work.items[0], p = cut.layout.params;
-  if (cut.layout.customKey === undefined && work.box && item) {
+  if (cut.layout.id === 'center' && cut.layout.customKey === undefined && work.box && item) {
     if (p.sub && cut.lineText !== cut.text) {
       const sub = work.cut!.geometry.subtitle!;
       ctx.save(); ctx.globalAlpha = E.outCubic(work.state.pIn); ctx.font = fontCSS(sub.font, sub.size); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = cut.style.palette.sub;

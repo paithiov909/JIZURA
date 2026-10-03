@@ -10,6 +10,7 @@ import {prepareScene, finalizeScene} from '../dist/core/scene-plan.js';
 import {CanvasMeasurementService} from '../dist/canvas/service.js';
 import {createCanvasFrame, drawFrame} from '../dist/canvas/frame.js';
 import {prepareEffectItems, clearEffectCache} from '../dist/canvas/effect-frame.js';
+import {batchGates} from './batch-gates.jsx';
 import {drawReference} from './effect-reference.jsx';
 import {PortScene, portInputs, imageParameters} from './port-model.tsx';
 import {glyphWave} from '../examples/custom/effects.tsx';
@@ -67,7 +68,8 @@ window.runPortCase = async (id, injection) => {
       const work = createCanvasFrame(plan, frame), motions = prepareEffectItems(work, plan.prepared);
       // Diagnostic extension point for mixed/item-center/spacing, jitter steps,
       // emphasis code-point mapping and decor null/current-box cases in stage13.
-      geometry.push({frame, state: work.state, box: work.box, motions,
+      const gates = batchGates(plan, work, motions);
+      geometry.push({frame, gates, state: work.state, box: work.box, motions,
         items: work.items.map(item => ({...item, font: {...item.font}}))});
       if (spec.legacy) {
         drawReference(reference, plan, frame);
@@ -90,6 +92,17 @@ window.runPortCase = async (id, injection) => {
       drawFrame(direct, plan, spec.from + 2); const a = new Uint8ClampedArray(await pixels(direct));
       drawFrame(direct, plan, spec.from + 3); requirePixels(await pixels(direct), a, 'raw', 'Same quantized step');
       quantizedPair = [spec.from + 2, spec.from + 3];
+    }
+    let adjacentJitterSteps = null;
+    if (cut.hold?.id === 'jitter' && cut.hold.params.amount > 0 && spec.duration > 10) {
+      const pair = [spec.from + spec.enter + 6, spec.from + spec.enter + 8];
+      const states = pair.map(f => createCanvasFrame(plan, f).state);
+      check(states[0].step !== states[1].step, 'Jitter adjacent samples did not change step');
+      check(states.every(s => s.holdAmount === 1 && s.pIn === 1 && s.pOut === 0), 'Jitter adjacent samples must isolate stable hold');
+      drawFrame(direct, plan, pair[0]); const first = new Uint8ClampedArray(await pixels(direct));
+      drawFrame(direct, plan, pair[1]);
+      check(pixelDifference(await pixels(direct), first).differentPixels > 0, 'Jitter adjacent steps did not change real pixels');
+      adjacentJitterSteps = pair;
     }
     if (injection === 'parameter') center({params: {track: -1}});
     if (spec.kind === 'image') check(HtmlInCanvas.isSupported(), 'HTML-in-Canvas unsupported');
@@ -146,6 +159,6 @@ window.runPortCase = async (id, injection) => {
     }
     return {id, spec, frames, anchor, visiblePixels, clearChecks, canvasStateRestored, images, references, geometry, sourceComparisons,
       prepared: resolveScene(scene, config, [cut]), measuredGeometry: plan.cuts.map(c => c.geometry),
-      reproducibility: {forwardReverse: true, strictModeRemount: true, clearedEffectCache: true, planUnchanged: true, editRestore: true, quantizedPair}, negativeParameters};
+      reproducibility: {forwardReverse: true, strictModeRemount: true, clearedEffectCache: true, planUnchanged: true, editRestore: true, quantizedPair, adjacentJitterSteps}, negativeParameters};
   } finally {unmount(); service.dispose(); check(document.fonts.size === 0 && !(window.remotion_delayRenderHandles?.length), 'Port case leaked fonts/render handles');}
 };

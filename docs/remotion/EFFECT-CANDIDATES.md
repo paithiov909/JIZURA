@@ -1,6 +1,6 @@
 # 旧カタログの分類と最初の移植群
 
-段階11（2026-10-03）の選定資料。[実行可能な検索一覧](../../remotion-jizura/examples/catalog/README.md)とは分離する。
+段階11（2026-10-03）の選定資料。分類source/reportの15精査・860件という当時の記録は保持し、13の5件の実装結果は下記へ追補する。[実行可能な検索一覧](../../remotion-jizura/examples/catalog/README.md)とは分離する。
 旧通常カタログをgroup/IDと登録順で集計し、[fixture](../../tests/baseline/v1/registry.json)へ照合した。
 style/fontは数えず、order外の特殊layout title/interludeも通常860件に加えない。
 
@@ -41,7 +41,7 @@ engine初期化だけに計測context stubを用い、plan/measure/renderは実�
 ## 段階13で実装する5件
 
 次表を確定し、13で対象選びを繰り返さない。公開factory名はこの表の名前を採用予定とするが、
-parameterの型・範囲や内部helperは13の実装結果で確定する。**現在これらのfactoryは未実装**。
+parameterの型・範囲や内部helperは13の実装結果で確定する。**段階13で実装済み**。現在の確定params/適応/検証は[13の結果](13-first-effect-batch.md)を参照。
 新5件は明示指定専用とし、既存7件の省略指定CANDIDATES/順序/seedを変えない。
 
 | 順序 | 旧group/ID → 公開名 | 原型の特徴 | 必要処理・比較の焦点 |
@@ -78,3 +78,12 @@ callerの公開TextPlacement/GlyphTransformを先に広げない。12ではこ�
   10の単一HtmlInCanvas接続成功を全旧fx移植の証拠へ広げない。
 
 12には上記casesと適応境界、13には固定5件と順序、14には実行可能catalogの選択入口を渡す。
+
+## 段階13の実装追補
+
+注釈sourceは選定のdisposition/order/features/adaptationを保持し、新5件へ
+implementation=ported-stage13、comparison=stage13-adapted-reference-recorded、13のevidenceを加えた。
+選定分類のcountsは旧7ported/5selectedのまま、実装数は合計12。比較は単一font/cap/強調/seed
+adapterを含み、bracketsの新pad/stroke端点は旧固定値と差がある。ユーザー承認とは扱わない。
+`node remotion-jizura/scripts/inventory-legacy.mjs --output=dist/remotion/stage13`で
+860件の登録順/ID照合と現在注釈を再生成でき、段階11の生成reportを上書きしない。

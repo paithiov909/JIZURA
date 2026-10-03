@@ -1,7 +1,7 @@
 import React from 'react';
 import {CanvasImage, HtmlInCanvas, staticFile, useCurrentFrame} from 'remotion';
 import {blur} from '@remotion/effects/blur';
-import {JizuraScene, JizuraCut, center, pop, wipe, drift, breathe, kasumi, checkerStrip, sliceGlitch,
+import {JizuraScene, JizuraCut, center, pop, wipe, drift, breathe, kasumi, checkerStrip, sliceGlitch, mixed, slideLeft, shrink, jitter, brackets,
   type JizuraCutProps, type JizuraSceneProps} from 'remotion-jizura';
 import {offsetLines, glyphWave, boxRule} from '../examples/custom/effects.tsx';
 import {imageSource} from '../examples/image-effects/ImageEffects.tsx';
@@ -23,6 +23,15 @@ export function portInputs(spec: PortCase, edit = false, fontSrc = '/NotoSansJP.
   if (p === 'breathe' || p === 'combined') cut.hold = breathe({seed: spec.seed});
   if (p === 'kasumi' || p === 'combined') cut.decor = [kasumi({seed: spec.seed, params: {n: 2, right: false, ...spec.decor}})];
   if (p === 'checker' || p === 'combined') cut.decor = [...cut.decor!, checkerStrip({seed: spec.seed, params: {v: 2, right: false, low: true, accent: true, ...spec.decor}})];
+  if (p === 'mixed' || p === 'batch' || p === 'mixed-breathe-shrink') cut.layout = mixed({seed: spec.seed, params: {
+    mode: 'line', rotAmp: 6, smallK: 0.5, accentIdx: 2, ...spec.mixed, ...(edit ? {mode: spec.mixed?.mode === 'stair' ? 'wave' : 'stair', rotAmp: 0} : {})}});
+  if (p === 'slideLeft' || p === 'batch') cut.enter = slideLeft({seed: spec.seed});
+  if (p === 'shrink' || p === 'batch' || p === 'mixed-breathe-shrink') cut.exit = shrink({seed: spec.seed});
+  if (p === 'shrink' || p === 'mixed-breathe-shrink') cut.hold = breathe({seed: spec.seed});
+  if (p === 'jitter' || p === 'batch') cut.hold = jitter({seed: spec.seed, params: {amount: spec.jitterAmount ?? 1}});
+  if (p === 'brackets' || p === 'brackets-pop' || p === 'batch') cut.decor = [brackets({seed: spec.seed, params: {pad: 18, stroke: 2.2, accent: false, ...spec.brackets}})];
+  if (p === 'brackets-pop') {cut.enter = pop({seed: spec.seed}); if (spec.exit) cut.exit = shrink({seed: spec.seed});}
+  if (p === 'brackets') cut.exit = shrink({seed: spec.seed});
   if (p === 'custom') {
     const opts = spec.custom!;
     cut.layout = offsetLines({seed: spec.seed, params: {offset: edit ? (opts.offset === 0.1 ? -0.1 : 0.1) : opts.offset}});
