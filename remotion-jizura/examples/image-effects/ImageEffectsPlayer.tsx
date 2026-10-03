@@ -2,9 +2,9 @@ import {useState} from 'react';
 import {Player} from '@remotion/player';
 import {HtmlInCanvas} from 'remotion';
 import {ImageEffects, type ImageEffectsProps} from './ImageEffects.tsx';
-export function ImageEffectsPlayer() {
+export function ImageEffectsPlayer({initialMode}: {initialMode?: string}) {
   const [target, setTarget] = useState<ImageEffectsProps['target']>('lyrics');
-  const [mode, setMode] = useState<ImageEffectsProps['mode']>('combined');
+  const [mode, setMode] = useState<ImageEffectsProps['mode']>(['combined','standard','glitch','disabled','reverse'].includes(initialMode ?? '') ? initialMode as ImageEffectsProps['mode'] : 'combined');
   const [amount, setAmount] = useState(0.65);
   if (!HtmlInCanvas.isSupported()) return <p>Use Chrome 149+ with HTML-in-Canvas enabled at chrome://flags/#canvas-draw-element.</p>;
   return <>

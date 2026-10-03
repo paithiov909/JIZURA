@@ -85,3 +85,19 @@ HtmlInCanvasのJIZURA接続、独立CanvasImage、alpha/順序/無効化/Cut境�
 標準blurはsoftware WebGL2 swangle、sliceは2d、HtmlInCanvasはpixelDensity1/単一wrapper。
 1080p37msはslice+toDataURLの中央値で、純effect適用や実時間preview fpsの証拠ではない。
 出力はdist/remotion/stage10、前提と限界は[10の結果](10-remotion-effects.md)。
+
+## 段階11からの入口（2026-10-03）
+
+[分類と固定5件](EFFECT-CANDIDATES.md)、[catalog API](API.md#段階11のcatalogsearch契約2026-10-03)、
+[検索・比較例](../../remotion-jizura/examples/catalog/README.md)を使う。
+`node remotion-jizura/scripts/inventory-legacy.mjs`で旧860件のorder/fixture照合と
+注釈・case分類を再生成する。reportはdist、sourceはscripts/legacy-catalog-rules.mjs。
+`tests/catalog-validation.mjs`がmetadata重複/欠落/default/範囲を検出する。
+catalogは型/schemaの説明であり、実行は元factoryの境界で行う。
+
+12では既存7件と09/10例だけで共通harnessを実行し、13の新5件は実装しない。
+選定済みmixedは09の全文placementでは表現できず、shrinkはglyph scaleだけでitem中心/trackを再現できない。
+13で限定した内部geometry/item変形経路を足す方針を採用したため、12では
+glyph/emphasis配置、item中心・spacing、最短Cut/phase端点、jitterのstep再現、
+decorのnull/current boxを検出するcase追加箇所を用意する。公開caller schemaを先に広げない。
+標準blurのeditor範囲と実行検証、旧共有bagのignored値、native画像target/backendを区別する。

@@ -1,6 +1,6 @@
 # remotion-jizura 表現拡充・レビュー体験の開発計画
 
-作成日：2026-10-03。ブランチ：`remotion`。状態：08〜10は実装・技術検証完了、11〜14は未着手。
+作成日：2026-10-03。ブランチ：`remotion`。状態：08〜11は実装・技術検証完了、12〜14は未着手。
 初期01〜07の[計画](PLAN.md)・[API](API.md)・[検証記録](VALIDATION.md)を前提とする。
 [作業一覧](README.md)から各タスクへ進む。
 
@@ -149,3 +149,21 @@ Cut宣言→resolveSceneの時間とseed→画像fx発火のsidecarを利用側�
 採用版のHTML-in-Canvas flag・nesting拒否・software WebGL2条件を記録し、一般GPU保証には広げない。
 ユーザー目視とUI Saveボタンは未確認。旧pixel完全互換や全fx移植は行っていない。
 11へ画像schemaと適用対象の分類、12へ取得丸め/alpha/順序/時間ケース、14へ単一wrapperを渡す。
+
+## 段階11の結果（2026-10-03）
+
+getEffectCatalog/searchEffectsと、組み込み7＋native1のmetadataを追加した。
+caller3例/標準blurは例側catalogへ明示追加し、12件の用途/名前/tag/group/条件検索と実Player・動画リンクを確認。
+用途は編集上の仮説、動作説明はsource/既存証拠に基づく。未移植候補は実行一覧から分離し、
+旧860件のgroup/ID/orderをfixtureへ照合、主な責務で粗分類し、精査15件を区別した。
+生成reportはdist、分類注釈と選定理由はsourceに保持。詳細は[11の結果](11-effect-catalog.md)。
+
+13の対象はmixed、slideLeft（旧slideL）、shrink、jitter、bracketsの5件・この順序で確定した。
+新5件は明示指定専用とし既存自動候補を維持する。mixedは個別glyph配置、shrinkはitem中心/track変形が必要で、
+09の全文placement/glyph scaleでは不足する。13で限定した内部geometry/item経路を追加し、
+12ではその差を検出できるcase拡張箇所を用意する。公開caller型を先に広げない。
+vcolsは縦組metrics/約物/outline列のため延期した。標準blurやslice familyは旧効果の完全移植とは扱わない。
+
+57 Node契約、12実preview PNG対同条件の元例差0、検索と9動画URL、外部tarballの型/検索/11既存PNGを確認。
+旧保存画像とのbackend条件差は別記録で、baseline更新・一般許容差は導入しない。
+ユーザーのdesign/motion承認は未確認。次は12の共通検証手順。

@@ -23,7 +23,9 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 解決済み構成取得、実Player・22 PNG・外部tarball利用を検証しました。
 [10：Remotion標準effects接続の試作](docs/remotion/10-remotion-effects.md)では、HtmlInCanvasで
 標準blurと独自sliceをJIZURAへ接続し、独立画像・実Player/Studio/PNG/動画・外部tarballを検証しました。
-次の着手先は[11：選択カタログ・移植候補の整理](docs/remotion/11-effect-catalog.md)です。
+[11：選択カタログ・移植候補の整理](docs/remotion/11-effect-catalog.md)では、12件の検索・実Player一覧、
+旧860部品の登録照合・分類と最初の移植5件を確定し、公開検索APIの外部tarball利用を確認しました。
+次の着手先は[12：共通の移植・検証手順](docs/remotion/12-port-validation.md)です。
 旧版の完全互換は目標にせず、LRC・音声解析・拍スナップは利用側のワークフローで扱います。
 AE/CEP連携は対象外。大きなプロジェクト構造・導入・配布の決定は後段に置きます。
 

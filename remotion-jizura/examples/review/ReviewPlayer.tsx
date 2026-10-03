@@ -5,8 +5,8 @@ import type {PlayerRef} from '@remotion/player';
 import {ReviewWorkbench} from './ReviewWorkbench.tsx';
 import {reviewInputs} from './inputs.tsx';
 
-export const ReviewPlayer = ({playerRef}: {playerRef?: Ref<PlayerRef>}) => {
-  const [name, setName] = useState('combined');
+export const ReviewPlayer = ({playerRef, initialCandidate = 'combined'}: {playerRef?: Ref<PlayerRef>; initialCandidate?: string}) => {
+  const [name, setName] = useState(Object.hasOwn(reviewInputs, initialCandidate) ? initialCandidate : 'combined');
   const [range, setRange] = useState('target');
   const inFrame = range === 'reference' ? 60 : 0;
   const outFrame = range === 'target' ? 59 : 119;

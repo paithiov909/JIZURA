@@ -95,7 +95,7 @@ These commands require the fixed font, Chrome and ffmpeg/ffprobe; the consumer
 also requires npm registry/cache and stage07's scene result. They generate evidence
 under ignored `dist/remotion/stage09/`. See the [stage09 contract](../docs/remotion/API.md#段階09の拡張契約2026-10-03)
 for group/ID conflicts, lifecycle, motion progress, seed/slot dependencies and
-logical bounds. Catalog/search remains a later stage.
+logical bounds. Stage11 adds separate discovery data without changing factory metadata.
 
 ## Native image effects (stage 10)
 
@@ -116,6 +116,25 @@ HTML-in-Canvas flag. Fixed tests use Chrome154 and software WebGL2 `swangle`.
 This experimental connection does not add a Scene/Cut `effects` prop.
 
 ## Choosing effects and timing
+
+Stage11 adds `getEffectCatalog()` and `searchEffects(query?, entries?)`.
+The package catalog contains seven text/decor effects plus native sliceGlitch;
+image records describe native effects, not Cut declarations. Search supports name,
+tag, group, use and conditions, preserves source order, and never changes automatic
+selection. The [catalog example](examples/catalog/README.md) includes the three
+caller definitions and standard blur, three usage queries, real Player previews,
+parameter meaning/limitations and links to generated representative movies.
+Open `http://localhost:3108/?catalog` with the existing Player command.
+
+```ts
+import {getEffectCatalog, searchEffects} from 'remotion-jizura';
+const quiet = searchEffects({group: 'hold', uses: ['静かな保持']});
+const native = searchEffects({group: 'image', conditions: ['2d']}, getEffectCatalog());
+```
+
+Catalog records are readonly discovery data. Import the real factory to execute.
+Seeded built-in defaults, unused shared params and standard editor ranges are
+explicitly distinguished; suitability is a hypothesis for visual review.
 
 These Cut declarations fit inside a Scene with a loaded font:
 

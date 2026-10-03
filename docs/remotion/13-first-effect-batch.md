@@ -19,9 +19,24 @@
 
 ## 対象の確定表
 
-11の担当が、対象ID/group、公開名、原型の特徴、依存、比較条件をここへ追記する。
-この表と11の結果が未記入なら、13の前提は未達。初期7effectは新規移植数へ数えない。
-対象は4〜6effectで、少なくとも新layout・文字運動・decorを含める。
+段階11で5件を確定した。詳細は[選定資料](EFFECT-CANDIDATES.md)と
+[注釈source](../../remotion-jizura/scripts/legacy-catalog-rules.mjs)。12の完了後にこの順序で着手する。
+全5件は現在未実装。初期7件は新規移植数に含めない。対象の再選定は不要。
+
+| 順序 | 旧group/ID | 公開factory名 | 特徴・必要処理 | 主な確認 |
+| --- | --- | --- | --- | --- |
+| 1 | layout/mixed | mixed | scriptによる大小、1/2行、seed回転。glyph advance/個別size/位置/強調index/box | 2/9/10/16字、kana/kanji/Latin/約物/改行/space、縦長 |
+| 2 | enter/slideL | slideLeft | 逐字stagger0.5、outQuint、dx=-0.85×size、alpha | 1/複数行、progress0/1、最短Cut、明示入場frame |
+| 3 | exit/shrink | shrink | item中心基準のinCubic収縮とtrack減少、alpha=1-e² | glyph中心/spacing、breathe/mixed組み合わせ、exit境界 |
+| 4 | hold/jitter | jitter | step-indexed seed変位と回転、hold量 | 同step/隣step、0強度、motionFps、逆seek、並列render |
+| 5 | decor/brackets | brackets | boxの4隅、0.35秒展開、exit閉鎖、front layer | null/current box、pad/stroke端点、透明・縦長 |
+
+mixedは旧fontBig/fontSmallを単一の解決fontへ適応する。原型の大小リズムを優先する。
+09のTextPlacementは全文を各placementに描くためそのまま使えず、13で限定した内部geometry経路を追加する。
+shrinkはglyph自身のscaleだけでitemのglyph中心やtrackが縮まらないため、限定した内部item変形経路を使う。
+必要なら12のcase拡張箇所を使い、差の理由/旧参考画像を残す。callerの公開layout/motion型を先に広げない。
+新5件は明示指定専用。既存7件のCANDIDATES・候補順・省略seedを維持し、catalogのautoSelect=falseを付ける。
+parameter名/型/範囲は13で実装・検証して確定する。vcolsは縦組metrics/約物/outline列のため延期。
 
 ## 作業
 

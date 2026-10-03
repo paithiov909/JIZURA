@@ -67,3 +67,12 @@ HTML-in-Canvas flag、software WebGL2 blurのswangle、nesting拒否の条件を
 Studio literal displacementのnative保存backend・再読み込み・別renderは検証済み。
 amount等computed値のGUI保存全般やUI Saveボタン確認は未実施。
 [実例](../../remotion-jizura/examples/image-effects/README.md)と[10の結果](10-remotion-effects.md)を入口にする。
+
+## 段階11の選択入口（2026-10-03）
+
+[実Player catalog](../../remotion-jizura/examples/catalog/README.md)は`/?catalog`で利用できる。
+getEffectCatalog/searchEffectsのmetadataと用途3例から候補の理由・params・条件を確認し、
+08/09/10比較例へ移れる。caller定義/標準画像effectsはimportと実行境界を分け、
+検索entryをCut宣言として使わない。未移植候補は[EFFECT-CANDIDATES](EFFECT-CANDIDATES.md)の別report。
+13の新5件が完了したら既存一覧へ明示追加し、AIの選定理由と局所修正/再現へ接続する。
+代表動画は生成物であり、独自3件/画像2件の動画は組み合わせ例。選択effect単独の動画と取り違えない。

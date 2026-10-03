@@ -685,6 +685,9 @@ React memoには私有identityを使う。この値はseedにも公開snapshot�
 [CustomEffects.tsx](../../remotion-jizura/examples/custom/CustomEffects.tsx)。
 実装・検証・未確認条件は [09の結果](09-custom-effects.md)を参照。
 
+段階11で組み込みの意味metadata/searchを追加した。09のfactory.metadataと
+inspection内の独自metadataは変更せず、選択情報は下記の別catalog APIから取得する。
+
 ## 段階10の画像effects契約（2026-10-03）
 
 公開値 `sliceGlitch` と型 `SliceGlitchParams` を追加した。
@@ -754,3 +757,58 @@ unpremultiply丸め差で、この取得経路に限定した検証条件とし�
 Studioのliteral displacementのnative保存backend→source→reload→別bundle PNGは実測済み。
 computed amount/seed/frame/disabled等の自由なGUI書換えやUI Saveボタンは未検証。
 [10の結果](10-remotion-effects.md)に性能・描画証拠・制約を記録する。
+
+## 段階11のcatalog/search契約（2026-10-03）
+
+公開値`getEffectCatalog`、`searchEffects`と型`CatalogEntry`、`CatalogParameter`、
+`CatalogQuery`を追加した。[型](../../remotion-jizura/src/catalog-types.ts)と
+[意味情報・検索](../../remotion-jizura/src/catalog.ts)がpackage内のsource。
+
+```ts
+getEffectCatalog(): readonly CatalogEntry[];
+searchEffects(query?: CatalogQuery, entries?: readonly CatalogEntry[]): readonly CatalogEntry[];
+// query: text?, name?, group?, tags?, uses?, conditions?
+```
+
+既定catalogは組み込み7effectとnative画像sliceGlitchの8件。
+全entryのstatusはimplementedで、groupはlayout/enter/hold/exit/decor/image。
+文字運動のkindはmotion、画像のkindはimage。originをbuiltin/caller-example/
+native-image/standard-imageで区別する。画像entryはCut宣言ではなくnative factoryの案内。
+catalogはコードを持たない深いfreeze済みJSONデータで、同じreadonly値を返す。
+新entryの取得・検索でCANDIDATES/候補順/乱数・Scene/inspectionを変更しない。
+autoSelect=trueは既存7件だけ。旧未移植候補は別reportで管理し、この取得結果に入れない。
+
+callerの独自factoryや標準Remotion packageは既定catalogへ登録しない。
+[例のcatalog](../../remotion-jizura/examples/catalog/entries.tsx)は09のfactory.metadataから
+scalar schemaを変換し、独自3件と標準blurをcaller所有の一覧へ補う（全12件）。
+独自metadataそのものや既存inspectionのshapeは維持する。
+caller提供の一覧は呼出側で保持・検証する。検索は実行用registryやfactory lookupを提供しない。
+実行時は元factoryをimportして、画像/文字の境界に従い宣言する。
+
+全entryの必須情報はgroup/ID/name/description/kind/origin/status/autoSelect、tags/moods/
+movements/uses/conditions/constraints、parameters、suitability、provenance、visual。
+descriptionの出所はsource、sources/evidenceに実装と既存検証メモを記録する。
+用途・雰囲気の適性はsuitability.status=hypothesisで、実測済みの動作説明と区別する。
+decorのlayer、imageのbackend、parameterのunit/integer/exclusiveMax/requiredは該当時に使う。
+visualは開発比較のroute/candidate/Composition/代表frameとignored動画path。
+package利用者のasset URLではなく、repository例への対応資料である。
+
+parameterはscalar number/boolean/enum、必須description/usage/default。
+default.kind=seededは組み込みの省略値で、実値はseedによるresolveSceneを参照する。
+default.kind=fixedは独自/nativeのschema既定値。usage=ignoredは旧共有bagの受理のみで
+描画調整にならない。kasumiはn/right、checkerStripはv/right/low/accentだけが有効。
+kasumiのn=2+(n%2)、checkerStripのv%3の意味とr<1のexclusiveMaxを記載する。
+seedは文字factory optionであり、shared bag parameterとは別。画像sliceにはseed/frame/fpsがある。
+numberのbounds=inputは入力検証範囲、bounds=editorはUI schema範囲。
+標準blur radiusは有限number必須で、schemaの0..100/default40と実例の明示4pxを区別する。
+catalogをparameter検証APIとして使ったり、固定値を全factoryの省略入力へ適用しない。
+
+検索はNFKC・小文字化したsubstringでtext/nameを扱う。textの空白区切りtokenはAND、
+nameはID/name、textは説明/tag/mood/動き/用途/条件/制約までを対象とする。
+groupは完全一致、tags/uses/conditionsは各指定値が同じfieldに完全一致するAND。
+すべてのfilterをANDし、入力順を保つ。省略/空queryは全件、該当なしは空配列。
+結果配列はfreezeするがcallerのentryは変異・freezeしない。ランキング/自然言語推論はない。
+
+[検索例と実Player一覧](../../remotion-jizura/examples/catalog/README.md)に
+静かな保持・短いキメ・控えめな装飾の例、条件、再生成commandを記録する。
+[旧候補の分類と確定5件](EFFECT-CANDIDATES.md)は公開実行APIとは分ける。
