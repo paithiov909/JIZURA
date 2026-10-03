@@ -3,6 +3,8 @@ import type {MeasurementService, PreparedCut, PreparedScene} from '../core/scene
 import type {ResolvedFont} from '../core/style.js';
 import {fontCSS, SceneFonts} from './fonts.js';
 import type {CutGeometry} from './geometry.js';
+import {customRuntime} from '../effects/custom.js';
+import {measureCustomCut} from './custom-layout.js';
 import {measureCenterCut} from './center.js';
 
 export class CanvasMeasurementService implements MeasurementService<CutGeometry> {
@@ -34,7 +36,8 @@ export class CanvasMeasurementService implements MeasurementService<CutGeometry>
 
   measureCut(cut: PreparedCut, scene: PreparedScene): CutGeometry {
     if (!this.ready || this.disposed || !this.context) throw new JizuraError('E_FONT', `cuts[${cut.declarationIndex}].font`, 'Prepare fonts before measuring text.');
-    return measureCenterCut(cut, scene, (font, ch) => {
+    const measure = customRuntime(cut.layout) ? measureCustomCut : measureCenterCut;
+    return measure(cut, scene, (font, ch) => {
       const key = JSON.stringify([font, ch]);
       let advance = this.cache.get(key);
       if (advance === undefined) {

@@ -1,10 +1,10 @@
 import {center, pop, wipe, drift, breathe, kasumi, checkerStrip} from 'remotion-jizura';
-import type {JizuraCutProps, DecorParams} from 'remotion-jizura';
+import type {JizuraCutProps, DecorParams, SceneInspection} from 'remotion-jizura';
 
 // Development inputs only. IDs are example labels, not new JizuraCut props.
 export type ReviewCut = {id: string; cut: JizuraCutProps};
 export type ReviewInput = {name: string; cuts: ReviewCut[]};
-export type ReviewProps = {input?: ReviewInput; candidate?: string; fontSrc?: string};
+export type ReviewProps = {input?: ReviewInput; candidate?: string; fontSrc?: string; onInspect?: (inspection: SceneInspection) => void};
 const decorParams: DecorParams = {n: 2, right: true, low: false, accent: true,
   corner: false, big: false, mode: 'count', from: 0, to: 60, v: 2, r: 0.4};
 const fixed = (seed: number, from: number): JizuraCutProps => ({

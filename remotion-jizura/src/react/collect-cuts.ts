@@ -27,6 +27,7 @@ export function collectCuts(children: ReactNode): readonly JizuraCutProps[] {
   visit(children, 'children'); return cuts;
 }
 export function prepareSceneFromProps(props: JizuraSceneProps, config: {width: number; height: number; fps: number}) {
-  const {children, ...settings} = props;
+  const {children, onInspect, ...settings} = props;
+  if (onInspect !== undefined && typeof onInspect !== 'function') fail('E_INPUT', 'onInspect', 'Expected a callback.');
   return prepareScene(settings, config, () => collectCuts(children));
 }

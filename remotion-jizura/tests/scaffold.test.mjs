@@ -9,7 +9,7 @@ const config = {width: 640, height: 360, fps: 24};
 const isError = (code, path) => e => e instanceof api.JizuraError && e.code === code && e.path === path;
 
 test('root exposes only the public contract and imports without DOM access', () => {
-  assert.deepEqual(Object.keys(api).sort(), ['JizuraScene', 'JizuraCut', 'JizuraError', 'parseLines', 'center', 'pop', 'wipe', 'drift', 'breathe', 'kasumi', 'checkerStrip'].sort());
+  assert.deepEqual(Object.keys(api).sort(), ['JizuraScene', 'JizuraCut', 'JizuraError', 'defineLayoutEffect', 'defineMotionEffect', 'defineDecorEffect', 'resolveScene', 'parseLines', 'center', 'pop', 'wipe', 'drift', 'breathe', 'kasumi', 'checkerStrip'].sort());
 });
 test('empty Scene resolves dimensions, background and stage 03 settings', () => {
   const scene = prepareSceneFromProps({durationInFrames: 24}, config);

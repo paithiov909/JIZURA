@@ -1,6 +1,6 @@
 # remotion-jizura 表現拡充・レビュー体験の開発計画
 
-作成日：2026-10-03。ブランチ：`remotion`。状態：08は実装・技術検証完了、09〜14は未着手。
+作成日：2026-10-03。ブランチ：`remotion`。状態：08/09は実装・技術検証完了、10〜14は未着手。
 初期01〜07の[計画](PLAN.md)・[API](API.md)・[検証記録](VALIDATION.md)を前提とする。
 [作業一覧](README.md)から各タスクへ進む。
 
@@ -121,3 +121,17 @@ params・2Cutの時間を固定し、最初のCutだけの変更・保存入力�
 Studioの保存には採用版が探索できるentry/root名とリテラルdefault propsが必要だったため、
 `examples/studio-entry.tsx` / `StudioRoot.tsx`を追加し、初期候補を文字列propsにした。
 09には局所編集用parameterの意味、構成確認、識別・seedの条件、Player/Studio間の転記の不便を渡す。
+
+## 段階09の結果（2026-10-03）
+
+独自layout/motion/decorをcallerのTSからfactory宣言で局所適用できるAPIと、
+font前のresolveScene/計測後のScene.onInspectを追加した。scalar schema/metadataと
+explicit seedの条件を[API追補](API.md#段階09の拡張契約2026-10-03)へ確定。
+可変global registry・JSONコード復元・新しい公開Cut ID・独自自動抽選は導入しない。
+組み込み7effectの候補/seedを維持し、現在frameのglyph変形/図形decorを画像fxから分離する。
+
+独自3例の2実Player、22 PNG一致・復元・別Scene分離・cleanup、実外部tarballの型/22PNG、
+旧7effect283参照比較と61並列PNG、08の9案を検証した。詳細は[09の結果](09-custom-effects.md)。
+生成物はdist、ユーザーデザイン承認と独自Studio保存は未確認。
+10へ通常DOM canvasとの画像fx接続境界、11へmetadataと組み込み意味情報の補完、
+12へfocused browser/consumer手順を引き継いだ。共通harness/catalogは未実装のまま残す。

@@ -10,6 +10,8 @@
 公開契約の変更はない。初期全体の実測は[検証記録](VALIDATION.md)を参照。
 検証結果は[段階03の結果](03-scene-plan.md)、[段階04の結果](04-static-canvas.md)、[段階05の結果](05-remotion-frames.md)、[段階06の結果](06-effect-port.md)を参照。
 初期実装の契約はこの文書を優先し、変更時は理由と影響するメモを更新する。
+2026-10-03の段階09で独自effect/構成確認を追加した。現在の追加契約は末尾の
+[段階09の拡張契約](#段階09の拡張契約2026-10-03)を参照。初期仕様の記録は保持する。
 
 ## 公開境界と型
 
@@ -572,3 +574,113 @@ const Partial = () => <JizuraScene durationInFrames={60}>
 Remotion/Reactの採用版・workspace・パッケージversion・コマンド・固定フォントファイルと
 ライセンス・画像比較の許容差は担当段階02/04/06で記録する。APIの入力意味は再決定しない。
 旧plan/baselineを改変せず、抽選差、時間差、フォントadapter、bbox差を個々のeffect比較と分けて検証する。
+
+## 段階09の拡張契約（2026-10-03）
+
+初期01〜07の契約に、公開値 `defineLayoutEffect`、`defineMotionEffect`、
+`defineDecorEffect`、`resolveScene` と `JizuraScene.onInspect` を追加した。
+初期の7factory、候補順・抽選・seed・時間・無効化の契約は維持する。
+型の正確な入口は [custom-types.ts](../../remotion-jizura/src/custom-types.ts) と
+[inspection.ts](../../remotion-jizura/src/inspection.ts)。内部ScenePlanは引き続き非公開。
+
+### 定義・宣言・metadata
+
+`defineLayoutEffect({id,name,description,tags,schema,layout})`、
+`defineMotionEffect({group,id,name,description,tags,schema,transform})`、
+`defineDecorEffect({id,name,description,tags,schema,layer,draw})` はfactoryを返す。
+factoryを `{seed?, params?}` で呼び、その戻り値をCutの対応groupへ渡す。
+motionのgroupはenter/exit/hold、decorのlayerはback/front。
+定義は利用側のTSファイルへ置き、importして局所利用する。React render外で一度定義する。
+定義/宣言時はDOM・Canvas・fontロード・乱数消費を行わない。
+
+IDは英字開始の英数字・`.`・`_`・`-`、最大128文字。IDの名前空間はgroup単位。
+同じSceneで同group/IDの異なる定義を使用すると `E_EFFECT`。同じ定義の反復は許す。
+既存の同groupの組み込みIDは予約済みで、独自定義による置換は `E_EFFECT`。
+別Sceneでは同IDの異なる定義を使用でき、可変global registryを共有しない。
+独自宣言はfactoryが作ったオブジェクトをそのまま渡す。ID文字列・手書き・spreadや
+JSONコピーでコードを復元しない。異group、未対応ID、不正paramsは `E_EFFECT`。
+
+factoryのreadonly `.metadata` はgroup/ID、name、description、tags、schema、
+`autoSelect: false`、decorのlayer。metadata/schema/宣言は呼出側からコピーしてfreezeする。
+独自effectは省略指定の自動抽選へ参加しない。候補追加APIは導入しない。
+組み込みeffectの意味情報・検索catalogは11の担当で、構成snapshotのmetadataは独自effectのみ。
+
+schemaは最大64個のparameter。値はnumber/boolean/enumのscalarとし、必須の
+`default`・`description`、任意の`unit`を持つ。numberは有限min/max、任意integer、
+enumは重複しない非空のvalues。defaultもschema検証する。未知key、null、
+型違い、非有限数、範囲外は `E_EFFECT`。省略/undefinedはdefault、0/falseを保持する。
+parameterの型はschemaから推論する。defaultは固定値で、旧parameter bagとは独立。
+Studio schemaへ変換可能な最小データ形に留め、Zod/GUI生成・検索は11/14へ残す。
+
+### 計測と実行
+
+全callbackは同期・純粋なframe/入力依存とし、外部時計、Math.random、前frame、
+可変closureへ依存しない。libraryはcontextの読み取りデータをfreezeし、出力を検証するが、
+呼出側コードの純粋性を自動で保証しない。資源を取得するsetup/cleanup hookは設けない。
+font・計測cache・glyph cache・描画待機はSceneが所有し、既存のcleanupで解放する。
+callbackでCanvas/資源を保持したり非同期作業を始めたりしない。
+
+共通contextはwidth/height、正規化text/emphasis、解決font/Style、seed、params、
+`random(index)`。randomは非負safe整数indexと当該seedからstatelessに[0,1)を返す。
+layout/decorのseedはeffect seed、motionのseedはeffect/item indexから導くitemSeed。
+itemの追加・順序変更はmotionのitemSeedへ影響する。inspectionのitemSeedは先頭itemの値。
+
+layoutはfont準備後に呼び、`measureText({size,track?})` と
+`fitText({maxWidth,maxHeight,maxSize?,track?})` を使用できる。
+fitTextは解決Style.fontSizeも上限に加える。track既定はStyle.track→0.06。
+返すのは1〜64個の `{x,y,size,track?,sx?,sy?}`。libraryが各placementへ
+本文全体のglyph/強調色を組み、静止geometry/boxを確定する。座標・sizeはdesign px、
+scaleは正、trackは0..1 em。明示改行・emphasisを保持する。center固有の再分割・
+subtitle・underlineは独自layoutへ暗黙適用しない。任意glyph注入、縦組、別本文のitemは未対応。
+
+motionはlibraryが計測したglyphごとに呼ぶ。contextにはglyph/glyphIndex/itemIndex、
+localFrame、量子化後seconds、fps、Cut durationInFrames、pIn/pOut/holdAmount、progress。
+progressはenter=pIn、exit=pOut、hold=holdAmount。呼ぶphase条件は既存のapplyEnter/
+applyHold/applyExitと同じ。D1や無効/0frame phaseは呼ばない。
+戻り値はnullか `{dx?,dy?,scale?,rotation?,alpha?,hide?}`。dx/dyはdesign px、
+rotationは度、scaleは0以上、alphaは0..1。enter→hold→exitで移動/回転を加算、
+scale/alphaを乗算、hideをORする。組み込みpop/wipe/breathe/driftと組み合わせ可能。
+組み込みのgeometry変更後のglyphへ適用する。enterはprogress1で静止へ戻り、
+exitはprogress1で消え、holdはprogress0で静止になる式を作者が書く。
+
+decorは当該frameのbox（全glyph非表示ならnull）、上記frame情報とctxを受け取る。
+背面decor→文字→前面decor、同layer内は配列順。libraryはcallbackをsave/restoreで囲む。
+callback内のsave/restoreも釣り合わせる。drawはvoidを同期returnする。図形APIとして
+標準Canvas2Dを使い、helper facadeは追加しない。boxは移動・scale・hide/alpha0を含む
+論理glyph矩形のunionで、回転/clip/fragmentの厳密な可視境界ではない。
+標準Remotion画像effectsやCanvas全画素の加工とは別の境界であり、10へ引き継ぐ。
+
+### 構成取得と局所変更
+
+```ts
+resolveScene(sceneProps, {width, height, fps}, cutPropsArray): SceneInspection;
+// scenePropsはchildren/onInspectを含まない。font不要の全入力検証後、同期で返す。
+// Sceneのwidth/height指定はconfigより優先する。fpsはconfigのみ。
+<JizuraScene {...sceneProps} onInspect={handleInspection}>...</JizuraScene>
+```
+
+resolveSceneのstageはprepared。時間順のcutsへdeclarationIndex、text/emphasis、
+from/end/duration、phase時間、Cut seed、effect group/ID/seed/itemSeed/params/
+explicitParams/layer、解決font/Style、独自metadataを含む。準備前なのでgeometryなし。
+onInspectはfont準備・計測・初回draw後にstage=measuredを通知し、静止boxとitemの
+x/y/size/track/sx/sy/glyphCountを追加する。空Sceneもmeasuredで通知する。
+失敗/キャンセルした計測を通知しない。StrictModeでは通知が反復しうる。
+callbackの置換だけでは再計測/再通知せず、次の準備完了時に最新のcallbackを使う。
+
+両方とも新しいJSON snapshot。readonly型だが実体の変更は可能で、内部planへ波及しない。
+関数、Canvas、glyph cache、私有の定義identityを含まない。JSONは診断/比較データであり、
+実行形式や旧project互換形式ではない。再現はimport済みfactoryへ保存scalar入力を渡す。
+新しい公開Cut IDは導入しない。例のtarget/referenceラベルとReact keyは開発/Reactの識別で、
+seedやeffectを解決するIDではない。
+
+Cutの時間/text/font/Style・Cut/effect seed・全解決paramsを固定すれば、別Cutの局所編集や
+Scene seed/宣言位置変更による乱数波及を避けられる。decorは明示effect seedでslot依存を外す。
+省略Cut seedは宣言index、省略decor seedは配列slotへ依存し、配置の自動配分もCut数に依存する。
+候補追加時には省略指定の抽選が変わりうるが、09の独自定義追加は候補を変えない。
+font/寸法/全体Styleの変更、固定していない時間再配分、effect定義自体の変更には
+画素不変を保証しない。同ID/同paramsでcallbackを差し替えた場合も再計測するため、
+React memoには私有identityを使う。この値はseedにも公開snapshotにも含めない。
+
+例は [custom/effects.tsx](../../remotion-jizura/examples/custom/effects.tsx) と
+[CustomEffects.tsx](../../remotion-jizura/examples/custom/CustomEffects.tsx)。
+実装・検証・未確認条件は [09の結果](09-custom-effects.md)を参照。

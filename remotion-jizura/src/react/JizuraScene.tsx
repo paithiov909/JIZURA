@@ -1,5 +1,6 @@
 import {useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {useBufferState, useCurrentFrame, useDelayRender, useRemotionEnvironment, useVideoConfig} from 'remotion';
+import {sceneInspection} from '../inspection.js';
 import {drawEmptyFrame} from '../canvas/empty-frame.js';
 import {CanvasMeasurementService} from '../canvas/service.js';
 import {clearEffectCache} from '../canvas/effect-frame.js';
@@ -25,11 +26,13 @@ export function JizuraScene(props: JizuraSceneProps) {
   const signature = JSON.stringify(prepared);
   const scene = useMemo(() => prepared, [signature]);
   // Remount resources when declarations change; frame updates retain the plan.
-  return <SceneCanvas key={signature} scene={scene} frame={frame} />;
+  return <SceneCanvas key={signature} scene={scene} frame={frame} onInspect={props.onInspect} />;
 }
 
-function SceneCanvas({scene, frame}: {scene: PreparedScene; frame: number}) {
+function SceneCanvas({scene, frame, onInspect}: {scene: PreparedScene; frame: number; onInspect?: JizuraSceneProps['onInspect']}) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const inspectRef = useRef(onInspect);
+  useLayoutEffect(() => {inspectRef.current = onInspect;}, [onInspect]);
   const frameRef = useRef(frame);
   const [plan, setPlan] = useState<ScenePlan<CutGeometry> | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -79,6 +82,9 @@ function SceneCanvas({scene, frame}: {scene: PreparedScene; frame: number}) {
     if (plan) drawFrame(ref.current, plan, frame);
     else drawEmptyFrame(ref.current, scene.background, active);
   }, [frame, scene, plan]);
+  useLayoutEffect(() => {
+    if (plan || !scene.cuts.length) inspectRef.current?.(sceneInspection(scene, plan ?? {prepared: scene, cuts: []}));
+  }, [scene, plan]);
   if (error) throw error;
   return <canvas ref={ref} width={scene.width} height={scene.height}
     data-jizura-ready={scene.cuts.length ? plan !== null : true}

@@ -1,5 +1,6 @@
 import type {JizuraCutProps, JizuraSceneProps} from '../types.js';
 import {resolveEffect, type ResolvedEffect} from '../effects/declarations.js';
+import {customRuntime} from '../effects/custom.js';
 import {cutSeed} from './random.js';
 import {resolveFont, resolveStyle, type ResolvedFont, type ResolvedStyle} from './style.js';
 import {resolveText, type CutText} from './text.js';
@@ -21,7 +22,7 @@ export type PreparedScene = Readonly<{
 const CUT_KEYS = ['text', 'seed', 'from', 'durationInFrames', 'enterDurationInFrames', 'exitDurationInFrames',
   'layout', 'enter', 'exit', 'hold', 'decor', 'treat', 'bg', 'cam', 'fx', 'trans', 'font', 'style'];
 export function prepareScene(
-  input: Omit<JizuraSceneProps, 'children'>,
+  input: Omit<JizuraSceneProps, 'children' | 'onInspect'>,
   config: {width: number; height: number; fps: number},
   declarationsOrCollect: readonly JizuraCutProps[] | (() => readonly JizuraCutProps[]),
 ): PreparedScene {
@@ -39,6 +40,14 @@ export function prepareScene(
   if (!Array.isArray(declarations) || declarations.length > 1000) fail('E_INPUT', 'cuts', 'Expected at most 1000 Cut declarations.');
   // Validate in declaration order before the time collection is sorted/checked.
   let inputCodePoints = 0;
+  const definitions = new Map<string, number>();
+  const checkDefinition = (effect: ResolvedEffect | null, path: string) => {
+    if (!effect) return;
+    const runtime = customRuntime(effect); if (!runtime) return;
+    const key = `${effect.group}:${effect.id}`, previous = definitions.get(key);
+    if (previous !== undefined && previous !== runtime.key) fail('E_EFFECT', path, 'Different definitions use the same group and ID in this Scene.');
+    definitions.set(key, runtime.key);
+  };
   const resolved = Array.from(declarations, (c, i) => {
     const path = `cuts[${i}]`;
     keys(record(c, path), CUT_KEYS, path);
@@ -52,7 +61,7 @@ export function prepareScene(
     const cutFont = c.font === undefined ? font : resolveFont(c.font, `${path}.font`);
     const cutStyle = resolveStyle(props.style, c.style, `${path}.style`);
     const layout = resolveEffect(c.layout, 'layout', s, `${path}.layout`)!;
-    const trackSource = layout.explicitParams.includes('track') ? 'params' as const : cutStyle.track !== undefined ? 'style' as const : 'auto' as const;
+    const trackSource = layout.customKey === undefined && layout.explicitParams.includes('track') ? 'params' as const : layout.customKey === undefined && cutStyle.track !== undefined ? 'style' as const : 'auto' as const;
     const resolvedLayout = trackSource === 'style' ? freeze({...layout, params: {...layout.params, track: cutStyle.track!}}) : layout;
     const enter = resolveEffect(c.enter, 'enter', s, `${path}.enter`);
     const exit = resolveEffect(c.exit, 'exit', s, `${path}.exit`);
@@ -63,6 +72,8 @@ export function prepareScene(
         if (value === undefined) fail('E_EFFECT', `${path}.decor[${slot}]`, 'Decor entries must be IDs or declarations.');
         return resolveEffect(value, 'decor', s, `${path}.decor[${slot}]`, slot)!;
       });
+    for (const [group, effect] of Object.entries({layout: resolvedLayout, enter, exit, hold})) checkDefinition(effect, `${path}.${group}`);
+    decor.forEach((effect, slot) => checkDefinition(effect, `${path}.decor[${slot}]`));
     for (const g of ['treat', 'bg', 'cam', 'fx', 'trans'] as const) {
       if (c[g] !== undefined && c[g] !== null) fail('E_EFFECT', `${path}.${g}`, 'This group only supports null.');
     }

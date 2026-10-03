@@ -19,7 +19,9 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 [拡張計画](docs/remotion/EXTENSION-PLAN.md)に08〜14の7タスクを用意しました。
 [08：既存7effectの最小レビュー環境](docs/remotion/08-review-workbench.md)を実装し、
 比較9案・局所変更と復元・保存入力からのPNG/短い動画・Studio保存を検証しました。
-次の着手先は[09：独自effect・構成確認API](docs/remotion/09-custom-effects.md)です。
+[09：独自effect・構成確認API](docs/remotion/09-custom-effects.md)では、利用側のlayout/motion/decor定義、
+解決済み構成取得、実Player・22 PNG・外部tarball利用を検証しました。
+次の着手先は[10：Remotion標準effects接続の試作](docs/remotion/10-remotion-effects.md)です。
 旧版の完全互換は目標にせず、LRC・音声解析・拍スナップは利用側のワークフローで扱います。
 AE/CEP連携は対象外。大きなプロジェクト構造・導入・配布の決定は後段に置きます。
 

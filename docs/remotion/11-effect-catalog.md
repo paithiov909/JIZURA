@@ -52,3 +52,15 @@ AIが読めるmetadataと、人間が見られる08の比較例を対応させ�
 
 未着手。metadata/search契約、一覧/分類source、集計command、目視範囲、選定理由を追記する。
 12へケース分類と対象、13へ確定した移植群、14へ候補選択の入口を渡す。
+
+## 段階09のmetadata引き継ぎ（2026-10-03）
+
+独自factory.metadataはgroup/id/name/description/tags/schema/autoSelect=false、
+decorはlayerを持つ。schemaはnumber（有限min/max、任意integer）、boolean、enum、
+必須default/descriptionと任意unit。snapshotへ独自metadataを含む。
+組み込み7effectの意味metadata・検索・視覚リンクは未追加で、この段階で補う。
+checkerStripのvはv%3で行数、kasumiのnは2+(n%2)で帯数となる。r等、各effectが
+使わない旧共有paramsもあるため、全keyを実効的な調整値と説明しない。
+組み込み候補への自動参加や候補順の変更は09では行っていない。
+[API追補](API.md#段階09の拡張契約2026-10-03)と
+[独自定義](../../remotion-jizura/examples/custom/effects.tsx)を形式の入口にする。

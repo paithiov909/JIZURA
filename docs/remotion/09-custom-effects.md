@@ -1,6 +1,6 @@
 # 段階09：独自effect・構成確認API
 
-状態：未着手。前提：[08の結果](08-review-workbench.md)。
+状態：完了（2026-10-03、実装・技術検証。ユーザーのdesign/motion確認は未実施）。前提：[08の結果](08-review-workbench.md)。
 次段階：[10：標準effects接続](10-remotion-effects.md)。
 
 ## 開始時に読むもの
@@ -69,5 +69,103 @@ Player選択・Studio保存・JSON編集は自動同期されず、全入力の�
 
 ## 結果・引き継ぎ
 
-未着手。確定した公開値/型、独自例の場所、構成取得のタイミング、checks/実描画、制約を追記する。
-10へ画像加工との境界、11へmetadata、12へ定義/ケース形式と検証入口を渡す。
+2026-10-03：現在の `remotion` ブランチで段階09を実装・技術検証した。
+開始時はクリーンでorigin/remotionより2commit先行、08のコード・結果と比較fontが存在した。
+段階10以降の実装・追加移植は行っていない。package version/依存/lockfile/参照sourceは維持した。
+
+### 確定した境界
+
+- 公開値：defineLayoutEffect、defineMotionEffect、defineDecorEffect、resolveScene。
+  Scene.onInspectとCustomEffect/Schema/Context/Inspection系型を追加した。
+  [API追補](API.md#段階09の拡張契約2026-10-03)に入力・実行・seed・cleanup契約を記録。
+- 定義は利用側TSへ置きfactoryの宣言を直接渡す。可変global registryを設けず、
+  コードをWeakMapで宣言/解決effectに関連付け、plan/inspectionのserializable dataから分離。
+  同group/IDの異定義はScene内でE_EFFECT、別Sceneでは分離。既存IDは予約、独自自動抽選なし。
+  同ID/同paramsのcallback差し替えも再計測する私有identityは乱数/snapshotへ含めない。
+- scalar schemaの型推論、固定default・description/範囲/unit・tagsを実装。
+  Studio GUI/schemaの自動生成は導入せず、11/14で必要情報を拡張する。
+- layoutはfont待機後のmeasureText/fitTextと1〜64個の本文placement。
+  motionはglyphの移動/scale/rotation/alpha/hide、decorは現在frame boxとCanvas2D。
+  独自例はoffsetLines/glyphWave/boxRule各1つ。新しい旧effect移植ではない。
+- resolveSceneはfont前の同期prepared snapshot。onInspectはfont・geometry・初回描画後の
+  measured snapshot（静止box/placements/glyphCount）。両方はdetached JSONでplanを変更できない。
+  callbackのidentity変更だけでは再計測/再通知しない。StrictModeでの反復通知は許す。
+- 公開Cut IDは追加せず、明示時間・Cut/effect seed・全paramsで局所修正を固定する。
+  省略Cut seedの宣言index依存・decor seedのslot依存・自動時間再配分の影響を保持。
+  組み込み7effectの初期API/描画差は意図していない。独自layoutはcenterの再分割/装飾を使わない。
+
+### 変更ファイル
+
+- 公開型/構成：`remotion-jizura/src/custom-types.ts`、`src/inspection.ts`、
+  `src/types.ts`、`src/index.ts`。
+- 解決/実行：同packageの `src/effects/custom.ts`、`src/effects/declarations.ts`、
+  `src/effects/motion.ts`、`src/core/scene-plan.ts`、`src/canvas/custom-layout.ts`、
+  `src/canvas/custom-frame.ts`、`src/canvas/service.ts`、`src/canvas/effect-frame.ts`、
+  `src/react/collect-cuts.ts`、`src/react/JizuraScene.tsx`。
+- 例：`examples/custom/effects.tsx`、`CustomEffects.tsx`、`README.md`、
+  `examples/StudioRoot.tsx`、`examples/index.tsx`、
+  `examples/review/inputs.tsx`、`ReviewWorkbench.tsx`、`README.md`。
+  08の例へonInspectを転送。従来indexがstudio-entryをimportするだけでは採用版の
+  registerRoot静的検査で停止したため、indexにも直接registerRootを書き、既存書き出しを修復した。
+- テスト：`tests/custom.test.mjs`、`custom-types.tsx`、`custom-entry.jsx`、
+  `custom-browser.mjs`、`custom-consumer.mjs`、`scaffold.test.mjs`、`consumer-validation.mjs`。
+  最後の2つの厳密export一覧を新しい4公開値に更新し、内部export拒否は維持した。
+- 文書：root/package README、API、本メモ、作業一覧、EXTENSION-PLAN、10/11/12の後続メモ。
+  初期PLAN/VALIDATIONの過去実績とbaselineは変更していない。
+
+### 実行した検証と結果
+
+- `npm run typecheck:remotion`：成功。schemaのnumber/enum、空schema、group mismatchの型ケースを含む。
+- `npm run check:remotion`：最終51/51成功（既存42＋独自9）、型検査/build成功。
+  customのNode計測はstubであり、font/画素の証拠は次の実browserと分離した。
+- 新command `node remotion-jizura/tests/custom-browser.mjs`：成功。
+  2実Playerで同一frame、逆seek、snapshot変更、12→32→12の局所振幅変更/復元、固定reference、
+  別Scene同IDの異定義、同ID/同paramsの関数差し替え、StrictMode再mount/cache再生成を確認。
+  Canvas alpha/transform復元、最終owned font face0。baseline/editedの各11 PNGは
+  Player対Remotionで画素差0、保存JSONを再読込した復元frame24も差0。
+  concurrency2で60frame/2.5秒MP4を生成・全frame decode。MP4はlossyでPNG一致と分離。
+- 新command `node remotion-jizura/tests/custom-consumer.mjs`：成功。
+  既存consumer gateで実tarballをrepository外へinstall（workspace symlinkなし）、
+  callerの3定義・公開型ケースをstrict TS検査し、baseline/editedの22実PNGを画素差0で確認。
+  旧例11PNGも一致。packed importsは全てpackage内部/peerに限定し、deep importを拒否。
+  最終ソースの再pack後に検証し、packed/emitted JS・d.ts計64ファイルのbyte一致と
+  package内部/peerの148 importを確認した。installにはregistryまたはnpm cacheが必要。
+- `node remotion-jizura/tests/effect-browser.mjs`：旧7effectの参照283比較で画素差0、
+  StrictMode/複数Scene/seek/cache再生成/cleanup成功。旧例61並列PNGも全frame一致。
+  MP4の最大frame平均channel差1.42619213（lossy）、61frameの最も近い原画を確認。
+  初回は上記index静的検査でexport部分が停止し、entry修正後に全体を再実行して成功。
+- `node remotion-jizura/tests/review-browser.mjs`：08の9案の実Player、保存/復元、
+  99 PNG一致、9本60frame動画decode、target/reference loopと局所編集回帰を確認。
+- `npm run check`：参照4target build・出力/契約/i18n・ja/en AE object-model mock成功。
+  `npm run spike:build && npm run spike:test`：保存spike build/Node VM/AE model mock成功。
+  Adobe/CEP実機の証拠ではない。
+- 変更Markdown11ファイルのローカルリンク161件と未追跡を含む空白検査、
+  `git diff --check`：成功。一時checkerは `/tmp/jizura-stage09-files.txt` の変更一覧から検査した。
+- sandboxではbuildの`spawnSync tsc EPERM`、browserの`listen EPERM`があった。
+  同commandを許可された通常実行環境で再実行した結果を上記に採用。
+  ViteのPlayer `use client` warningと旧buildの既存warningは残るが、検証は成功。
+
+### 実描画・目視の範囲
+
+ignored `dist/remotion/stage09/`へ、baseline/edited JSON、prepared/measured snapshot、
+Player/export22PNG、復元PNG、custom.mp4、環境/font/hash対応のcustom-result.json、
+custom-consumer-result.jsonを保存。生成物はcommit対象ではない。
+Node26.10.0、React19.3.0、Remotion4.0.532、HeadlessChrome154、640×360/24fps、
+preview DPR2、Noto Sans JP700/normalを使用。font SHA256は
+`c2f3b4d463500a2ddcd3849cded1fceeb9fd6d1c32e6cbecd568453ba50fc68f`。
+
+担当agentはbaseline/edited frame24 PNGと、MP4を4fpsで抽出した10frame contact sheetを目視。
+歌詞の保持・朝の強調・glyph wave振幅差・文字下のrule・pop入場/drift退出を確認した。
+動画を全速で再生しての目視、ユーザーのdesign/motion承認、独自例のStudio操作/Saveは未確認。
+contact sheetはPillow未導入のためffmpegで採取した開発用出力で、baselineには採用しない。
+
+### 制約と次段階
+
+font/OS/browser差、縦長/1080p性能、独自例の全parameter端点は未測定。
+純粋callbackの契約を利用側が守る必要がある。setup/外部資源hook、任意glyph注入/縦組、
+厳密な回転/clip/shard bbox、画像effect接続、全parameter GUI/catalog/保存syncは未導入。
+
+10は[追加引き継ぎ](10-remotion-effects.md#段階09からの入口2026-10-03)から開始する。
+通常DOM canvasと図形decorの境界を維持し、画像加工は標準Remotion APIで独立に試す。
+11へfactory.metadata/schemaと組み込み意味情報の未追加、12へfocused harnessと
+JSON/PNG/環境の対応を渡した。10/11/12のメモを同期済み。

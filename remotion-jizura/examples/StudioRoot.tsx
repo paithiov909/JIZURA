@@ -1,5 +1,6 @@
 import {Composition, Sequence, staticFile} from 'remotion';
 import {center, pop, wipe, drift, breathe, kasumi, checkerStrip, JizuraCut, JizuraScene} from 'remotion-jizura';
+import {CustomEffects} from './custom/CustomEffects.tsx';
 import {LyricsDemo} from './lyrics.tsx';
 import {ReviewWorkbench} from './review/ReviewWorkbench.tsx';
 
@@ -45,6 +46,7 @@ export const EffectSamples = ({mode = 'fixed', seed = 1234, motionFps = null, of
     font={{family: 'Noto Sans JP', weight: 700, src: staticFile('NotoSansJP.ttf')}} style={{fontSize: 64}} background="#16324F"><JizuraCut {...cut} /></JizuraScene></Sequence>;
 };
 export const Root = () => <>
+  <Composition id="CustomEffects" component={CustomEffects} defaultProps={{amplitude: 12}} width={640} height={360} fps={24} durationInFrames={120} />
   <Composition id="ReviewWorkbench" component={ReviewWorkbench} defaultProps={{candidate: "combined"}} width={640} height={360} fps={24} durationInFrames={120} />
   <Composition id="LyricsDemo" component={LyricsDemo} defaultProps={{seed: 20260922, cutSeed: 1234}} width={640} height={360} fps={24} durationInFrames={120} />
   <Composition id="EffectSamples" component={EffectSamples} defaultProps={{mode: "fixed", seed: 1234, motionFps: null, offset: 0}} width={640} height={360} fps={24} durationInFrames={120} />

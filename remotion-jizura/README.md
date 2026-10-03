@@ -62,6 +62,41 @@ and open `http://localhost:3108/?review`; the original LyricsDemo remains at `/`
 `dist/remotion/stage08/` outputs. `review-studio.mjs` checks saving in running Studio.
 These are development inputs, not a public project format or new effect API.
 
+## Custom effects and resolved configuration (stage 09)
+
+Import `defineLayoutEffect`, `defineMotionEffect`, and `defineDecorEffect` from
+`remotion-jizura` in a caller-owned TS file. Define them outside React renders;
+call the returned factory with `{seed, params}` and pass its original declaration
+to the matching Cut group. Each factory exposes `.metadata` with typed parameter
+schema, defaults/bounds/descriptions/units and tags. Custom effects are explicit
+choices and do not change the existing seven automatic candidates.
+
+The [custom example](examples/custom/README.md) defines measured text placement,
+a seeded per-glyph wave and a rule below the lyric bounds. In Studio select
+`CustomEffects`, change `amplitude` 12 → 32, compare frame24 and the fixed
+reference at frame84/112, then restore 12.
+
+`resolveScene(sceneProps, {width, height, fps}, cutPropsArray)` synchronously
+returns a detached `SceneInspection` with `stage: "prepared"`, resolved Cut times,
+effect IDs/seeds/params and font/style. `JizuraScene.onInspect` reports
+`stage: "measured"` after fonts, measurement and the first draw, adding static
+placements/bounds. `ReviewWorkbench` also forwards this optional callback.
+Snapshots contain no code or Canvas and cannot change the internal plan.
+They are diagnostic data; restore custom effects by importing the same definitions
+and passing saved scalar options back to their factories.
+
+```sh
+npm run check:remotion
+node remotion-jizura/tests/custom-browser.mjs
+node remotion-jizura/tests/custom-consumer.mjs
+```
+
+These commands require the fixed font, Chrome and ffmpeg/ffprobe; the consumer
+also requires npm registry/cache and stage07's scene result. They generate evidence
+under ignored `dist/remotion/stage09/`. See the [stage09 contract](../docs/remotion/API.md#段階09の拡張契約2026-10-03)
+for group/ID conflicts, lifecycle, motion progress, seed/slot dependencies and
+logical bounds. Native Remotion image effects and catalog/search remain later stages.
+
 ## Choosing effects and timing
 
 These Cut declarations fit inside a Scene with a loaded font:

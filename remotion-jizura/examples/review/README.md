@@ -97,7 +97,7 @@ Player example. Reload `combined.json` to restore the saved baseline. Regenerati
 the browser outputs overwrites development outputs, not committed baseline fixtures.
 Keep copies of a manually edited JSON if you need to preserve it between runs.
 
-## Review limits and stage 09 handoff
+## Stage08 review limits and original stage09 handoff
 
 Center cannot be disabled; “single” means one tested effect plus required layout.
 There is no motion strength/speed parameter, resolved-config inspection, stable
@@ -107,3 +107,17 @@ reordered decor slots or new automatic candidates have a different contract.
 Stage09 should use this pair of Cuts and the saved input/PNG correspondence to
 evaluate its custom-effect and inspection APIs. Technical equality is distinct
 from a user's design acceptance.
+
+## Stage09 update
+
+`ReviewWorkbench` now forwards an optional `onInspect` callback to `JizuraScene`.
+Use it in TSX to obtain a detached measured configuration; use the public
+`resolveScene` function with the same Scene settings, 24fps and
+`reviewInputs.combined.cuts.map(({cut}) => cut)` for font-free inspection.
+Callback functions are code props and are not saved in Studio JSON.
+
+The [custom example](../custom/README.md) reuses the lyric/target/reference timing
+with explicitly seeded caller-owned layout/motion/decor. Its wave adds amplitude
+and speed controls; the original pop/wipe/drift/breathe factories remain empty
+params. No public Cut ID or automatic Player/Studio synchronization was added.
+Existing nine review inputs and their pixels retain their stage08 meaning.

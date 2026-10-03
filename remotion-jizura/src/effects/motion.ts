@@ -2,7 +2,7 @@ import type {PreparedCut} from '../core/scene-plan.js';
 import type {FrameState} from '../core/frame.js';
 import type {FrameItem} from '../canvas/frame.js';
 import {E, clamp, lerp, rs, r, TAU, DEG} from './math.js';
-export type CharTransform = {hide?: boolean; s?: number; rot?: number};
+export type CharTransform = {hide?: boolean; s?: number; rot?: number; dx?: number; dy?: number; a?: number};
 export type PieceTransform = {dx: number; dy: number; rot: number; s: number; st: number; sdir: number; a: number};
 export const PID: PieceTransform = Object.freeze({dx: 0, dy: 0, rot: 0, s: 1, st: 1, sdir: 0, a: 1});
 export function popChar(seed: number, i: number, n: number, p: number): CharTransform {

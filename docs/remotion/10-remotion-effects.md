@@ -54,3 +54,14 @@ Cutを発火の指定元としつつ適用対象を分ける設計を試す。�
 
 未着手。接続案と採否、時間/適用先の契約、独自effect、実測、未達・制約を追記する。
 11へ画像加工候補の分類、12へalpha/順序/時間の検証ケース、14へ実動する組み合わせを渡す。
+
+## 段階09からの入口（2026-10-03）
+
+09の公開値はdefineLayoutEffect/defineMotionEffect/defineDecorEffect/resolveScene、
+Scene.onInspect。詳細は[APIの追補](API.md#段階09の拡張契約2026-10-03)。
+decorはlibraryがsave/restoreするCanvas2Dの図形描画で、画像effectではない。
+Sceneは引き続き通常DOM canvas。内部ref・全画素加工・標準effects propsは公開していない。
+10ではこの境界を前提に採用版の公開APIで接続を試す。独自文字motionのschemaへ
+画像fxを押し込めない。新しい出力callback等が必要なら09の契約を明示的に拡張する。
+実例は[custom README](../../remotion-jizura/examples/custom/README.md)、
+実描画入口は `node remotion-jizura/tests/custom-browser.mjs`。

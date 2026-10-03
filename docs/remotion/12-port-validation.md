@@ -58,3 +58,14 @@
 
 未着手。追加手順とsource、確定command、検証実績、目視、基準画像の扱い、制約を追記する。
 13へそのまま使えるケース/harnessとレビュー記録templateを渡す。
+
+## 段階09の検証入口（2026-10-03）
+
+公開定義/宣言・prepared/measured構成は[API追補](API.md#段階09の拡張契約2026-10-03)。
+`tests/custom.test.mjs` はschema/ID/不正出力と計測stubを区別し、
+`node remotion-jizura/tests/custom-browser.mjs` は2実Player・22実PNG、snapshot変更、
+局所変更/復元、同IDの関数差し替え、逆seek、再mount、font cleanupを確認する。
+`node remotion-jizura/tests/custom-consumer.mjs` は実tarballの外部型/22PNGと旧11PNG。
+生成例・環境/hashはignored `dist/remotion/stage09/`、定義は
+[examples/custom](../../remotion-jizura/examples/custom/README.md)。これらは09のfocused
+harnessで、共通ケース形式や移植baselineではない。12で共通化する。

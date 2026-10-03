@@ -1,4 +1,6 @@
 import type * as React from "react";
+import type {CustomEffect} from "./custom-types.js";
+import type {SceneInspection} from "./inspection.js";
 
 export type Seed = number; // 整数 0..4294967295。文字列や丸め・暗黙の変換は不可
 export type Color = string; // #RGB または #RRGGBB のみ。解決時に #RRGGBB に正規化
@@ -47,11 +49,11 @@ export type DriftEffect = EffectDeclaration<"exit", "drift", NoParams>;
 export type BreatheEffect = EffectDeclaration<"hold", "breathe", NoParams>;
 export type KasumiEffect = EffectDeclaration<"decor", "kasumi", DecorParams>;
 export type CheckerStripEffect = EffectDeclaration<"decor", "checkerStrip", DecorParams>;
-export type LayoutInput = "center" | CenterEffect;
-export type EnterInput = "pop" | "wipe" | PopEffect | WipeEffect | null;
-export type ExitInput = "drift" | DriftEffect | null;
-export type HoldInput = "breathe" | BreatheEffect | null;
-export type DecorInput = "kasumi" | "checkerStrip" | KasumiEffect | CheckerStripEffect;
+export type LayoutInput = CustomEffect<"layout"> | "center" | CenterEffect;
+export type EnterInput = CustomEffect<"enter"> | "pop" | "wipe" | PopEffect | WipeEffect | null;
+export type ExitInput = CustomEffect<"exit"> | "drift" | DriftEffect | null;
+export type HoldInput = CustomEffect<"hold"> | "breathe" | BreatheEffect | null;
+export type DecorInput = CustomEffect<"decor"> | "kasumi" | "checkerStrip" | KasumiEffect | CheckerStripEffect;
 export type EffectOptions<P> = Readonly<{seed?: Seed; params?: Readonly<Partial<P>>}>;
 
 export type JizuraCutProps = Readonly<{
@@ -78,5 +80,6 @@ export type JizuraSceneProps = Readonly<{
   style?: JizuraStyle;
   background?: Color | null;
   motionFps?: number | null;
+  onInspect?: (inspection: SceneInspection) => void;
   children?: React.ReactNode;
 }>;

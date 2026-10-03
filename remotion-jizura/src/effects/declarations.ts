@@ -2,6 +2,7 @@ import type {
   CenterParams, DecorParams, EffectOptions, NoParams, CenterEffect, PopEffect,
   WipeEffect, DriftEffect, BreatheEffect, KasumiEffect, CheckerStripEffect,
 } from '../types.js';
+import {customRuntime, attachCustom, customParams} from './custom.js';
 import {fail, freeze, keys, record, seed} from '../core/validation.js';
 import {effectSeed, itemSeed, parameterSeed, rng, selectionSeed} from '../core/random.js';
 
@@ -11,7 +12,7 @@ export type Declaration = Readonly<{group: Group; id: string; seed?: number; par
 export type ResolvedEffect = Readonly<{
   group: Group; id: string; seed: number; itemSeed: number;
   params: Readonly<Record<string, ParamValue>>; explicitParams: readonly string[];
-  layer?: 'back' | 'front';
+  layer?: 'back' | 'front'; customKey?: number;
 }>;
 // All catalog IDs are implemented by center.ts, motion.ts and decor.ts.
 // Candidate order/weights remain the API v1 equal-probability selection.
@@ -41,11 +42,15 @@ function params(value: unknown, group: Group, path: string): Record<string, Para
 export function validateDeclaration(value: unknown, group: Group, path: string): Declaration {
   const v = typeof value === 'string' ? {group, id: value} : record(value, path, 'E_EFFECT');
   keys(v, ['group', 'id', 'seed', 'params'], path, 'E_EFFECT');
-  if (v.group !== group || typeof v.id !== 'string' || !CANDIDATES[group].includes(v.id)) fail('E_EFFECT', path, 'Unsupported effect ID or group.');
-  const p = params(v.params, group, `${path}.params`);
-  return freeze({group, id: v.id as string,
+  const custom = customRuntime(v);
+  if (v.group !== group || typeof v.id !== 'string' || (!custom && !CANDIDATES[group].includes(v.id)) ||
+      (custom && (custom.metadata.group !== group || custom.metadata.id !== v.id || CANDIDATES[group].includes(v.id)))) fail('E_EFFECT', path, 'Unsupported effect ID or group.');
+  const p = custom ? customParams(v.params, custom.metadata.schema, `${path}.params`) : params(v.params, group, `${path}.params`);
+  const declaration = freeze({group, id: v.id as string,
     ...(v.seed === undefined ? {} : {seed: seed(v.seed, `${path}.seed`)}),
     ...(p === undefined ? {} : {params: p})});
+  if (custom) attachCustom(declaration, custom);
+  return declaration;
 }
 function factory(group: Group, id: string, options: unknown): Declaration {
   const o = options === undefined ? {} : record(options, id, 'E_EFFECT');
@@ -78,7 +83,11 @@ export function resolveEffect(value: unknown, group: Group, cut: number, path: s
   if (value === null && group !== 'layout' && group !== 'decor') return null;
   const declaration = validateDeclaration(value === undefined ? rng(selectionSeed(cut, group)).pick(CANDIDATES[group]) : value, group, path);
   const s = declaration.seed ?? effectSeed(cut, group, declaration.id, slot);
-  return freeze({group, id: declaration.id, seed: s, itemSeed: itemSeed(s, 0),
-    params: {...generatedParams(group, s), ...declaration.params}, explicitParams: Object.keys(declaration.params ?? {}),
-    ...(group === 'decor' ? {layer: declaration.id === 'kasumi' ? 'back' as const : 'front' as const} : {})});
+  const custom = customRuntime(declaration);
+  const effect = freeze({group, id: declaration.id, seed: s, itemSeed: itemSeed(s, 0),
+    ...(custom ? {customKey: custom.key} : {}),
+    params: custom ? customParams(declaration.params, custom.metadata.schema, `${path}.params`, true) : {...generatedParams(group, s), ...declaration.params}, explicitParams: Object.keys(declaration.params ?? {}),
+    ...(group === 'decor' ? {layer: custom?.metadata.layer ?? (declaration.id === 'kasumi' ? 'back' as const : 'front' as const)} : {})});
+  if (custom) attachCustom(effect, custom);
+  return effect;
 }
