@@ -684,3 +684,73 @@ React memoには私有identityを使う。この値はseedにも公開snapshot�
 例は [custom/effects.tsx](../../remotion-jizura/examples/custom/effects.tsx) と
 [CustomEffects.tsx](../../remotion-jizura/examples/custom/CustomEffects.tsx)。
 実装・検証・未確認条件は [09の結果](09-custom-effects.md)を参照。
+
+## 段階10の画像effects契約（2026-10-03）
+
+公開値 `sliceGlitch` と型 `SliceGlitchParams` を追加した。
+これはRemotionの `createEffect` による `EffectDescriptor` を返す画像factoryで、
+09のglyph/layout/decor宣言とは型・schema・実行境界を分ける。
+型・実装は [slice-glitch.ts](../../remotion-jizura/src/effects/slice-glitch.ts)。
+`JizuraScene`/`JizuraCut` のprops、初期7effect、自動候補・seed、inspectionは変更しない。
+
+```tsx
+import {CanvasImage, HtmlInCanvas, useCurrentFrame} from 'remotion';
+import {sliceGlitch} from 'remotion-jizura';
+// caller側でactive Cutを解決し、Sequence内のframeからCut.fromを引く。
+const effects = [sliceGlitch({seed: 1234, frame: 24, fps: 24})];
+// <CanvasImage src="..." effects={effects} />
+// <HtmlInCanvas width={640} height={360} pixelDensity={1} effects={effects}>
+//   <JizuraScene ...>...</JizuraScene>
+// </HtmlInCanvas>
+```
+
+全paramsは省略/undefinedで既定値。有限number、範囲・整数条件を検証し、
+未知key・null・不正値をfactory時に `TypeError` とする（文字用のJizuraErrorではない）。
+
+| parameter | 既定・範囲 | 意味 |
+| --- | --- | --- |
+| amount | 0.65、0..1 | 横変位の強度。0はpass-through |
+| displacement | 0.05、0..0.2 | target幅に対する最大変位の割合 |
+| bands | 18、整数1..128 | 全高を分割する横帯数 |
+| seed | 1234、uint32 | 各帯・時間tickのpattern seed |
+| frame | 0、非負safe整数 | callerが渡すCut-local frame |
+| fps | 24、0より大きく1000以下 | frameから秒への換算 |
+| rate | 12、0..120 | 1秒あたりのpattern更新数。0は固定pattern |
+| disabled | false、boolean | Remotionの標準無効化。加工chainがskipする |
+
+tickは `floor(frame * (rate / fps))`。seed/tick/bandからstateless hashを作り、
+約45%の帯を水平へ整数pixel移動する。前frame・外部時計・Math.randomに依存しない。
+factoryはhookを使わず、Composition/Sequence開始位置を加算しない。
+Scene.motionFpsとも独立する。effectKeyは全解決paramsとRemotionのdisabled値を含む。
+
+Canvas2D backend。targetを毎回clearしてsourceを帯単位で描き、端の移動分はwrapする。
+空の背景を塗らず、alphaを持つ画像をそのまま移動する。旧sliceの重ね描き/alphaGuardとは
+異なる適応で、旧pixel・旧planner/seed互換は主張しない。setupはnull、独自buffer/履歴なし。
+targetとchain資源はRemotionが所有し、文字用の資源hookは追加しない。
+同targetへの効果は配列順。blur→sliceとslice→blurの違いを実測した。
+Standard schemaはRemotionのInteractivitySchemaで、09のCustomEffectSchemaではない。
+
+JIZURA接続は利用側の単一 `HtmlInCanvas` wrapperを採用した。
+通常canvasへeffects propsを付けたり、内部refを取得するAPIは追加しない。
+`background={null}` のSceneを包めば歌詞/decor層、背景色付きSceneなら背景込みになる。
+wrapper外のDOM/背景は加工対象外。複数Scene/任意DOM全合成の保証は今回未測定。
+独立画像は公開 `CanvasImage` で同factoryを使用する。
+
+[実例](../../remotion-jizura/examples/image-effects/ImageEffects.tsx)は同じCut宣言を
+resolveSceneへ渡し、解決済み `[from,end)`、Cut seed、frame-fromから加工を発火する。
+空白はdisabled、Cut開始でframe0へ戻り、終了frameでは無効化する。
+これはcaller側のsidecarで、新しいCut.fx/decor指定や保存project契約ではない。
+
+Chrome149以降のHTML-in-Canvas flag、採用Remotion4.0.532を前提とする試作。
+実測はChrome154/Linux、pixelDensity1、blur WebGL2をswangle、sliceを2dで行った。
+採用実装はHtmlInCanvasのnestingを拒否する。portableな汎用DOM加工保証には広げない。
+font/初回Canvas描画は既存Sceneの待機、capture/chain/paintはHtmlInCanvasの待機に従い、
+別のsetTimeoutによるproduction描画同期や新しい出力callbackを設けない。
+
+Playerの直接Canvas PNGとrenderのscreenshot PNGは26/45件で全画素一致。
+残りはRGB最大差1、alpha差0、丸めたpremultiplied RGB差0。最初の不一致は39画素の
+unpremultiply丸め差で、この取得経路に限定した検証条件として採用した。
+別GPU/browser/fontへ拡大した許容差は決めていない。
+Studioのliteral displacementのnative保存backend→source→reload→別bundle PNGは実測済み。
+computed amount/seed/frame/disabled等の自由なGUI書換えやUI Saveボタンは未検証。
+[10の結果](10-remotion-effects.md)に性能・描画証拠・制約を記録する。

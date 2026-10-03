@@ -95,7 +95,25 @@ These commands require the fixed font, Chrome and ffmpeg/ffprobe; the consumer
 also requires npm registry/cache and stage07's scene result. They generate evidence
 under ignored `dist/remotion/stage09/`. See the [stage09 contract](../docs/remotion/API.md#段階09の拡張契約2026-10-03)
 for group/ID conflicts, lifecycle, motion progress, seed/slot dependencies and
-logical bounds. Native Remotion image effects and catalog/search remain later stages.
+logical bounds. Catalog/search remains a later stage.
+
+## Native image effects (stage 10)
+
+`sliceGlitch({amount?, displacement?, bands?, seed?, frame?, fps?, rate?, disabled?})`
+returns a Remotion-native image `EffectDescriptor`, separate from glyph/decor
+declarations. Pass Cut-local frame explicitly. It shifts seeded horizontal bands,
+wraps edges, clears each target frame and preserves alpha without frame history.
+Use it in `CanvasImage.effects`, or wrap JIZURA in one public `HtmlInCanvas` with
+`pixelDensity={1}`. A transparent Scene processes lyrics/decor; a Scene with a
+background processes both. Effects apply in array order.
+
+The [image-effects example](examples/image-effects/README.md) connects standard
+blur, Cut-derived triggers, an independent image, Player controls and Studio
+source saving. Open `/?image-effects` with the existing Player command.
+`sliceGlitch` uses existing `remotion@4.0.532`; the standard blur example separately
+uses `@remotion/effects@4.0.532`. Studio/Player needs Chrome149+ with the
+HTML-in-Canvas flag. Fixed tests use Chrome154 and software WebGL2 `swangle`.
+This experimental connection does not add a Scene/Cut `effects` prop.
 
 ## Choosing effects and timing
 

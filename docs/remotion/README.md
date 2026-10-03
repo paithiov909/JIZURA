@@ -18,7 +18,7 @@ Remotion依存を追加し、空SceneのStudio表示・PNG・MP4書き出しを�
 
 2026-10-03に次の方針を採用した。AIがRemotionコードを組み、人間がデザイン・モーションを
 見て直すフローに向け、表現の拡充・選択・局所調整・再現を優先する。
-[拡張計画](EXTENSION-PLAN.md)と08〜14のメモを作成した。08/09は実装・技術検証完了、10〜14は未着手。
+[拡張計画](EXTENSION-PLAN.md)と08〜14のメモを作成した。08〜10は実装・技術検証完了、11〜14は未着手。
 旧版の完全互換は目標にせず、LRC/audio解析/拍スナップは利用側のツールで扱う。
 AE/CEP連携は対象外。大きなrepository構造・導入・配布の決定は後段へ置く。
 
@@ -32,7 +32,7 @@ AE/CEP連携は対象外。大きなrepository構造・導入・配布の決定�
 | --- | --- | --- | --- |
 | 08 | [既存7effectの最小レビュー環境](08-review-workbench.md) | 初期01〜07 | 完了（比較9案・保存/復元・実Player/Studio/PNG/動画、ユーザー目視は未確認） |
 | 09 | [独自effect・構成確認API](09-custom-effects.md) | 08完了 | 完了（公開独自3例・構成確認・実Player/PNG/外部consumer、ユーザー目視は未確認） |
-| 10 | [Remotion標準effects接続の試作](10-remotion-effects.md) | 09完了 | 未着手 |
+| 10 | [Remotion標準effects接続の試作](10-remotion-effects.md) | 09完了 | 完了（HtmlInCanvas接続・独自slice・実Player/Studio/PNG/動画/外部consumer、ユーザー目視は未確認） |
 | 11 | [選択カタログ・移植候補の整理](11-effect-catalog.md) | 10完了、09のmetadata | 未着手 |
 | 12 | [共通の移植・検証手順](12-port-validation.md) | 11完了、09/10の実測 | 未着手 |
 | 13 | [最初の小さな移植群](13-first-effect-batch.md) | 12完了、11の対象確定 | 未着手 |
@@ -96,8 +96,9 @@ docs/remotion/EXTENSION-PLAN.md、docs/remotion/08-review-workbench.mdを読み�
 
 [08：既存7effectの最小レビュー環境](08-review-workbench.md)は完了。
 [09：独自effect・構成確認API](09-custom-effects.md)も完了。
-次は[10：Remotion標準effects接続の試作](10-remotion-effects.md)。
-09のAPI追補・custom例・構成snapshot/実描画結果から着手する。
+[10：Remotion標準effects接続の試作](10-remotion-effects.md)も完了。
+次は[11：選択カタログ・移植候補の整理](11-effect-catalog.md)。
+09のmetadataと10の画像fx適用境界・schema・実描画結果から着手する。
 08〜14の成果と検証範囲は[拡張計画](EXTENSION-PLAN.md)を参照する。
 新しい公開API・command・移植候補は担当タスクで決め、後続メモへ引き継ぐ。
 全effect・audio/BPM/LRC・overlap/transitionや公開/配布は初期到達点に含めていない。

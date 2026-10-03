@@ -1,6 +1,6 @@
 # remotion-jizura 表現拡充・レビュー体験の開発計画
 
-作成日：2026-10-03。ブランチ：`remotion`。状態：08/09は実装・技術検証完了、10〜14は未着手。
+作成日：2026-10-03。ブランチ：`remotion`。状態：08〜10は実装・技術検証完了、11〜14は未着手。
 初期01〜07の[計画](PLAN.md)・[API](API.md)・[検証記録](VALIDATION.md)を前提とする。
 [作業一覧](README.md)から各タスクへ進む。
 
@@ -135,3 +135,17 @@ explicit seedの条件を[API追補](API.md#段階09の拡張契約2026-10-03)�
 生成物はdist、ユーザーデザイン承認と独自Studio保存は未確認。
 10へ通常DOM canvasとの画像fx接続境界、11へmetadataと組み込み意味情報の補完、
 12へfocused browser/consumer手順を引き継いだ。共通harness/catalogは未実装のまま残す。
+
+## 段階10の結果（2026-10-03）
+
+公開HtmlInCanvasの単一wrapperで既存Sceneを加工する方式が実動した。
+標準blur(WebGL2)と新しいsliceGlitch(2d)を配列順で組み合わせ、独立CanvasImageにも適用した。
+公開追加は画像factory/型だけで、Scene/Cut/09の文字用API・候補順・seedは維持。
+Cut宣言→resolveSceneの時間とseed→画像fx発火のsidecarを利用側例へ置いた。
+詳細・確定parameter・必要条件は[API追補](API.md#段階10の画像effects契約2026-10-03)と[10の結果](10-remotion-effects.md)。
+
+45実PNGはalpha/premultiplied RGB一致（raw26件完全一致、残りRGB最大差1の取得丸め）。
+5秒動画、逆seek/再mount/Sequence/透明、Studio native保存backend、1080p、外部tarballを確認。
+採用版のHTML-in-Canvas flag・nesting拒否・software WebGL2条件を記録し、一般GPU保証には広げない。
+ユーザー目視とUI Saveボタンは未確認。旧pixel完全互換や全fx移植は行っていない。
+11へ画像schemaと適用対象の分類、12へ取得丸め/alpha/順序/時間ケース、14へ単一wrapperを渡す。

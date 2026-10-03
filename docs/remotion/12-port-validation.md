@@ -69,3 +69,19 @@
 生成例・環境/hashはignored `dist/remotion/stage09/`、定義は
 [examples/custom](../../remotion-jizura/examples/custom/README.md)。これらは09のfocused
 harnessで、共通ケース形式や移植baselineではない。12で共通化する。
+
+## 段階10の画像検証入口（2026-10-03）
+
+`node remotion-jizura/tests/image-effects-browser.mjs` はnative slice/標準blur、
+HtmlInCanvasのJIZURA接続、独立CanvasImage、alpha/順序/無効化/Cut境界/Sequence/
+逆seek/再mountを確認し、45PNG・5秒MP4・1080pを取得する。
+`image-effects-studio.mjs` は稼働Studioのnative保存backend→source→reload→別bundle PNG。
+`image-effects-consumer.mjs` は実tarball外部型/7native PNGと旧11PNG。
+
+直接Canvas PNG対Chromium screenshotはraw26/45件完全一致、残りRGB最大差1、
+全件alpha差0・丸めたpremultiplied RGB差0。取得時のunpremultiply丸め差なので、
+同一render同士の外部consumer比較は引き続きraw画素差0を使う。
+一般GPU許容差へ広げず、条件/画素差/alpha/premultipliedを別々に残す。
+標準blurはsoftware WebGL2 swangle、sliceは2d、HtmlInCanvasはpixelDensity1/単一wrapper。
+1080p37msはslice+toDataURLの中央値で、純effect適用や実時間preview fpsの証拠ではない。
+出力はdist/remotion/stage10、前提と限界は[10の結果](10-remotion-effects.md)。

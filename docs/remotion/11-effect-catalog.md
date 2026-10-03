@@ -64,3 +64,14 @@ checkerStripのvはv%3で行数、kasumiのnは2+(n%2)で帯数となる。r等�
 組み込み候補への自動参加や候補順の変更は09では行っていない。
 [API追補](API.md#段階09の拡張契約2026-10-03)と
 [独自定義](../../remotion-jizura/examples/custom/effects.tsx)を形式の入口にする。
+
+## 段階10の画像effect引き継ぎ（2026-10-03）
+
+sliceGlitchはnative createEffect/EffectDescriptorで、09の文字用factory.metadataとは別。
+公開typeはio.jizura.sliceGlitch、schemaはRemotion InteractivitySchema。parameterは
+amount/displacement/bands/seed/frame/fps/rate/標準disabled。
+通常JIZURA canvasを単一HtmlInCanvasで包む接続が実動し、CanvasImageにも同factoryを適用した。
+画像加工の適用先（歌詞/decorだけ、Scene背景込み、独立画像）、HTML-in-Canvas flagと
+2d/WebGL2 backend条件を分類条件へ含める。全旧fxがこの方式で移植済みとは扱わない。
+標準blur/chromaticAberration等を新しい文字effectとして重複登録しない。
+[10の結果](10-remotion-effects.md)・[API](API.md#段階10の画像effects契約2026-10-03)が根拠。

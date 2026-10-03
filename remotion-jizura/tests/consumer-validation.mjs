@@ -84,7 +84,7 @@ import {createHash} from 'node:crypto';
 import {bundle} from '@remotion/bundler';
 import {selectComposition,renderStill} from '@remotion/renderer';
 import * as api from 'remotion-jizura';
-assert.deepEqual(Object.keys(api).sort(), ['JizuraScene','JizuraCut','JizuraError','defineLayoutEffect','defineMotionEffect','defineDecorEffect','resolveScene','parseLines','center','pop','wipe','drift','breathe','kasumi','checkerStrip'].sort());
+assert.deepEqual(Object.keys(api).sort(), ['JizuraScene','JizuraCut','JizuraError','defineLayoutEffect','defineMotionEffect','defineDecorEffect','resolveScene', 'sliceGlitch','parseLines','center','pop','wipe','drift','breathe','kasumi','checkerStrip'].sort());
 await assert.rejects(import('remotion-jizura/dist/core/scene-plan.js'), e=>e.code==='ERR_PACKAGE_PATH_NOT_EXPORTED');
 const browserExecutable=process.env.JIZURA_BROWSER ?? '/usr/bin/google-chrome';
 const serveUrl=await bundle({entryPoint:new URL('./entry.tsx',import.meta.url).pathname,outDir:new URL('./bundle',import.meta.url).pathname,publicDir:new URL('./public',import.meta.url).pathname});

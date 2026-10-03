@@ -56,3 +56,14 @@ AIにも人間にも分かる利用手順と、実際の操作・描画で確認
 
 未着手。統合例、レビュー指示と修正範囲、checks、画像/動画、操作・目視・時間、未解決を追記する。
 08〜14の到達点、未達/未確認、次の具体候補を拡張計画・作業一覧へ追記し、過去の検証記録を保持する。
+
+## 段階10の実動接続引き継ぎ（2026-10-03）
+
+JIZURAを単一の公開HtmlInCanvas（pixelDensity1）で包む方式が実動した。
+歌詞/decorのみはScene.background=null、背景込みは背景付きSceneを包み、
+wrapper外の背景/DOMは加工対象外。Cut時間/seed/local frameの画像fx発火は
+resolveSceneを使うcaller側sidecarで、Cut.fx指定を新設していない。
+HTML-in-Canvas flag、software WebGL2 blurのswangle、nesting拒否の条件を守る。
+Studio literal displacementのnative保存backend・再読み込み・別renderは検証済み。
+amount等computed値のGUI保存全般やUI Saveボタン確認は未実施。
+[実例](../../remotion-jizura/examples/image-effects/README.md)と[10の結果](10-remotion-effects.md)を入口にする。

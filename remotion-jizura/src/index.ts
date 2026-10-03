@@ -9,3 +9,4 @@ export {defineLayoutEffect, defineMotionEffect, defineDecorEffect} from './effec
 export {resolveScene} from './inspection.js';
 export type * from './custom-types.js';
 export type {SceneInspection, CutInspection, EffectInspection} from './inspection.js';
+export {sliceGlitch, type SliceGlitchParams} from './effects/slice-glitch.js';
