@@ -29,7 +29,10 @@ PNG・短いMP4書き出しを確認しました。段階03でparser・時間配
 実PNG/短い動画・並列比較・失敗診断と[追加手順](docs/remotion/PORTING.md)を整備しました。
 [13：最初の小さな移植群](docs/remotion/13-first-effect-batch.md)では、mixed/slideLeft/shrink/jitter/bracketsを
 明示指定専用で追加し、21case149PNG・動画・外部tarball・17件catalogと既存回帰を検証しました。
-次の着手先は[14：AI生成コードからのレビュー体験](docs/remotion/14-review-loop.md)です。
+[14：AI生成コードからのレビュー体験](docs/remotion/14-review-loop.md)では、4Cut・12秒の統合例、
+3局所修正・比較・保存/復元、100PNG一致・実Studio保存・2動画・font/性能実測を確認しました。
+08〜14の実装・技術検証は完了。[統合例の手順](remotion-jizura/examples/review-loop/README.md)を入口に、
+次は動画のユーザーレビューと1080pの文字端差/画像処理性能を切り分け、次の群・UXを別途選びます。
 旧版の完全互換は目標にせず、LRC・音声解析・拍スナップは利用側のワークフローで扱います。
 AE/CEP連携は対象外。大きなプロジェクト構造・導入・配布の決定は後段に置きます。
 

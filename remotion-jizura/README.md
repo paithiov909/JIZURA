@@ -63,6 +63,23 @@ and open `http://localhost:3108/?review`; the original LyricsDemo remains at `/`
 `dist/remotion/stage08/` outputs. `review-studio.mjs` checks saving in running Studio.
 These are development inputs, not a public project format or new effect API.
 
+## Brief-to-review loop (stage 14)
+
+[The twelve-second example](examples/review-loop/README.md) combines four explicit
+Cuts, existing/new/caller effects and standard/native image processing. Open
+`/?review-loop` with the Player command, or select `ReviewLoop`, `ReviewLoop1080`
+or `ReviewLoopPortrait` in Studio. Three fixed review instructions cover duration,
+layout replacement and image scope. Compare before/after at the same frame, loop a
+Cut, save/reload scalar settings and restore the original. One `{input: ...}` props
+envelope is shared by Player JSON, Studio defaultProps and rendering.
+
+The Player preloads the exact caller-owned font once across local edits. Input and
+measured inspection downloads record separate reproduction/diagnostic data; custom
+code is recreated by importing the same definitions. `loop-validation.mjs` and
+`loop-studio.mjs` generate ignored stage14 artifacts, including timing and delayed-font
+trials. Read the example for command prerequisites and the backend-save/UI distinction.
+User design acceptance remains unconfirmed. No public API or effect parameters change.
+
 ## Custom effects and resolved configuration (stage 09)
 
 Import `defineLayoutEffect`, `defineMotionEffect`, and `defineDecorEffect` from

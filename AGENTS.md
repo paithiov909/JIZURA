@@ -8,10 +8,13 @@ The source cleanup and initial stages 01–07 are complete in `remotion-jizura/`
 (provisional package name: `remotion-jizura`). Preserve their plan and evidence in
 [docs/remotion/PLAN.md](docs/remotion/PLAN.md) and
 [docs/remotion/VALIDATION.md](docs/remotion/VALIDATION.md).
-The next stages 08–14 follow
+Extension stages 08–14 are implemented and technically validated (14 completed
+on 2026-10-04). Preserve their results and unresolved limits in
 [docs/remotion/EXTENSION-PLAN.md](docs/remotion/EXTENSION-PLAN.md): a minimal review
 loop, custom effects and inspection APIs, native Remotion effects experiments,
 a catalog, repeatable port validation, a small effect batch and review integration.
+The next effect batch and UX scope remain undecided. Start from task14 results;
+user design approval and the recorded 1080p pixel/performance limits remain open.
 Read [README.md](README.md), [docs/remotion/README.md](docs/remotion/README.md),
 both plans and the assigned numbered task memo before changing code.
 The initial API is recorded in [docs/remotion/API.md](docs/remotion/API.md).

@@ -1,6 +1,6 @@
 # remotion-jizura 表現拡充・レビュー体験の開発計画
 
-作成日：2026-10-03。ブランチ：`remotion`。状態：08〜13は実装・技術検証完了、14は未着手。
+作成日：2026-10-03。ブランチ：`remotion`。状態：08〜14は実装・技術検証完了（14完了2026-10-04）。1080p差・ユーザー承認は結果へ分けて記録。
 初期01〜07の[計画](PLAN.md)・[API](API.md)・[検証記録](VALIDATION.md)を前提とする。
 [作業一覧](README.md)から各タスクへ進む。
 
@@ -199,3 +199,22 @@ mixedは単一fontの個別glyph item/強調写像、shrinkはitem中心/track�
 生成物はdist、ユーザーレビューと採用済みbaselineは未確認。高pad/strokeの縦長clipと
 高回転の可読性は採用判断へ残す。14へ17件catalog、新60frame例、調整paramsと
 item数変更のmotion seedへの影響を渡した。14の統合例/UXと次の移植群は実装していない。
+
+## 段階14の結果（2026-10-04）
+
+17件catalogからのbrief/選定理由、既存/新/caller/画像effectsを4Cut・12秒の例へ統合し、
+入場時間、layout差し替え、画像window/targetの3修正を実行した。同じscalar props JSONから
+Player/Studio/renderへ往復し、変更対象外のCut、復元、計測snapshotと画像の対応を確認。
+640×360の5案100PNGはraw差0、2本の12秒動画、実Studio6保存/18PNG/6fresh bundle、
+共通harness9case68PNG/旧参考53比較/並列1・2、root/spikeとproduction bundleも確認した。
+詳細なcommand・目視・制約は[14の結果](14-review-loop.md)、手順は[統合例](../../remotion-jizura/examples/review-loop/README.md)。
+
+遅延fontのpreloadはScene準備前へ待機を移したが総時間削減ではない。1080p/縦長の代表16PNGと
+時間を採取し、縦長はpreview/export/再exportが一致、1080pは文字端maxRaw1の差を未解決として保存。
+高解像度画像有効seekはsoftware WebGL2で最大約1.12秒（4RAF待機含む）だった。
+新parameter/API/依存は不要で追加せず、ユーザーdesign/motion承認は未確認。
+
+08〜14で最小の選択→実コード→描画→局所レビュー→比較→保存/復元を接続できた。
+次は実ユーザーの動画レビュー、1080pの描画/取得/backendと性能の切り分け、JSON転記/対象frame移動の
+UX観測を優先する。次の移植群はcurrent box系rings/dotsとslideR方向統合を精査候補とし、
+vcolsは延期を維持する。次段階番号・群の採用/実装・公開/導入方式は別途選び、今回先に固定しない。
